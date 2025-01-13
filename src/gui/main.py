@@ -5,9 +5,10 @@ import ttkbootstrap as ttk
 
 # def printhello():
 #     print(entryInt.get())
-def valueentry():
-    print(entryint.get())
-    entrystr.set('test')
+def valueentry(): 
+    minutos = entryint.get()
+    horas = minutos / 60
+    label.set(horas)
 
 window= ttk.Window(themename='darkly')
 window.title('test')
@@ -17,25 +18,25 @@ entryint = tk.IntVar()
 entryframeint = ttk.Entry(window,
 				  textvariable=entryint)
 
-entrystr = tk.StringVar()
-entryframestr = ttk.Label(window,
-						  textvariable=entrystr,
-						  text='test')
-entryframestr.pack()
+# entrystr = tk.StringVar()
+# entryframestr = ttk.Label(window,
+# 						  textvariable=entrystr,
+# 						  text='test')
+# entryframestr.pack()
 entryframeint.pack()
 button.pack()
 
 #title one div for the text
-label = ttk.Label(window, text='Test', font='Cambria 12 italic')
+label = ttk.Label(window, text='Conversor', font='Cambria 12 italic')
 label.pack()
 
 #one big div for ex 2 widg for him
-input_frame = ttk.Frame(window)
-entryInt = tk.IntVar()
-entry = ttk.Entry(input_frame, textvariable=entryInt)
-entry.pack(side='top',padx=10)
-button.pack(side='left')
-input_frame.pack(pady=20)
-output_label = ttk.Label(window, text='output test')
-output_label.pack()
+# input_frame = ttk.Frame(window)
+# entryInt = tk.IntVar()
+# entry = ttk.Entry(input_frame, textvariable=entryInt)
+# entry.pack(side='top',padx=10)
+# button.pack(side='left')
+# input_frame.pack(pady=20)
+# output_label = ttk.Label(window, text='output test')
+# output_label.pack()
 window.mainloop()
