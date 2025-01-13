@@ -1,6 +1,71 @@
 import subprocess
 import customtkinter as ctk
 from tkinter import ttk, Menu
+import threading
+
+# Function to run the command and capture output with progress updates
+def run_vagrant_command(command, machine_id, *args):
+    # Initialize progress to 0
+    progress_bar.set(0)
+    status_label.configure(text=f"Running {command} on {machine_id}...")
+    app.update()
+
+    try:
+        # Simulate a long-running task (you could monitor the process or use other mechanisms)
+        process = subprocess.Popen(["vagrant", command, machine_id, *args], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+
+        # Process output line by line to update the progress bar
+        for line in process.stdout:
+            # Example of checking output (you can enhance this for actual progress information)
+            line_str = line.decode('utf-8')
+            if "progress" in line_str:  # Look for any markers in the output
+                progress = int(line_str.split(" ")[-1].strip('%'))  # Placeholder for actual progress
+                progress_bar.set(progress)  # Update progress bar
+            app.update()  # Update the UI
+
+        process.wait()  # Wait for the process to complete
+    except subprocess.CalledProcessError as e:
+        status_label.configure(text=f"Error: {e.stderr}")
+    finally:
+        update_treeview()  # Update the treeview after the operation
+        progress_bar.set(100)  # Ensure progress bar reaches 100%
+        status_label.configure(text="Task completed")
+
+# Function to start a machine in a background thread
+def start_machine():
+    selected_item = tree.selection()[0]
+    machine_id = tree.item(selected_item, "values")[0]
+    task_thread = threading.Thread(target=run_vagrant_command, args=("up", machine_id))
+    task_thread.start()
+
+# Function to stop a machine in a background thread
+def stop_machine():
+    selected_item = tree.selection()[0]
+    machine_id = tree.item(selected_item, "values")[0]
+    task_thread = threading.Thread(target=run_vagrant_command, args=("halt", machine_id))
+    task_thread.start()
+
+# Function to reload a machine in a background thread
+def reload_machine():
+    selected_item = tree.selection()[0]
+    machine_id = tree.item(selected_item, "values")[0]
+    task_thread = threading.Thread(target=run_vagrant_command, args=("reload", machine_id))
+    task_thread.start()
+
+# Function to delete a machine in a background thread
+def delete_machine():
+    selected_item = tree.selection()[0]
+    machine_id = tree.item(selected_item, "values")[0]
+    task_thread = threading.Thread(target=run_vagrant_command, args=("destroy", machine_id, "-f"))
+    task_thread.start()
+
+# Function to update the treeview with the parsed data
+def update_treeview():
+    output = get_vagrant_status()
+    data = parse_vagrant_status(output)
+    tree.delete(*tree.get_children())  # Clear the treeview
+    for item in data:
+        tree.insert("", "end", values=(item["id"], item["name"], item["provider"], item["state"], item["directory"]))
 
 # Function to run the command and capture output
 def get_vagrant_status():
@@ -36,14 +101,6 @@ def parse_vagrant_status(output):
             })
     return data
 
-# Function to update the treeview with the parsed data
-def update_treeview():
-    output = get_vagrant_status()
-    data = parse_vagrant_status(output)
-    tree.delete(*tree.get_children())  # Clear the treeview
-    for item in data:
-        tree.insert("", "end", values=(item["id"], item["name"], item["provider"], item["state"], item["directory"]))
-
 # Function to show the context menu on right-click
 def show_context_menu(event):
     item = tree.identify_row(event.y)  # Get the item under the cursor
@@ -51,38 +108,13 @@ def show_context_menu(event):
         tree.selection_set(item)  # Select the item
         context_menu.post(event.x_root, event.y_root)  # Show the menu at the cursor position
 
-# Function to handle menu actions
-def start_machine():
-    selected_item = tree.selection()[0]
-    machine_id = tree.item(selected_item, "values")[0]
-    subprocess.run(["vagrant", "up", machine_id])
-    update_treeview()
-
-def stop_machine():
-    selected_item = tree.selection()[0]
-    machine_id = tree.item(selected_item, "values")[0]
-    subprocess.run(["vagrant", "halt", machine_id])
-    update_treeview()
-
-def reload_machine():
-    selected_item = tree.selection()[0]
-    machine_id = tree.item(selected_item, "values")[0]
-    subprocess.run(["vagrant", "reload", machine_id])
-    update_treeview()
-
-def delete_machine():
-    selected_item = tree.selection()[0]
-    machine_id = tree.item(selected_item, "values")[0]
-    subprocess.run(["vagrant", "destroy", "-f", machine_id])
-    update_treeview()
-
 # Create the main window
-ctk.set_appearance_mode("light")  # Set dark mode
-ctk.set_default_color_theme("dark-blue")  # Set color theme
+ctk.set_appearance_mode("light")
+ctk.set_default_color_theme("dark-blue")
 
 app = ctk.CTk()
 app.title("XenoDashBoard")
-app.geometry("800x400")
+app.geometry("800x500")
 
 # Create a frame for the treeview
 frame = ctk.CTkFrame(app)
@@ -117,68 +149,41 @@ tree.bind("<Button-2>", show_context_menu)  # For macOS
 refresh_button = ctk.CTkButton(app, text="Refresh", command=update_treeview)
 refresh_button.pack(pady=10)
 
+# Create a progress bar to show task progress
+progress_bar = ctk.CTkProgressBar(app, width=300)
+progress_bar.pack(pady=20)
+
+# Create a label to display status
+status_label = ctk.CTkLabel(app, text="Ready")
+status_label.pack(pady=10)
+
 # Initial update of the treeview
 update_treeview()
 
 # Run the application
 app.mainloop()
 
-import tkinter as tk
-from tkinter import ttk
 
-class Tooltip:
-    def __init__(self, widget, text):
-        self.widget = widget
-        self.text = text
-        self.tooltip_window = None
-        self.widget.bind("<Enter>", self.show_tooltip)
-        self.widget.bind("<Leave>", self.hide_tooltip)
+# #TOOLTIP OPTION
+# import tkinter as tk
+# import Pmw
 
-    def show_tooltip(self, event=None):
-        if self.tooltip_window:
-            return
-        # Create tooltip window
-        self.tooltip_window = tk.Toplevel(self.widget)
-        self.tooltip_window.wm_overrideredirect(True)  # Remove window decorations
-        self.tooltip_window.wm_geometry(f"+{event.x_root + 10}+{event.y_root + 10}")  # Position near cursor
-        label = tk.Label(self.tooltip_window, text=self.text, background="white", relief="solid", borderwidth=1)
-        label.pack()
+# # Initialize the main Tkinter application
+# root = tk.Tk()
+# root.title("Balloon Tooltip Example")
 
-    def hide_tooltip(self, event=None):
-        if self.tooltip_window:
-            self.tooltip_window.destroy()
-            self.tooltip_window = None
+# # Initialize Pmw
+# Pmw.initialise(root)
 
-# Main application
-root = tk.Tk()
-root.title("Info Icon with Tooltip")
-info_icon = ttk.Label(root, text="ℹ️", cursor="hand2")
-info_icon.pack(pady=20)
+# # Create a label (e.g., an info icon)
+# info_icon = tk.Label(root, text="ℹ️", font=("Arial", 16), cursor="hand2")
+# info_icon.pack(pady=20)
 
-Tooltip(info_icon, "This is some additional information when you hover.")
+# # Create a Balloon widget
+# tooltip = Pmw.Balloon(root)
 
-root.mainloop()
+# # Attach the Balloon to the info icon
+# tooltip.bind(info_icon, "This is some additional information displayed as a tooltip.")
 
-#TOOLTIP OPTION
-import tkinter as tk
-import Pmw
-
-# Initialize the main Tkinter application
-root = tk.Tk()
-root.title("Balloon Tooltip Example")
-
-# Initialize Pmw
-Pmw.initialise(root)
-
-# Create a label (e.g., an info icon)
-info_icon = tk.Label(root, text="ℹ️", font=("Arial", 16), cursor="hand2")
-info_icon.pack(pady=20)
-
-# Create a Balloon widget
-tooltip = Pmw.Balloon(root)
-
-# Attach the Balloon to the info icon
-tooltip.bind(info_icon, "This is some additional information displayed as a tooltip.")
-
-# Start the Tkinter event loop
-root.mainloop()
+# # Start the Tkinter event loop
+# root.mainloop()
