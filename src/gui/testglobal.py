@@ -122,3 +122,63 @@ update_treeview()
 
 # Run the application
 app.mainloop()
+
+import tkinter as tk
+from tkinter import ttk
+
+class Tooltip:
+    def __init__(self, widget, text):
+        self.widget = widget
+        self.text = text
+        self.tooltip_window = None
+        self.widget.bind("<Enter>", self.show_tooltip)
+        self.widget.bind("<Leave>", self.hide_tooltip)
+
+    def show_tooltip(self, event=None):
+        if self.tooltip_window:
+            return
+        # Create tooltip window
+        self.tooltip_window = tk.Toplevel(self.widget)
+        self.tooltip_window.wm_overrideredirect(True)  # Remove window decorations
+        self.tooltip_window.wm_geometry(f"+{event.x_root + 10}+{event.y_root + 10}")  # Position near cursor
+        label = tk.Label(self.tooltip_window, text=self.text, background="white", relief="solid", borderwidth=1)
+        label.pack()
+
+    def hide_tooltip(self, event=None):
+        if self.tooltip_window:
+            self.tooltip_window.destroy()
+            self.tooltip_window = None
+
+# Main application
+root = tk.Tk()
+root.title("Info Icon with Tooltip")
+info_icon = ttk.Label(root, text="ℹ️", cursor="hand2")
+info_icon.pack(pady=20)
+
+Tooltip(info_icon, "This is some additional information when you hover.")
+
+root.mainloop()
+
+#TOOLTIP OPTION
+import tkinter as tk
+import Pmw
+
+# Initialize the main Tkinter application
+root = tk.Tk()
+root.title("Balloon Tooltip Example")
+
+# Initialize Pmw
+Pmw.initialise(root)
+
+# Create a label (e.g., an info icon)
+info_icon = tk.Label(root, text="ℹ️", font=("Arial", 16), cursor="hand2")
+info_icon.pack(pady=20)
+
+# Create a Balloon widget
+tooltip = Pmw.Balloon(root)
+
+# Attach the Balloon to the info icon
+tooltip.bind(info_icon, "This is some additional information displayed as a tooltip.")
+
+# Start the Tkinter event loop
+root.mainloop()
