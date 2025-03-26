@@ -1,5 +1,5 @@
 import dearpygui.dearpygui as dpg 
-from src.gui.assets.themes import * 
+from assets.themes import * 
 import ctypes
 import os
 import sys
@@ -13,7 +13,10 @@ class XenoVagrantGUI:
         
         self.icon_path = "test.ico"
         if not os.path.exists(self.icon_path):
-            print(f"Icon file not found: {self.icon_path}")
+            print(f"""
+                  Icon file not found: {self.icon_path}
+                  Make sure you execute the app inside his folder.
+                  """)
             sys.exit(1)
     
     def theme_callback(self, app_data, user_data):
