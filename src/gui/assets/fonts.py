@@ -1,7 +1,7 @@
 import dearpygui.dearpygui as dpg
-from typing import Union
 
-fonts = {}
+fonts = {} #Dict that stores the fonts--------------------------------------------------
+
 def load_fonts():
         with dpg.font_registry():
             

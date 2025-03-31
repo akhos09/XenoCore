@@ -1,15 +1,14 @@
-import dearpygui.dearpygui as dpg
-import ctypes
 import os
 import sys
-import webbrowser
 
-from assets.menu import *
-from assets.themes import *
-from assets.fonts import *
+import dearpygui.dearpygui as dpg
+import ctypes
+
+from assets import *
 
 #Callbacks for GUI elements------------------------------------------------------------------
 class CallbacksGUI(MenuElementsGUI):
+    
     def theme_callback(self, app_data, user_data, themes):
         themes = {
             "Dark Theme": dark_theme,
@@ -50,7 +49,7 @@ class XenoVagrantGUI(CallbacksGUI):
                   """)
             sys.exit(1)
 
-# Main function
+#Main function--------------------------------------------------------------------------------
 def main():
     try:
         app = XenoVagrantGUI()
