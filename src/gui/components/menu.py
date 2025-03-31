@@ -126,7 +126,7 @@ class MenuElementsGUI: #Elements from GUI---------------------------------------
                                                 dpg.add_button(label="Go to Default Theme Settings", tag="theme_settings", callback=self.advanced_theme_callback)    
                                                 dpg.set_item_pos(dpg.last_item(), pos=[250,130])
         
-    def final_setup_menu(self):  #Final setup--------------------------------------------------
+    def final_setup_menu(self): #Final setup--------------------------------------------------
         load_fonts()
         dpg.bind_font(fonts["Default"])
         dpg.bind_theme(default_theme())

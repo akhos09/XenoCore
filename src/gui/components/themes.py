@@ -2,7 +2,6 @@ from typing import  Union
 import dearpygui.dearpygui as dpg
 
 def default_theme() -> Union[str, int]:
-
     with dpg.theme() as theme_id:
         with dpg.theme_component(0):
             # Text and Background Colors
@@ -47,10 +46,10 @@ def default_theme() -> Union[str, int]:
             dpg.add_theme_style(dpg.mvStyleVar_ScrollbarRounding, 3)
             dpg.add_theme_style(dpg.mvStyleVar_GrabRounding, 3)
             dpg.add_theme_style(dpg.mvStyleVar_ItemSpacing, 10, 10) 
+            
     return theme_id
 
 def dark_theme() -> Union[str, int]:
-
     with dpg.theme() as theme_id:
         with dpg.theme_component(0):
             dpg.add_theme_color(dpg.mvThemeCol_Text                   , (1.00 * 255, 1.00 * 255, 1.00 * 255, 1.00 * 255))
@@ -141,11 +140,10 @@ def dark_theme() -> Union[str, int]:
             dpg.add_theme_color(dpg.mvNodeCol_GridLine, (200, 200, 200, 40), category=dpg.mvThemeCat_Nodes)
             
             dpg.add_theme_style(dpg.mvStyleVar_ItemSpacing, 18, 18) 
-
+            
     return theme_id
 
 def light_theme() -> Union[str, int]:
-
     with dpg.theme() as theme_id:
         with dpg.theme_component(0):
             dpg.add_theme_color(dpg.mvThemeCol_Text                   , (0.00 * 255, 0.00 * 255, 0.00 * 255, 1.00 * 255))
@@ -240,7 +238,6 @@ def light_theme() -> Union[str, int]:
     return theme_id
 
 def dracula_theme() -> Union[str, int]:
-
     with dpg.theme() as theme_id:
         with dpg.theme_component(0):
             # Text and Background Colors
@@ -275,7 +272,6 @@ def dracula_theme() -> Union[str, int]:
     return theme_id
 
 def cyberpunk_theme() -> Union[str, int]:
-
     with dpg.theme() as theme_id:
         with dpg.theme_component(0):
             # Core Colors
@@ -309,7 +305,6 @@ def cyberpunk_theme() -> Union[str, int]:
     return theme_id
 
 def gruvboxdark_theme() -> Union[str, int]:
-
     with dpg.theme() as theme_id:
         with dpg.theme_component(0):
             # Gruvbox Dark Color Palette
@@ -341,6 +336,7 @@ def gruvboxdark_theme() -> Union[str, int]:
 
 
             dpg.add_theme_style(dpg.mvStyleVar_ItemSpacing, 18, 18) 
+            
     return theme_id
 
 def nyx_theme() -> Union[str, int]:
@@ -401,4 +397,5 @@ def nyx_theme() -> Union[str, int]:
             dpg.add_theme_style(dpg.mvStyleVar_GrabRounding, 4)
             
             dpg.add_theme_style(dpg.mvStyleVar_ItemSpacing, 18, 18) 
+            
     return theme_id
