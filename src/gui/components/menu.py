@@ -2,9 +2,8 @@ import dearpygui.dearpygui as dpg
 
 import webbrowser
 
-from assets.menu import *
-from assets.themes import *
-from assets.fonts import *
+from .themes import *
+from .fonts import *
 
 class MenuElementsGUI: #Elements from GUI--------------------------------------------------------------------------------
     def initial_settings(self): #Initial settings(viewport)--------------------------------------------------------------------------------
