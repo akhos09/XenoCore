@@ -24,11 +24,11 @@ class MenuElementsGUI: #Elements from GUI---------------------------------------
             with dpg.tab_bar(tag="tab_bar"): #Machines Tab--------------------------------------------------
                 with dpg.tab(label="Machines", tag="machines"):
                     with dpg.child_window(tag="machineswin",label="machineswin", use_internal_label=True, border=True, auto_resize_x=False, auto_resize_y=False):
-                        dpg.add_text("Machines Management")
                         dpg.add_button(
                             label="Search for Vagrant Machines",
                             callback=self.get_vagrant_status,
-                            width=333
+                            width=333,
+                            tag="searchmachinesbutton"
                         )
                 
                 with dpg.tab(label="Plugins", tag="plugins"): #Plugins Tab--------------------------------------------------
@@ -122,7 +122,7 @@ class MenuElementsGUI: #Elements from GUI---------------------------------------
                                                 dpg.add_button(label="Advanced Appearance Settings", tag="theme_advance_settings")
                                             
                                             with dpg.popup(tag="theme_settings_alert", modal=False, mousebutton=0, parent=dpg.last_item(), min_size=[150,150], no_move=True):
-                                                dpg.set_item_pos(dpg.last_item(), pos=[250,100])
+                                                dpg.set_item_pos("theme_settings_alert", pos=[640,400])
                                                 dpg.add_spacer(height=20)
                                                 dpg.add_text("Be careful with these settings. They could break the appearance of the app.")
                                                 dpg.add_spacer(height=30)
