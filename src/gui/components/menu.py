@@ -23,8 +23,13 @@ class MenuElementsGUI: #Elements from GUI---------------------------------------
             
             with dpg.tab_bar(tag="tab_bar"): #Machines Tab--------------------------------------------------
                 with dpg.tab(label="Machines", tag="machines"):
-                    with dpg.child_window(label="machineswin", use_internal_label=True, border=True, auto_resize_x=True, auto_resize_y=True):
+                    with dpg.child_window(tag="machineswin",label="machineswin", use_internal_label=True, border=True, auto_resize_x=False, auto_resize_y=False):
                         dpg.add_text("Machines Management")
+                        dpg.add_button(
+                            label="Search for Vagrant Machines",
+                            callback=self.get_vagrant_status,
+                            width=333
+                        )
                 
                 with dpg.tab(label="Plugins", tag="plugins"): #Plugins Tab--------------------------------------------------
                     with dpg.child_window(label="pluginswin", use_internal_label=True, border=True, auto_resize_x=True, auto_resize_y=True):
