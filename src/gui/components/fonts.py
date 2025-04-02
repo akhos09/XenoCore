@@ -1,5 +1,6 @@
-import dearpygui.dearpygui as dpg
 import os
+
+import dearpygui.dearpygui as dpg
 
 fonts = {} #Dict that stores the fonts--------------------------------------------------
 

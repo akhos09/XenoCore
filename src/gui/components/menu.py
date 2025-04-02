@@ -1,6 +1,6 @@
-import dearpygui.dearpygui as dpg
-
 import webbrowser
+
+import dearpygui.dearpygui as dpg
 
 from .themes import *
 from .fonts import *
@@ -35,7 +35,7 @@ class MenuElementsGUI: #Elements from GUI---------------------------------------
                     with dpg.child_window(label="otherwin", use_internal_label=True, border=True, auto_resize_x=False, auto_resize_y=False):
                         with dpg.group(horizontal=False):
                             with dpg.tab_bar():
-                                with dpg.tab(label="Help", tag="help_tab"):
+                                with dpg.tab(label="Help", tag="help_tab"): #Help Section--------------------------------------------------
                                     with dpg.child_window(autosize_x=True, autosize_y=True):
                                         
                                         with dpg.collapsing_header(label="Troubleshooting"):
@@ -62,7 +62,7 @@ class MenuElementsGUI: #Elements from GUI---------------------------------------
                                             dpg.add_text("Email: discordpbl09@gmail.com", bullet=True)
                                             dpg.add_text("Discord: pabi09", bullet=True)
                                         
-                                with dpg.tab(label="About"):
+                                with dpg.tab(label="About"): # About Section--------------------------------------------------
                                     with dpg.collapsing_header(label="Quick Start Guide"):
                                         dpg.add_text("1. Configure your settings in the Settings tab", bullet=True)
                                         dpg.add_text("2. Add new machines in the Machines tab", bullet=True)
@@ -82,7 +82,7 @@ class MenuElementsGUI: #Elements from GUI---------------------------------------
                                                 width=180
                                             )
                                             
-                                with dpg.tab(label="Appearance"):
+                                with dpg.tab(label="Appearance"):# Appearance Section--------------------------------------------------
                                     with dpg.child_window(label="appearancetab", use_internal_label=True, border=True, auto_resize_x=False, auto_resize_y=False):
                                         with dpg.group(horizontal=False):
                                             with dpg.group(horizontal=False):
