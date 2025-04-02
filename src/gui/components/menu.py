@@ -24,12 +24,26 @@ class MenuElementsGUI: #Elements from GUI---------------------------------------
             with dpg.tab_bar(tag="tab_bar"): #Machines Tab--------------------------------------------------
                 with dpg.tab(label="Machines", tag="machines"):
                     with dpg.child_window(tag="machineswin",label="machineswin", use_internal_label=True, border=True, auto_resize_x=False, auto_resize_y=False):
-                        dpg.add_button(
-                            label="Search for Vagrant Machines",
-                            callback=self.get_vagrant_status,
-                            width=333,
-                            tag="searchmachinesbutton"
-                        )
+                        with dpg.collapsing_header(label="List of environments",tag="envheader"):
+                            dpg.add_button(
+                                label="Search for Vagrant Machines",
+                                callback=self.get_vagrant_status,
+                                width=333,
+                                tag="searchmachinesbutton"
+                            )
+                        with dpg.collapsing_header(label="Main Options (Create Delete Stop/Halt Package Reload Provision)"):
+                            with dpg.tree_node(label="Create environment"):
+                                with dpg.group(horizontal=True):
+                                    dpg.add_text("Select the folder containing the Vagrantfile", bullet=True)
+                                    dpg.add_button(
+                                        label="Select folder",
+                                        callback=self.create_vagrant_env,
+                                        width=180,
+                                        tag="folderselectionbtn",
+                                    )
+                                
+                        with dpg.collapsing_header(label="Snapshot Options"):
+                            pass
                 
                 with dpg.tab(label="Plugins", tag="plugins"): #Plugins Tab--------------------------------------------------
                     with dpg.child_window(label="pluginswin", use_internal_label=True, border=True, auto_resize_x=True, auto_resize_y=True):
