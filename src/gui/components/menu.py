@@ -179,3 +179,5 @@ class MenuElementsGUI: #Elements from GUI---------------------------------------
         self.initial_settings()
         self.gui_components()
         self.final_setup_menu()
+        
+
