@@ -32,8 +32,9 @@ class MenuElementsGUI: # Elements from GUI--------------------------------------
     THEME_ADV_SETTINGS_TAG = "theme_advance_settings"
     THEME_SETTINGS_ALERT_TAG = "theme_settings_alert"
     THEME_SETTINGS_BTN_TAG = "theme_settings"
-
-    def initial_settings(self): # Initial settings (viewport)--------------------------------------------------------
+    
+# Initial settings (viewport)--------------------------------------------------------
+    def initial_settings(self): 
         dpg.create_context()
         dpg.create_viewport(
             title="XenoVagrant", 
@@ -43,10 +44,12 @@ class MenuElementsGUI: # Elements from GUI--------------------------------------
             large_icon=self.icon_path,
             decorated=True
         )
-
-    def gui_components(self): # Components and structure--------------------------------------------------------------
-        with dpg.window(tag=self.MAIN_WINDOW_TAG): # Main Window-----------------------------------------------------
-            with dpg.tab_bar(tag=self.TAB_BAR_TAG): # Machines Tab----------------------------------------------------
+# Components and structure--------------------------------------------------------------
+    def gui_main_components(self): 
+        with dpg.window(tag=self.MAIN_WINDOW_TAG):
+            with dpg.tab_bar(tag=self.TAB_BAR_TAG): 
+                
+# Machines tab & Widgets--------------------------------------------------------------------------------------------------------------------------
                 with dpg.tab(label="Machines", tag=self.MACHINES_TAB):
                     with dpg.child_window(tag=self.MACHINES_WIN_TAG, label="machineswin", use_internal_label=True, border=True, auto_resize_x=False, auto_resize_y=False):
                         with dpg.collapsing_header(label="List of environments", tag=self.ENV_HEADER_TAG):
@@ -56,6 +59,7 @@ class MenuElementsGUI: # Elements from GUI--------------------------------------
                                 width=333,
                                 tag=self.SEARCH_MACHINES_BTN_TAG
                             )
+                            
                         with dpg.collapsing_header(label="Main Options (Create Delete Stop/Halt Package Reload Provision)"):
                             with dpg.tree_node(label="Create environment"):
                                 with dpg.group(horizontal=True):
@@ -66,6 +70,7 @@ class MenuElementsGUI: # Elements from GUI--------------------------------------
                                         width=155,
                                         tag=self.FOLDER_SELECTION_BTN_TAG
                                     )
+                                    
                             with dpg.tree_node(label="Halt/Stop environment"):
                                 with dpg.group(horizontal=True):
                                     dpg.add_text("Enter the ID of the machine you want to stop: ", bullet=True)
@@ -89,18 +94,21 @@ class MenuElementsGUI: # Elements from GUI--------------------------------------
                                         tag=self.DELETE_ENV_BTN_TAG
                                     )
                                     dpg.add_checkbox(label="Force", tag=self.FORCE_DELETE_CHECKBOX_TAG)
-
+                                    
+# Plugins tab & Widgets-------------------------------------------------------------------------------------------------------------------------
                 with dpg.tab(label="Plugins", tag=self.PLUGINS_TAB):
                     with dpg.child_window(label="pluginswin", use_internal_label=True, border=True, auto_resize_x=True, auto_resize_y=True, tag=self.PLUGINS_WIN_TAG):
                         with dpg.group(horizontal=True):
                             dpg.add_text("Plugins Management")
-
+                            
+# Other tab & Widgets---------------------------------------------------------------------------------------------------------------------------
                 with dpg.tab(label="Other", tag=self.OTHER_TAB):
                     with dpg.child_window(label="otherwin", use_internal_label=True, border=True, auto_resize_x=False, auto_resize_y=False, tag=self.OTHER_WIN_TAG):
                         with dpg.group(horizontal=False):
                             with dpg.tab_bar():
                                 with dpg.tab(label="Help", tag=self.HELP_TAB):
                                     with dpg.child_window(autosize_x=True, autosize_y=True):
+                                        
                                         with dpg.collapsing_header(label="Troubleshooting"):
                                             with dpg.tree_node(label="Connection Problems"):
                                                 dpg.add_text("Check network settings", bullet=True)
@@ -122,6 +130,7 @@ class MenuElementsGUI: # Elements from GUI--------------------------------------
                                             dpg.add_text("Discord: pabi09", bullet=True)
 
                                 with dpg.tab(label="About", tag=self.ABOUT_TAB):
+                                    
                                     with dpg.collapsing_header(label="Quick Start Guide"):
                                         dpg.add_text("1. Configure your settings in the Settings tab", bullet=True)
                                         dpg.add_text("2. Add new machines in the Machines tab", bullet=True)
@@ -169,12 +178,17 @@ class MenuElementsGUI: # Elements from GUI--------------------------------------
                                                     tag=self.FONT_SELECTOR_TAG
                                                 )
                                                 dpg.add_button(label="Advanced Appearance Settings", tag=self.THEME_ADV_SETTINGS_TAG)
-                                            with dpg.popup(tag=self.THEME_SETTINGS_ALERT_TAG, modal=False, mousebutton=0, parent=dpg.last_item(), min_size=[150,150], no_move=True):
-                                                dpg.set_item_pos(self.THEME_SETTINGS_ALERT_TAG, pos=[640,400])
+                                            with dpg.popup(tag=self.THEME_SETTINGS_ALERT_TAG,
+                                                           modal=False, 
+                                                           mousebutton=0,
+                                                           parent=dpg.last_item(),
+                                                           max_size=[1000,300],
+                                                           no_move=True):
+                                                
+                                                dpg.set_item_pos(self.THEME_SETTINGS_ALERT_TAG, pos=[540,350])
                                                 dpg.add_spacer(height=20)
                                                 dpg.add_text("Be careful with these settings. They could break the appearance of the app.")
                                                 dpg.add_spacer(height=30)
-                                                dpg.add_separator()
                                                 dpg.add_spacer(width=100, height=80)
                                                 dpg.add_button(label="Go to Default Theme Settings", tag=self.THEME_SETTINGS_BTN_TAG, callback=self.advanced_theme_callback)
                                                 dpg.set_item_pos(dpg.last_item(), pos=[250,130])
@@ -190,7 +204,7 @@ class MenuElementsGUI: # Elements from GUI--------------------------------------
     
     def menu(self): #Menu startup--------------------------------------------------
         self.initial_settings()
-        self.gui_components()
+        self.gui_main_components()
         self.final_setup_menu()
         
 

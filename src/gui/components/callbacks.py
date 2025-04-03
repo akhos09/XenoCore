@@ -36,7 +36,7 @@ class CallbacksGUI(MenuElementsGUI):  # Callbacks Class for the actions of the w
     TAG_CHECKBOX_DELETE_FORCE = "force_check_delete"
     TAG_CHECKBOX_STOP_FORCE = "force_check_stop"
 
-    THEMES = {
+    THEMES = { # Themes constants
         "Dark Theme": dark_theme,
         "Light Theme": light_theme,
         "Default Theme": default_theme,
@@ -46,17 +46,21 @@ class CallbacksGUI(MenuElementsGUI):  # Callbacks Class for the actions of the w
         "Nyx Theme": nyx_theme
     }
 
-    def theme_callback(self, app_data, user_data):
+# Themes selector-------------------------------------------------------------------------------------------------------------------------------------
+    def theme_callback(self, app_data, user_data): 
         theme = self.THEMES.get(user_data)
         if theme:
             dpg.bind_theme(theme())
-
-    def font_callback(self, app_data, user_data):
+            
+# Fonts selector--------------------------------------------------------------------------------------------------------------------------------------
+    def font_callback(self, app_data, user_data): 
         reset_font_binding(None if user_data == "Default Font" else user_data)
-
+        
+# Advanced theme settings ----------------------------------------------------------------------------------------------------------------------------
     def advanced_theme_callback(self, app_data, user_data):
         dpg.show_style_editor()
 
+# Vagrant env list -----------------------------------------------------------------------------------------------------------------------------------
     def get_vagrant_status(self, app_data, user_data):
         with dpg.window(label="Loading", modal=True, show=False, tag=self.TAG_POPUP_STATUS, no_title_bar=True, no_move=True, no_resize=True):
             dpg.add_text("Searching for Vagrant environments...")
@@ -83,7 +87,7 @@ class CallbacksGUI(MenuElementsGUI):  # Callbacks Class for the actions of the w
                 dpg.delete_item(self.TAG_TEMP_WINDOW)
             return
         
-        lines = command_status.stdout.splitlines()
+        lines = command_status.stdout.splitlines() 
         data_lines = []
         for line in lines:
             if line.startswith("-" * 10):
@@ -115,9 +119,10 @@ class CallbacksGUI(MenuElementsGUI):  # Callbacks Class for the actions of the w
 
         with dpg.child_window(auto_resize_x=True, auto_resize_y=True, parent="envheader", tag=self.TAG_TEMP_WINDOW):
             with dpg.table(header_row=True, row_background=True, 
-                        borders_innerH=True, borders_outerH=True, 
-                        borders_innerV=True, borders_outerV=True, 
-                        tag=self.TAG_TABLE, policy=dpg.mvTable_SizingStretchProp, context_menu_in_body=True):
+                           borders_innerH=True, borders_outerH=True, 
+                           borders_innerV=True, borders_outerV=True, 
+                           tag=self.TAG_TABLE, policy=dpg.mvTable_SizingStretchProp, 
+                           context_menu_in_body=True):
 
                 dpg.add_table_column(label="ID")
                 dpg.add_table_column(label="Name")
@@ -133,6 +138,7 @@ class CallbacksGUI(MenuElementsGUI):  # Callbacks Class for the actions of the w
                         dpg.add_text(machine["state"])
                         dpg.add_text(machine["directory"])
 
+# Create function of an env---------------------------------------------------------------------------------------------------------------------------
     def create_vagrant_env(self, app_data, user_data):
         def select_folder():
             root = Tk()
@@ -161,12 +167,21 @@ class CallbacksGUI(MenuElementsGUI):  # Callbacks Class for the actions of the w
         except Exception as e:
             messagebox.showerror("Error", f"Failed to start Vagrant: {str(e)}")
 
+# Delete function of an env---------------------------------------------------------------------------------------------------------------------------
     def delete_vagrant_env(self, app_data, user_data):
         id_env_delete = dpg.get_value(self.TAG_INPUT_DELETE_ID)
         check_delete = messagebox.askokcancel("Info",
-                                             f"This option will delete all of the files (but not the Vagrantfile and the additional ones) of the environment {id_env_delete}\nAre you sure to do this?")
+        f"This option will delete all of the files (but not the Vagrantfile and the additional ones) of the environment {id_env_delete}\nAre you sure to do this?")
+        
         if check_delete:
-            with dpg.window(label="Destroying the Vagrant environment", modal=True, show=False, tag=self.TAG_POPUP_DELETE, no_title_bar=True, no_move=True, no_resize=True):
+            with dpg.window(label="Destroying the Vagrant environment", 
+                            modal=True, 
+                            show=False, 
+                            tag=self.TAG_POPUP_DELETE, 
+                            no_title_bar=True, 
+                            no_move=True,
+                            no_resize=True):
+                
                 dpg.add_text("Destroying the Vagrant environment...")
                 dpg.add_spacer(width=100)
                 dpg.add_loading_indicator(pos=[170,50])
@@ -186,11 +201,19 @@ class CallbacksGUI(MenuElementsGUI):  # Callbacks Class for the actions of the w
             except Exception as e:
                 messagebox.showerror("Error", f"Failed to delete the environment: {str(e)}")
                 dpg.delete_item(self.TAG_POPUP_DELETE)
-
+                
+# Stop function of an env-----------------------------------------------------------------------------------------------------------------------------------
     def stop_vagrant_env(self, app_data, user_data):
         id_env_stop = dpg.get_value(self.TAG_INPUT_STOP_ID)
 
-        with dpg.window(label="Stopping the environment", modal=True, show=False, tag=self.TAG_POPUP_STOP, no_title_bar=True, no_move=True, no_resize=True):
+        with dpg.window(label="Stopping the environment",
+                        modal=True,
+                        show=False,
+                        tag=self.TAG_POPUP_STOP,
+                        no_title_bar=True,
+                        no_move=True,
+                        no_resize=True):
+            
             dpg.add_text("Stopping the Vagrant environment...")
             dpg.add_spacer(width=100)
             dpg.add_loading_indicator(pos=[170,50])
