@@ -135,6 +135,7 @@ class CallbacksGUI(MenuElementsGUI): # Callbacks Class for the actions of the wi
                         dpg.add_text(machine["provider"])
                         dpg.add_text(machine["state"])
                         dpg.add_text(machine["directory"])
+                        
     
     def create_vagrant_env(self, app_data, user_data): # Creation of the environment------------------------------------------------------------------------
         def select_folder():
@@ -189,13 +190,9 @@ class CallbacksGUI(MenuElementsGUI): # Callbacks Class for the actions of the wi
             dpg.show_item(self.POPUPSTOP_TAG)
         try:
             subprocess.run(["vagrant", "halt", f"{id_env_stop}"], capture_output=True, text=True)
-            dpg.delete_item(self.POPUPSTAT_TAG)
+            dpg.delete_item(self.POPUPSTOP_TAG)
+            self.get_vagrant_status()
         except Exception as e: 
             messagebox.showerror(title='ERROR', message=f'The environment {id_env_stop} could not be stopped. Make sure Vagrant is installed (or the machine is off or not created yet.\n\n{e}')
             dpg.delete_item(self.POPUPSTOP_TAG)           
         return
-        
-        
-
-          
-    
