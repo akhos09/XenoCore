@@ -38,8 +38,29 @@ class MenuElementsGUI: #Elements from GUI---------------------------------------
                                     dpg.add_button(
                                         label="Select folder",
                                         callback=self.create_vagrant_env,
-                                        width=180,
-                                        tag="folderselectionbtn",
+                                        width=140,
+                                        tag="folder_selection_btn",
+                                    )
+                            with dpg.tree_node(label="Halt/Stop environment"):
+                                with dpg.group(horizontal=True):
+                                    dpg.add_text("Enter the ID of the machine you want to stop: ", bullet=True)
+                                    dpg.add_input_text(width=200,hint="ID",tag="id_input_stop")
+                                    dpg.add_button(
+                                        label="Stop",
+                                        callback=self.stop_vagrant_env,
+                                        width=80,
+                                        tag="stop_env_btn",
+                                    )
+                                    
+                            with dpg.tree_node(label="Delete environment"):
+                                with dpg.group(horizontal=True):
+                                    dpg.add_text("Enter the ID of the machine you want to delete: ", bullet=True)
+                                    dpg.add_input_text(width=200,hint="ID",tag="id_input_delete")
+                                    dpg.add_button(
+                                        label="Stop",
+                                        callback=self.delete_vagrant_env,
+                                        width=80,
+                                        tag="delete_env_btn",
                                     )
                                 
                         with dpg.collapsing_header(label="Snapshot Options"):
