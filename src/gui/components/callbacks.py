@@ -24,15 +24,18 @@ def change_directory(target_dir):
     finally:
         os.chdir(current_dir)
 
-class CallbacksGUI(MenuElementsGUI): # Callbacks Class for the actions of the widgets------------------------------------------
-    TABLE_TAG = "vagrant_table"
-    POPUPSTAT_TAG = "searching_machines"
-    POPUPSTOP_TAG = "stopping_machine"
-    TEMPWIN_TAG = "table_tempwin"
-    IDENV_DEL_TAG = "id_input_delete"
-    IDENV_STOP_TAG = "id_input_stop"
-    CHECKBOX_DEL_TAG ="forcecheckdelete"
-    
+class CallbacksGUI(MenuElementsGUI):  # Callbacks Class for the actions of the widgets
+    # Constants for tags
+    TAG_TABLE = "vagrant_table"
+    TAG_POPUP_STATUS = "searching_machines"
+    TAG_POPUP_STOP = "stopping_machine"
+    TAG_POPUP_DELETE = "destroying_machine"
+    TAG_TEMP_WINDOW = "table_tempwin"
+    TAG_INPUT_DELETE_ID = "id_input_delete"
+    TAG_INPUT_STOP_ID = "id_input_stop"
+    TAG_CHECKBOX_DELETE_FORCE = "force_check_delete"
+    TAG_CHECKBOX_STOP_FORCE = "force_check_stop"
+
     THEMES = {
         "Dark Theme": dark_theme,
         "Light Theme": light_theme,
@@ -43,47 +46,43 @@ class CallbacksGUI(MenuElementsGUI): # Callbacks Class for the actions of the wi
         "Nyx Theme": nyx_theme
     }
 
-    def theme_callback(self, app_data, user_data): # Theme selector----------------------------------------------------------------------
+    def theme_callback(self, app_data, user_data):
         theme = self.THEMES.get(user_data)
         if theme:
             dpg.bind_theme(theme())
 
-    def font_callback(self, app_data, user_data): # Font selector----------------------------------------------------------------------
+    def font_callback(self, app_data, user_data):
         reset_font_binding(None if user_data == "Default Font" else user_data)
 
-    def advanced_theme_callback(self, app_data, user_data): # Advanced Settings----------------------------------------------------------------------
+    def advanced_theme_callback(self, app_data, user_data):
         dpg.show_style_editor()
 
-    def get_vagrant_status(self, app_data, user_data): # Machines List Table------------------------------------------------------------------------
-
-        with dpg.window(label="Loading", modal=True, show=False, tag=self.POPUPSTAT_TAG, no_title_bar=True, no_move=True, no_resize=True):
+    def get_vagrant_status(self, app_data, user_data):
+        with dpg.window(label="Loading", modal=True, show=False, tag=self.TAG_POPUP_STATUS, no_title_bar=True, no_move=True, no_resize=True):
             dpg.add_text("Searching for Vagrant environments...")
             dpg.add_spacer(width=100)
             dpg.add_loading_indicator(pos=[170,50])
-            dpg.set_item_pos(self.POPUPSTAT_TAG, [720,400])
-            dpg.show_item(self.POPUPSTAT_TAG)
-        
+            dpg.set_item_pos(self.TAG_POPUP_STATUS, [720,400])
+            dpg.show_item(self.TAG_POPUP_STATUS)
+
         try:                
             command_status = subprocess.run(["vagrant", "global-status"], capture_output=True, text=True)
         except Exception as e:
             messagebox.showerror(title='ERROR', message=f'Machines on your system could not be found. Make sure Vagrant is installed\n\n{e}')
-            dpg.delete_item(self.POPUPSTAT_TAG)
+            dpg.delete_item(self.TAG_POPUP_STATUS)
             return
         
-        dpg.delete_item(self.POPUPSTAT_TAG)
+        dpg.delete_item(self.TAG_POPUP_STATUS)
         
-        # Check for no environments first
         if "no active Vagrant environments" in command_status.stdout:
             messagebox.showinfo(title='INFO', 
-                            message='You dont have any Vagrant environment in your computer. Try creating one with the options below.')
-            # Clear any existing table
-            if dpg.does_item_exist(self.TABLE_TAG):
-                dpg.delete_item(self.TABLE_TAG)
-            if dpg.does_item_exist(self.TEMPWIN_TAG):
-                dpg.delete_item(self.TEMPWIN_TAG)
+                            message='You don’t have any Vagrant environment in your computer. Try creating one with the options below.')
+            if dpg.does_item_exist(self.TAG_TABLE):
+                dpg.delete_item(self.TAG_TABLE)
+            if dpg.does_item_exist(self.TAG_TEMP_WINDOW):
+                dpg.delete_item(self.TAG_TEMP_WINDOW)
             return
         
-        # Process output into a list of dictionaries
         lines = command_status.stdout.splitlines()
         data_lines = []
         for line in lines:
@@ -109,27 +108,23 @@ class CallbacksGUI(MenuElementsGUI): # Callbacks Class for the actions of the wi
             }
             instances.append(instance)
 
-        # Delete the previous table if it exists (refresh)
-        if dpg.does_item_exist(self.TABLE_TAG):
-            dpg.delete_item(self.TABLE_TAG)
-        if dpg.does_item_exist(self.TEMPWIN_TAG):
-            dpg.delete_item(self.TEMPWIN_TAG)
+        if dpg.does_item_exist(self.TAG_TABLE):
+            dpg.delete_item(self.TAG_TABLE)
+        if dpg.does_item_exist(self.TAG_TEMP_WINDOW):
+            dpg.delete_item(self.TAG_TEMP_WINDOW)
 
-        # Table for the environments---------------------------------------------------------------------------
-        with dpg.child_window(auto_resize_x=True, auto_resize_y=True, parent="envheader", tag=self.TEMPWIN_TAG):
+        with dpg.child_window(auto_resize_x=True, auto_resize_y=True, parent="envheader", tag=self.TAG_TEMP_WINDOW):
             with dpg.table(header_row=True, row_background=True, 
                         borders_innerH=True, borders_outerH=True, 
                         borders_innerV=True, borders_outerV=True, 
-                        tag=self.TABLE_TAG, policy=dpg.mvTable_SizingStretchProp, context_menu_in_body=True):
+                        tag=self.TAG_TABLE, policy=dpg.mvTable_SizingStretchProp, context_menu_in_body=True):
 
-                # Columns of the data---------------------------------------------------------------------------
-                dpg.add_table_column(label="ID", width_fixed=True, init_width_or_weight=0.0)
-                dpg.add_table_column(label="Name", width_fixed=True, init_width_or_weight=0.0)
-                dpg.add_table_column(label="Provider", width_fixed=True, init_width_or_weight=0.0)
-                dpg.add_table_column(label="State", width_fixed=True, init_width_or_weight=0.0)
-                dpg.add_table_column(label="Directory", width_fixed=True, init_width_or_weight=0.0)
+                dpg.add_table_column(label="ID")
+                dpg.add_table_column(label="Name")
+                dpg.add_table_column(label="Provider")
+                dpg.add_table_column(label="State")
+                dpg.add_table_column(label="Directory")
 
-                # Add data of the environments into the table--------------------------------------
                 for machine in instances:
                     with dpg.table_row():
                         dpg.add_text(machine["id"])
@@ -137,8 +132,8 @@ class CallbacksGUI(MenuElementsGUI): # Callbacks Class for the actions of the wi
                         dpg.add_text(machine["provider"])
                         dpg.add_text(machine["state"])
                         dpg.add_text(machine["directory"])
-    
-    def create_vagrant_env(self, app_data, user_data): # Creation of the environment------------------------------------------------------------------------
+
+    def create_vagrant_env(self, app_data, user_data):
         def select_folder():
             root = Tk()
             root.withdraw()
@@ -150,7 +145,6 @@ class CallbacksGUI(MenuElementsGUI): # Callbacks Class for the actions of the wi
             finally:
                 root.destroy()
 
-        # Get folder selection
         folder_selected = select_folder()
         
         if not folder_selected:
@@ -161,48 +155,59 @@ class CallbacksGUI(MenuElementsGUI): # Callbacks Class for the actions of the wi
             messagebox.showerror("Error", f"Directory does not exist: {folder_selected}")
             return
 
-        # Run Vagrant command
         try:
             with change_directory(folder_selected):
-                # date = datetime.today().strftime('%Y-%m-%d %H:%M:%S')
                 subprocess.Popen(f'start cmd /K vagrant up', shell=True)
         except Exception as e:
             messagebox.showerror("Error", f"Failed to start Vagrant: {str(e)}")
-    
-    def delete_vagrant_env(self, app_data, user_data): # Delete Vagrant environment------------------------------------------------------------------------
-        id_env_delete = dpg.get_value(self.IDENV_DEL_TAG) # Gets the ID of the input_text widget
+
+    def delete_vagrant_env(self, app_data, user_data):
+        id_env_delete = dpg.get_value(self.TAG_INPUT_DELETE_ID)
         check_delete = messagebox.askokcancel("Info",
                                              f"This option will delete all of the files (but not the Vagrantfile and the additional ones) of the environment {id_env_delete}\nAre you sure to do this?")
         if check_delete:
+            with dpg.window(label="Destroying the Vagrant environment", modal=True, show=False, tag=self.TAG_POPUP_DELETE, no_title_bar=True, no_move=True, no_resize=True):
+                dpg.add_text("Destroying the Vagrant environment...")
+                dpg.add_spacer(width=100)
+                dpg.add_loading_indicator(pos=[170,50])
+                dpg.set_item_pos(self.TAG_POPUP_DELETE, [720,400])
+                dpg.show_item(self.TAG_POPUP_DELETE)
+                
             try:
-                force_check = dpg.get_value(self.CHECKBOX_DEL_TAG)
-                if force_check:
-                    subprocess.Popen(f'start cmd /K vagrant destroy -f {id_env_delete}', shell=True)
+                force_delete_check = dpg.get_value(self.TAG_CHECKBOX_DELETE_FORCE)
+                
+                if force_delete_check:
+                    subprocess.run(["vagrant", "destroy", f"{id_env_delete}", "-f"], capture_output=True, text=True)
                 else:
-                    subprocess.Popen(f'start cmd /K vagrant destroy {id_env_delete}', shell=True)
+                    subprocess.run(["vagrant", "destroy", f"{id_env_delete}"], capture_output=True, text=True)
+                    
+                dpg.delete_item(self.TAG_POPUP_DELETE)
                     
             except Exception as e:
                 messagebox.showerror("Error", f"Failed to delete the environment: {str(e)}")
-                
-    
-    def stop_vagrant_env(self, app_data, user_data): # Stop Vagrant environment------------------------------------------------------------------------
-        id_env_stop = dpg.get_value(self.IDENV_STOP_TAG) # Gets the ID of the input_text widget
+                dpg.delete_item(self.TAG_POPUP_DELETE)
 
-        with dpg.window(label="Stopping the environment", modal=True, show=False, tag=self.POPUPSTOP_TAG, no_title_bar=True, no_move=True, no_resize=True):
+    def stop_vagrant_env(self, app_data, user_data):
+        id_env_stop = dpg.get_value(self.TAG_INPUT_STOP_ID)
+
+        with dpg.window(label="Stopping the environment", modal=True, show=False, tag=self.TAG_POPUP_STOP, no_title_bar=True, no_move=True, no_resize=True):
             dpg.add_text("Stopping the Vagrant environment...")
             dpg.add_spacer(width=100)
             dpg.add_loading_indicator(pos=[170,50])
-            dpg.set_item_pos(self.POPUPSTOP_TAG, [720,400])
-            dpg.show_item(self.POPUPSTOP_TAG)
-        try:
-            subprocess.run(["vagrant", "halt", f"{id_env_stop}"], capture_output=True, text=True)
-            dpg.delete_item(self.POPUPSTOP_TAG)
-        except Exception as e: 
-            messagebox.showerror(title='ERROR', message=f'The environment {id_env_stop} could not be stopped. Make sure Vagrant is installed (or the machine is off or not created yet.\n\n{e}')
-            dpg.delete_item(self.POPUPSTOP_TAG)           
-        return
-        
-        
+            dpg.set_item_pos(self.TAG_POPUP_STOP, [720,400])
+            dpg.show_item(self.TAG_POPUP_STOP)
 
-          
-    
+        try:
+            force_stop_check_var =  dpg.get_value(self.TAG_CHECKBOX_STOP_FORCE)
+            if force_stop_check_var:
+                subprocess.run(["vagrant", "halt", "-f", f"{id_env_stop}"], capture_output=True, text=True)
+                
+            else:
+                subprocess.run(["vagrant", "halt", f"{id_env_stop}"], capture_output=True, text=True)
+                
+            dpg.delete_item(self.TAG_POPUP_STOP)
+
+        except Exception as e: 
+            messagebox.showerror(title='ERROR', message=f'The environment {id_env_stop} could not be stopped. Make sure Vagrant is installed.\n\n{e}')
+            dpg.delete_item(self.TAG_POPUP_STOP)
+
