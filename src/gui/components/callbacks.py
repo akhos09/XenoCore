@@ -31,6 +31,8 @@ class CallbacksGUI(MenuElementsGUI): # Callbacks Class for the actions of the wi
     TEMPWIN_TAG = "table_tempwin"
     IDENV_DEL_TAG = "id_input_delete"
     IDENV_STOP_TAG = "id_input_stop"
+    CHECKBOX_DEL_TAG ="forcecheckdelete"
+    
     THEMES = {
         "Dark Theme": dark_theme,
         "Light Theme": light_theme,
@@ -173,7 +175,12 @@ class CallbacksGUI(MenuElementsGUI): # Callbacks Class for the actions of the wi
                                              f"This option will delete all of the files (but not the Vagrantfile and the additional ones) of the environment {id_env_delete}\nAre you sure to do this?")
         if check_delete:
             try:
-                subprocess.Popen(f'start cmd /K vagrant destroy -f {id_env_delete}', shell=True)
+                force_check = dpg.get_value(self.CHECKBOX_DEL_TAG)
+                if force_check:
+                    subprocess.Popen(f'start cmd /K vagrant destroy -f {id_env_delete}', shell=True)
+                else:
+                    subprocess.Popen(f'start cmd /K vagrant destroy {id_env_delete}', shell=True)
+                    
             except Exception as e:
                 messagebox.showerror("Error", f"Failed to delete the environment: {str(e)}")
                 
@@ -189,7 +196,7 @@ class CallbacksGUI(MenuElementsGUI): # Callbacks Class for the actions of the wi
             dpg.show_item(self.POPUPSTOP_TAG)
         try:
             subprocess.run(["vagrant", "halt", f"{id_env_stop}"], capture_output=True, text=True)
-            dpg.delete_item(self.POPUPSTAT_TAG)
+            dpg.delete_item(self.POPUPSTOP_TAG)
         except Exception as e: 
             messagebox.showerror(title='ERROR', message=f'The environment {id_env_stop} could not be stopped. Make sure Vagrant is installed (or the machine is off or not created yet.\n\n{e}')
             dpg.delete_item(self.POPUPSTOP_TAG)           

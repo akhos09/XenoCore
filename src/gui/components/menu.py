@@ -62,6 +62,10 @@ class MenuElementsGUI: #Elements from GUI---------------------------------------
                                         width=80,
                                         tag="delete_env_btn",
                                     )
+                                    dpg.add_checkbox(
+                                        label="Force",
+                                        tag="forcecheckdelete"
+                                    )
                                 
                         with dpg.collapsing_header(label="Snapshot Options"):
                             pass
