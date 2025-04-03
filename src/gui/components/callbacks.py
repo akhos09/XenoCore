@@ -178,7 +178,7 @@ class CallbacksGUI(MenuElementsGUI): # Callbacks Class for the actions of the wi
                 messagebox.showerror("Error", f"Failed to delete the environment: {str(e)}")
                 
     
-    def stop_vagrant_env(self, app_data, user_data): # Delete Vagrant environment------------------------------------------------------------------------
+    def stop_vagrant_env(self, app_data, user_data): # Stop Vagrant environment------------------------------------------------------------------------
         id_env_stop = dpg.get_value(self.IDENV_STOP_TAG) # Gets the ID of the input_text widget
 
         with dpg.window(label="Stopping the environment", modal=True, show=False, tag=self.POPUPSTOP_TAG, no_title_bar=True, no_move=True, no_resize=True):
