@@ -15,14 +15,17 @@ class MenuElementsGUI: # Elements from GUI--------------------------------------
     
     MAIN_WINDOW_TAG = "main_window"
     TAB_BAR_TAG = "tab_bar"
-    MACHINES_WIN_TAG = "machineswin"
-    ENV_HEADER_TAG = "envheader"
-    SEARCH_MACHINES_BTN_TAG = "searchmachinesbutton"
+    MACHINES_WIN_TAG = "machines_win"
+    ENV_HEADER_TAG = "env_header"
+    SEARCH_MACHINES_BTN_TAG = "search_machines_button"
     FOLDER_SELECTION_BTN_TAG = "folder_selection_btn"
     STOP_ENV_INPUT_TAG = "id_input_stop"
     STOP_ENV_BTN_TAG = "stop_env_btn"
+    START_ENV_BTN_TAG = "start_env_btn"
+    TAG_INPUT_START_ID = "id_input_start"
     DELETE_ENV_INPUT_TAG = "id_input_delete"
     DELETE_ENV_BTN_TAG = "delete_env_btn"
+    TAG_CHECKBOX_PROVISION = "check_provision"
     FORCE_DELETE_CHECKBOX_TAG = "force_check_delete"
     FORCE_STOP_CHECKBOX_TAG = "force_check_stop"
     PLUGINS_WIN_TAG = "pluginswin"
@@ -32,6 +35,7 @@ class MenuElementsGUI: # Elements from GUI--------------------------------------
     THEME_ADV_SETTINGS_TAG = "theme_advance_settings"
     THEME_SETTINGS_ALERT_TAG = "theme_settings_alert"
     THEME_SETTINGS_BTN_TAG = "theme_settings"
+    
     
 # Initial settings (viewport)--------------------------------------------------------
     def initial_settings(self): 
@@ -70,6 +74,18 @@ class MenuElementsGUI: # Elements from GUI--------------------------------------
                                         width=155,
                                         tag=self.FOLDER_SELECTION_BTN_TAG
                                     )
+                                    
+                            with dpg.tree_node(label="Start environment"):
+                                with dpg.group(horizontal=True):
+                                    dpg.add_text("Enter the ID of the machine you want to start: ", bullet=True)
+                                    dpg.add_input_text(width=200, hint="ID", tag=self.TAG_INPUT_START_ID)
+                                    dpg.add_button(
+                                        label="Start",
+                                        callback=self.start_vagrant_env,
+                                        width=80,
+                                        tag=self.START_ENV_BTN_TAG
+                                    )
+                                    dpg.add_checkbox(label="Provision", tag=self.TAG_CHECKBOX_PROVISION)
                                     
                             with dpg.tree_node(label="Halt/Stop environment"):
                                 with dpg.group(horizontal=True):
@@ -206,5 +222,3 @@ class MenuElementsGUI: # Elements from GUI--------------------------------------
         self.initial_settings()
         self.gui_main_components()
         self.final_setup_menu()
-        
-

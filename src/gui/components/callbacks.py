@@ -32,9 +32,11 @@ class CallbacksGUI(MenuElementsGUI):  # Callbacks Class for the actions of the w
     TAG_POPUP_DELETE = "destroying_machine"
     TAG_TEMP_WINDOW = "table_tempwin"
     TAG_INPUT_DELETE_ID = "id_input_delete"
+    TAG_INPUT_START_ID = "id_input_start"
     TAG_INPUT_STOP_ID = "id_input_stop"
     TAG_CHECKBOX_DELETE_FORCE = "force_check_delete"
     TAG_CHECKBOX_STOP_FORCE = "force_check_stop"
+    TAG_CHECKBOX_PROVISION = "check_provision"
 
     THEMES = { # Themes constants
         "Dark Theme": dark_theme,
@@ -54,7 +56,7 @@ class CallbacksGUI(MenuElementsGUI):  # Callbacks Class for the actions of the w
             
 # Fonts selector--------------------------------------------------------------------------------------------------------------------------------------
     def font_callback(self, app_data, user_data): 
-        reset_font_binding(None if user_data == "Default Font" else user_data)
+        reset_font_binding (None if user_data == "Default Font" else user_data)
         
 # Advanced theme settings ----------------------------------------------------------------------------------------------------------------------------
     def advanced_theme_callback(self, app_data, user_data):
@@ -117,7 +119,7 @@ class CallbacksGUI(MenuElementsGUI):  # Callbacks Class for the actions of the w
         if dpg.does_item_exist(self.TAG_TEMP_WINDOW):
             dpg.delete_item(self.TAG_TEMP_WINDOW)
 
-        with dpg.child_window(auto_resize_x=True, auto_resize_y=True, parent="envheader", tag=self.TAG_TEMP_WINDOW):
+        with dpg.child_window(auto_resize_x=True, auto_resize_y=True, parent=self.ENV_HEADER_TAG, tag=self.TAG_TEMP_WINDOW):
             with dpg.table(header_row=True, row_background=True, 
                            borders_innerH=True, borders_outerH=True, 
                            borders_innerV=True, borders_outerV=True, 
@@ -137,6 +139,21 @@ class CallbacksGUI(MenuElementsGUI):  # Callbacks Class for the actions of the w
                         dpg.add_text(machine["provider"])
                         dpg.add_text(machine["state"])
                         dpg.add_text(machine["directory"])
+                        
+    def start_vagrant_env(self, app_data, user_data):
+        id_env_start = dpg.get_value(self.TAG_INPUT_START_ID)
+                        
+        try:
+            provision_check = dpg.get_value(self.TAG_CHECKBOX_PROVISION)
+            
+            if provision_check:
+                subprocess.Popen(f'start cmd /K vagrant up {id_env_start} --provision', shell=True)
+            else:
+                subprocess.Popen(f'start cmd /K vagrant up {id_env_start}', shell=True)
+                
+        except Exception as e:
+            messagebox.showerror("Error", f"Failed to start the environment: {str(e)}")
+                
 
 # Create function of an env---------------------------------------------------------------------------------------------------------------------------
     def create_vagrant_env(self, app_data, user_data):
@@ -233,4 +250,3 @@ class CallbacksGUI(MenuElementsGUI):  # Callbacks Class for the actions of the w
         except Exception as e: 
             messagebox.showerror(title='ERROR', message=f'The environment {id_env_stop} could not be stopped. Make sure Vagrant is installed.\n\n{e}')
             dpg.delete_item(self.TAG_POPUP_STOP)
-
