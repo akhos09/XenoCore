@@ -64,7 +64,7 @@ class MenuElementsGUI: # Elements from GUI--------------------------------------
                                 tag=self.SEARCH_MACHINES_BTN_TAG
                             )
                             
-                        with dpg.collapsing_header(label="Main Options (Create Delete Stop/Halt Package Reload Provision)"):
+                        with dpg.collapsing_header(label="Main Options (Create Start Stop/Halt Delete Package Reload)"):
                             with dpg.tree_node(label="Create environment"):
                                 with dpg.group(horizontal=True):
                                     dpg.add_text("Select the folder containing the Vagrantfile", bullet=True)

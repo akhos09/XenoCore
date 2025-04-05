@@ -30,6 +30,8 @@ class CallbacksGUI(MenuElementsGUI):  # Callbacks Class for the actions of the w
     TAG_POPUP_STATUS = "searching_machines"
     TAG_POPUP_STOP = "stopping_machine"
     TAG_POPUP_DELETE = "destroying_machine"
+    TAG_POPUP_CREATE = "creating_machine"
+    TAG_POPUP_START = "starting_machine"
     TAG_TEMP_WINDOW = "table_tempwin"
     TAG_INPUT_DELETE_ID = "id_input_delete"
     TAG_INPUT_START_ID = "id_input_start"
@@ -37,6 +39,7 @@ class CallbacksGUI(MenuElementsGUI):  # Callbacks Class for the actions of the w
     TAG_CHECKBOX_DELETE_FORCE = "force_check_delete"
     TAG_CHECKBOX_STOP_FORCE = "force_check_stop"
     TAG_CHECKBOX_PROVISION = "check_provision"
+    SEARCH_MACHINES_BTN_TAG = "search_machines_button"
 
     THEMES = { # Themes constants
         "Dark Theme": dark_theme,
@@ -139,10 +142,27 @@ class CallbacksGUI(MenuElementsGUI):  # Callbacks Class for the actions of the w
                         dpg.add_text(machine["provider"])
                         dpg.add_text(machine["state"])
                         dpg.add_text(machine["directory"])
+        
+        dpg.set_item_label(self.SEARCH_MACHINES_BTN_TAG,"Refresh")
+        dpg.set_item_width(self.SEARCH_MACHINES_BTN_TAG,100)
                         
+# Vagrant env start -----------------------------------------------------------------------------------------------------------------------------------
     def start_vagrant_env(self, app_data, user_data):
         id_env_start = dpg.get_value(self.TAG_INPUT_START_ID)
-                        
+        # with dpg.window(label="Starting the Vagrant environment", 
+        #         modal=True, 
+        #         show=False, 
+        #         tag=self.TAG_POPUP_START, 
+        #         no_title_bar=True, 
+        #         no_move=True,
+        #         no_resize=True):
+    
+        #         dpg.add_text("Booting up the Vagrant environment...")
+        #         dpg.add_spacer(width=100)
+        #         dpg.add_loading_indicator(pos=[170,50])
+        #         dpg.set_item_pos(self.TAG_POPUP_START, [720,400])
+        #         dpg.show_item(self.TAG_POPUP_START)
+                
         try:
             provision_check = dpg.get_value(self.TAG_CHECKBOX_PROVISION)
             
@@ -153,7 +173,6 @@ class CallbacksGUI(MenuElementsGUI):  # Callbacks Class for the actions of the w
                 
         except Exception as e:
             messagebox.showerror("Error", f"Failed to start the environment: {str(e)}")
-                
 
 # Create function of an env---------------------------------------------------------------------------------------------------------------------------
     def create_vagrant_env(self, app_data, user_data):
@@ -179,11 +198,27 @@ class CallbacksGUI(MenuElementsGUI):  # Callbacks Class for the actions of the w
             return
 
         try:
+            # with dpg.window(label="Creating the Vagrant environment", 
+            #                 modal=True, 
+            #                 show=False, 
+            #                 tag=self.TAG_POPUP_CREATE, 
+            #                 no_title_bar=True, 
+            #                 no_move=True,
+            #                 no_resize=True):
+                    
+            #     dpg.add_text("Creating the Vagrant environment...")
+            #     dpg.add_spacer(width=100)
+            #     dpg.add_loading_indicator(pos=[170,50])
+            #     dpg.set_item_pos(self.TAG_POPUP_CREATE, [720,400])
+            #     dpg.show_item(self.TAG_POPUP_CREATE)
+            
             with change_directory(folder_selected):
                 subprocess.Popen(f'start cmd /K vagrant up', shell=True)
+                
         except Exception as e:
             messagebox.showerror("Error", f"Failed to start Vagrant: {str(e)}")
-
+            # dpg.delete_item(self.TAG_POPUP_CREATE)
+            
 # Delete function of an env---------------------------------------------------------------------------------------------------------------------------
     def delete_vagrant_env(self, app_data, user_data):
         id_env_delete = dpg.get_value(self.TAG_INPUT_DELETE_ID)
