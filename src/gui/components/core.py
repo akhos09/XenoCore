@@ -51,6 +51,12 @@ class CallbacksCore(MenuElementsGUI):
             dpg.add_loading_indicator(pos= loading_pos)
             dpg.set_item_pos(popup_tag, [720,400])
             dpg.split_frame()
+    
+    def refresh(self, popup_tag):
+        dpg.delete_item(popup_tag)
+        self.show_loading_popup(message="Updating Vagrant environments list...", loading_pos=[177,50], popup_tag=self.TAG_POPUP_STATUS)
+        self.get_vagrant_status(None, "search_machines_button")
+        dpg.delete_item(self.TAG_POPUP_STATUS)
             
 # Vagrant env list -----------------------------------------------------------------------------------------------------------------------------------
     def get_vagrant_status(self, app_data, user_data):
@@ -166,10 +172,7 @@ class CallbacksCore(MenuElementsGUI):
         except Exception as e:
             messagebox.showerror("Error", f"Failed to start Vagrant: {str(e)}")
         finally:
-            dpg.delete_item(self.TAG_POPUP_CREATE)
-            self.show_loading_popup(message="Updating Vagrant environments list...", loading_pos=[177,50], popup_tag=self.TAG_POPUP_STATUS)
-            self.get_vagrant_status(None, "search_machines_button")
-            dpg.delete_item(self.TAG_POPUP_STATUS)
+            self.refresh(popup_tag=self.TAG_POPUP_CREATE)
                      
 # Vagrant env start -----------------------------------------------------------------------------------------------------------------------------------
     def start_vagrant_env(self, app_data, user_data):
@@ -192,10 +195,7 @@ class CallbacksCore(MenuElementsGUI):
         except Exception as e:
             messagebox.showerror("Error", f"Unexpected error: {str(e)}")
         finally:
-            dpg.delete_item(self.TAG_POPUP_START)
-            self.show_loading_popup(message="Updating Vagrant environments list...", loading_pos=[177,50], popup_tag=self.TAG_POPUP_STATUS)
-            self.get_vagrant_status(None, "search_machines_button")
-            dpg.delete_item(self.TAG_POPUP_STATUS)
+            self.refresh(popup_tag=self.TAG_POPUP_START)
         
 # Stop function of an env-----------------------------------------------------------------------------------------------------------------------------------
     def stop_vagrant_env(self, app_data, user_data):
@@ -217,10 +217,7 @@ class CallbacksCore(MenuElementsGUI):
         except Exception as e: 
             messagebox.showerror(title='ERROR', message=f'The environment {id_env_stop} could not be stopped. Make sure Vagrant is installed.\n\n{e}')
         finally:
-            dpg.delete_item(self.TAG_POPUP_STOP)
-            self.show_loading_popup(message="Updating Vagrant environments list...", loading_pos=[177,50], popup_tag=self.TAG_POPUP_STATUS)
-            self.get_vagrant_status(None, "search_machines_button")
-            dpg.delete_item(self.TAG_POPUP_STATUS)
+            self.refresh(popup_tag=self.TAG_POPUP_STOP)
         
 # Delete function of an env---------------------------------------------------------------------------------------------------------------------------
     def delete_vagrant_env(self, app_data, user_data):
@@ -247,7 +244,4 @@ class CallbacksCore(MenuElementsGUI):
             except Exception as e:
                 messagebox.showerror("Error", f"Failed to delete the environment: {str(e)}")
             finally:
-                dpg.delete_item(self.TAG_POPUP_DELETE)
-                self.show_loading_popup(message="Updating Vagrant environments list...", loading_pos=[177,50], popup_tag=self.TAG_POPUP_STATUS)
-                self.get_vagrant_status(None, "search_machines_button")
-                dpg.delete_item(self.TAG_POPUP_STATUS)
+                self.refresh(popup_tag=self.TAG_POPUP_DELETE)
