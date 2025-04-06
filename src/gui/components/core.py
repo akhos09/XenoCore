@@ -5,15 +5,12 @@ import tkinter
 from tkinter import filedialog as fd
 from tkinter import Tk
 from contextlib import contextmanager
-from datetime import datetime
 
 import dearpygui.dearpygui as dpg
 import ctypes
 from tkinter import messagebox
 
 from . import MenuElementsGUI
-from .themes import *
-from .fonts import reset_font_binding
 
 @contextmanager
 def change_directory(target_dir):
@@ -23,8 +20,8 @@ def change_directory(target_dir):
         yield
     finally:
         os.chdir(current_dir)
-
-class CallbacksGUI(MenuElementsGUI):  # Callbacks Class for the actions of the widgets
+        
+class CallbacksCore(MenuElementsGUI):
     # Constants for tags
     TAG_TABLE = "vagrant_table"
     TAG_POPUP_STATUS = "searching_machines"
@@ -41,39 +38,24 @@ class CallbacksGUI(MenuElementsGUI):  # Callbacks Class for the actions of the w
     TAG_CHECKBOX_PROVISION = "check_provision"
     SEARCH_MACHINES_BTN_TAG = "search_machines_button"
 
-    THEMES = { # Themes constants
-        "Dark Theme": dark_theme,
-        "Light Theme": light_theme,
-        "Default Theme": default_theme,
-        "Dracula Theme": dracula_theme,
-        "CyberPunk Theme": cyberpunk_theme,
-        "Dark Gruvbox Theme": gruvboxdark_theme,
-        "Nyx Theme": nyx_theme
-    }
-
-# Themes selector-------------------------------------------------------------------------------------------------------------------------------------
-    def theme_callback(self, app_data, user_data): 
-        theme = self.THEMES.get(user_data)
-        if theme:
-            dpg.bind_theme(theme())
+# Loading popup --------------------------------------------------------------------------------------------------------------------------------------
+    def show_loading_popup(self, message, loading_pos, popup_tag):
+        if dpg.does_item_exist(popup_tag):
+            dpg.delete_item(popup_tag)
             
-# Fonts selector--------------------------------------------------------------------------------------------------------------------------------------
-    def font_callback(self, app_data, user_data): 
-        reset_font_binding (None if user_data == "Default Font" else user_data)
-        
-# Advanced theme settings ----------------------------------------------------------------------------------------------------------------------------
-    def advanced_theme_callback(self, app_data, user_data):
-        dpg.show_style_editor()
-
+        with dpg.window(label="Loading", modal=True, show=True, tag=popup_tag, 
+                    no_title_bar=True, no_move=True, no_resize=True):
+            
+            dpg.add_text(message)
+            dpg.add_spacer(width=100)
+            dpg.add_loading_indicator(pos= loading_pos)
+            dpg.set_item_pos(popup_tag, [720,400])
+            dpg.split_frame()
+            
 # Vagrant env list -----------------------------------------------------------------------------------------------------------------------------------
     def get_vagrant_status(self, app_data, user_data):
-        with dpg.window(label="Loading", modal=True, show=False, tag=self.TAG_POPUP_STATUS, no_title_bar=True, no_move=True, no_resize=True):
-            dpg.add_text("Searching for Vagrant environments...")
-            dpg.add_spacer(width=100)
-            dpg.add_loading_indicator(pos=[170,50])
-            dpg.set_item_pos(self.TAG_POPUP_STATUS, [720,400])
-            dpg.show_item(self.TAG_POPUP_STATUS)
-
+        self.show_loading_popup(message="Updating Vagrant environments list...", loading_pos=[177,50], popup_tag=self.TAG_POPUP_STATUS)
+        
         try:                
             command_status = subprocess.run(["vagrant", "global-status"], capture_output=True, text=True)
         
@@ -171,19 +153,8 @@ class CallbacksGUI(MenuElementsGUI):  # Callbacks Class for the actions of the w
         if not os.path.exists(folder_selected):
             messagebox.showerror("Error", f"Directory does not exist: {folder_selected}")
             return
-        with dpg.window(label="Creating the Vagrant environment", 
-                    modal=True, 
-                    show=False, 
-                    tag=self.TAG_POPUP_CREATE, 
-                    no_title_bar=True, 
-                    no_move=True,
-                    no_resize=True):
             
-            dpg.add_text("Creating the Vagrant environment...")
-            dpg.add_spacer(width=100)
-            dpg.add_loading_indicator(pos=[170,50])
-            dpg.set_item_pos(self.TAG_POPUP_CREATE, [720,400])
-            dpg.show_item(self.TAG_POPUP_CREATE)
+        self.show_loading_popup(message="Creating the Vagrant environment...", loading_pos=[170,50], popup_tag=self.TAG_POPUP_CREATE)
             
         try:
             with change_directory(folder_selected):
@@ -194,25 +165,17 @@ class CallbacksGUI(MenuElementsGUI):  # Callbacks Class for the actions of the w
             messagebox.showerror("Error", f"Failed to create the environment (Vagrant error): {e}")
         except Exception as e:
             messagebox.showerror("Error", f"Failed to start Vagrant: {str(e)}")
-        
-        dpg.delete_item(self.TAG_POPUP_CREATE)   
+        finally:
+            dpg.delete_item(self.TAG_POPUP_CREATE)
+            self.show_loading_popup(message="Updating Vagrant environments list...", loading_pos=[177,50], popup_tag=self.TAG_POPUP_STATUS)
+            self.get_vagrant_status(None, "search_machines_button")
+            dpg.delete_item(self.TAG_POPUP_STATUS)
                      
 # Vagrant env start -----------------------------------------------------------------------------------------------------------------------------------
     def start_vagrant_env(self, app_data, user_data):
         id_env_start = dpg.get_value(self.TAG_INPUT_START_ID)
-        with dpg.window(label="Starting the Vagrant environment", 
-                modal=True, 
-                show=False, 
-                tag=self.TAG_POPUP_START, 
-                no_title_bar=True, 
-                no_move=True,
-                no_resize=True):
-    
-                dpg.add_text("Booting up the Vagrant environment...")
-                dpg.add_spacer(width=100)
-                dpg.add_loading_indicator(pos=[170,50])
-                dpg.set_item_pos(self.TAG_POPUP_START, [720,400])
-                dpg.show_item(self.TAG_POPUP_START)
+        
+        self.show_loading_popup(message="Booting up the Vagrant environment...", loading_pos=[170,50], popup_tag=self.TAG_POPUP_START)
                 
         try:
             provision_check = dpg.get_value(self.TAG_CHECKBOX_PROVISION)
@@ -228,26 +191,17 @@ class CallbacksGUI(MenuElementsGUI):  # Callbacks Class for the actions of the w
             messagebox.showerror("Error", f"Failed to start the environment (Vagrant error): {e}")
         except Exception as e:
             messagebox.showerror("Error", f"Unexpected error: {str(e)}")
-
-        dpg.delete_item(self.TAG_POPUP_START)
-
+        finally:
+            dpg.delete_item(self.TAG_POPUP_START)
+            self.show_loading_popup(message="Updating Vagrant environments list...", loading_pos=[177,50], popup_tag=self.TAG_POPUP_STATUS)
+            self.get_vagrant_status(None, "search_machines_button")
+            dpg.delete_item(self.TAG_POPUP_STATUS)
+        
 # Stop function of an env-----------------------------------------------------------------------------------------------------------------------------------
     def stop_vagrant_env(self, app_data, user_data):
         id_env_stop = dpg.get_value(self.TAG_INPUT_STOP_ID)
-
-        with dpg.window(label="Stopping the environment",
-                        modal=True,
-                        show=False,
-                        tag=self.TAG_POPUP_STOP,
-                        no_title_bar=True,
-                        no_move=True,
-                        no_resize=True):
-            
-            dpg.add_text("Stopping the Vagrant environment...")
-            dpg.add_spacer(width=100)
-            dpg.add_loading_indicator(pos=[170,50])
-            dpg.set_item_pos(self.TAG_POPUP_STOP, [720,400])
-            dpg.show_item(self.TAG_POPUP_STOP)
+        
+        self.show_loading_popup(message="Stopping the Vagrant environment...", loading_pos=[170,50], popup_tag=self.TAG_POPUP_STOP)
 
         try:
             force_stop_check_var =  dpg.get_value(self.TAG_CHECKBOX_STOP_FORCE)
@@ -262,9 +216,12 @@ class CallbacksGUI(MenuElementsGUI):  # Callbacks Class for the actions of the w
             messagebox.showerror("Error", f"Failed to stop the environment (Vagrant error): {e}")
         except Exception as e: 
             messagebox.showerror(title='ERROR', message=f'The environment {id_env_stop} could not be stopped. Make sure Vagrant is installed.\n\n{e}')
-            
-        dpg.delete_item(self.TAG_POPUP_STOP)
-
+        finally:
+            dpg.delete_item(self.TAG_POPUP_STOP)
+            self.show_loading_popup(message="Updating Vagrant environments list...", loading_pos=[177,50], popup_tag=self.TAG_POPUP_STATUS)
+            self.get_vagrant_status(None, "search_machines_button")
+            dpg.delete_item(self.TAG_POPUP_STATUS)
+        
 # Delete function of an env---------------------------------------------------------------------------------------------------------------------------
     def delete_vagrant_env(self, app_data, user_data):
         id_env_delete = dpg.get_value(self.TAG_INPUT_DELETE_ID)
@@ -272,20 +229,9 @@ class CallbacksGUI(MenuElementsGUI):  # Callbacks Class for the actions of the w
         f"This option will delete all of the files (but not the Vagrantfile and the additional ones) of the environment {id_env_delete}\nAre you sure to do this?")
         
         if check_delete:
-            with dpg.window(label="Destroying the Vagrant environment", 
-                            modal=True, 
-                            show=False, 
-                            tag=self.TAG_POPUP_DELETE, 
-                            no_title_bar=True, 
-                            no_move=True,
-                            no_resize=True):
-                
-                dpg.add_text("Destroying the Vagrant environment...")
-                dpg.add_spacer(width=100)
-                dpg.add_loading_indicator(pos=[170,50])
-                dpg.set_item_pos(self.TAG_POPUP_DELETE, [720,400])
-                dpg.show_item(self.TAG_POPUP_DELETE)
-                
+            
+            self.show_loading_popup(message="Destroying the Vagrant environment...", loading_pos=[170,50], popup_tag=self.TAG_POPUP_DELETE)
+            
             try:
                 force_delete_check = dpg.get_value(self.TAG_CHECKBOX_DELETE_FORCE)
                 
@@ -300,5 +246,8 @@ class CallbacksGUI(MenuElementsGUI):  # Callbacks Class for the actions of the w
                 messagebox.showerror("Error", f"Failed to delete the environment (Vagrant error): {e}")
             except Exception as e:
                 messagebox.showerror("Error", f"Failed to delete the environment: {str(e)}")
-                
-            dpg.delete_item(self.TAG_POPUP_DELETE)
+            finally:
+                dpg.delete_item(self.TAG_POPUP_DELETE)
+                self.show_loading_popup(message="Updating Vagrant environments list...", loading_pos=[177,50], popup_tag=self.TAG_POPUP_STATUS)
+                self.get_vagrant_status(None, "search_machines_button")
+                dpg.delete_item(self.TAG_POPUP_STATUS)

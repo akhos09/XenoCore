@@ -42,8 +42,8 @@ class MenuElementsGUI: # Elements from GUI--------------------------------------
         dpg.create_context()
         dpg.create_viewport(
             title="XenoVagrant", 
-            width=1280, 
-            height=720,
+            width=1400, 
+            height=900,
             small_icon=self.icon_path,
             large_icon=self.icon_path,
             decorated=True

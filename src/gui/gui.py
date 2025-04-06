@@ -2,16 +2,16 @@ import os
 import sys
 from tkinter import messagebox
 
-import dearpygui.dearpygui as dpg
 import ctypes
 
 from .components import MenuElementsGUI
-from .components.callbacks import CallbacksGUI
+from .components.core import CallbacksCore
+from .components.gui_core import CallbacksGUI
 from .components.themes import *
 from .components.fonts import reset_font_binding
 
 # Main GUI class (Screen and Icon settings)------------------------------------------------------------------
-class XenoVagrantGUI(CallbacksGUI):
+class XenoVagrantGUI(CallbacksGUI, CallbacksCore):
     def __init__(self):
         try:
             ctypes.windll.shcore.SetProcessDpiAwareness(1)  # Enable DPI awareness for high-resolution screens
