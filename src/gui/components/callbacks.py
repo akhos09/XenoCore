@@ -76,6 +76,9 @@ class CallbacksGUI(MenuElementsGUI):  # Callbacks Class for the actions of the w
 
         try:                
             command_status = subprocess.run(["vagrant", "global-status"], capture_output=True, text=True)
+        
+        except subprocess.CalledProcessError as e:
+            messagebox.showerror("Error", f"Failed to search the environments (Vagrant error): {e}")
         except Exception as e:
             messagebox.showerror(title='ERROR', message=f'Machines on your system could not be found. Make sure Vagrant is installed\n\n{e}')
             dpg.delete_item(self.TAG_POPUP_STATUS)
@@ -145,34 +148,6 @@ class CallbacksGUI(MenuElementsGUI):  # Callbacks Class for the actions of the w
         
         dpg.set_item_label(self.SEARCH_MACHINES_BTN_TAG,"Refresh")
         dpg.set_item_width(self.SEARCH_MACHINES_BTN_TAG,100)
-                        
-# Vagrant env start -----------------------------------------------------------------------------------------------------------------------------------
-    def start_vagrant_env(self, app_data, user_data):
-        id_env_start = dpg.get_value(self.TAG_INPUT_START_ID)
-        # with dpg.window(label="Starting the Vagrant environment", 
-        #         modal=True, 
-        #         show=False, 
-        #         tag=self.TAG_POPUP_START, 
-        #         no_title_bar=True, 
-        #         no_move=True,
-        #         no_resize=True):
-    
-        #         dpg.add_text("Booting up the Vagrant environment...")
-        #         dpg.add_spacer(width=100)
-        #         dpg.add_loading_indicator(pos=[170,50])
-        #         dpg.set_item_pos(self.TAG_POPUP_START, [720,400])
-        #         dpg.show_item(self.TAG_POPUP_START)
-                
-        try:
-            provision_check = dpg.get_value(self.TAG_CHECKBOX_PROVISION)
-            
-            if provision_check:
-                subprocess.Popen(f'start cmd /K vagrant up {id_env_start} --provision', shell=True)
-            else:
-                subprocess.Popen(f'start cmd /K vagrant up {id_env_start}', shell=True)
-                
-        except Exception as e:
-            messagebox.showerror("Error", f"Failed to start the environment: {str(e)}")
 
 # Create function of an env---------------------------------------------------------------------------------------------------------------------------
     def create_vagrant_env(self, app_data, user_data):
@@ -196,29 +171,100 @@ class CallbacksGUI(MenuElementsGUI):  # Callbacks Class for the actions of the w
         if not os.path.exists(folder_selected):
             messagebox.showerror("Error", f"Directory does not exist: {folder_selected}")
             return
-
-        try:
-            # with dpg.window(label="Creating the Vagrant environment", 
-            #                 modal=True, 
-            #                 show=False, 
-            #                 tag=self.TAG_POPUP_CREATE, 
-            #                 no_title_bar=True, 
-            #                 no_move=True,
-            #                 no_resize=True):
-                    
-            #     dpg.add_text("Creating the Vagrant environment...")
-            #     dpg.add_spacer(width=100)
-            #     dpg.add_loading_indicator(pos=[170,50])
-            #     dpg.set_item_pos(self.TAG_POPUP_CREATE, [720,400])
-            #     dpg.show_item(self.TAG_POPUP_CREATE)
+        with dpg.window(label="Creating the Vagrant environment", 
+                    modal=True, 
+                    show=False, 
+                    tag=self.TAG_POPUP_CREATE, 
+                    no_title_bar=True, 
+                    no_move=True,
+                    no_resize=True):
             
+            dpg.add_text("Creating the Vagrant environment...")
+            dpg.add_spacer(width=100)
+            dpg.add_loading_indicator(pos=[170,50])
+            dpg.set_item_pos(self.TAG_POPUP_CREATE, [720,400])
+            dpg.show_item(self.TAG_POPUP_CREATE)
+            
+        try:
             with change_directory(folder_selected):
-                subprocess.Popen(f'start cmd /K vagrant up', shell=True)
+                cmd = f'start /wait cmd /c "vagrant up & pause"'
+                subprocess.run(cmd ,shell=True, check=True)
                 
+        except subprocess.CalledProcessError as e:
+            messagebox.showerror("Error", f"Failed to create the environment (Vagrant error): {e}")
         except Exception as e:
             messagebox.showerror("Error", f"Failed to start Vagrant: {str(e)}")
-            # dpg.delete_item(self.TAG_POPUP_CREATE)
+        
+        dpg.delete_item(self.TAG_POPUP_CREATE)   
+                     
+# Vagrant env start -----------------------------------------------------------------------------------------------------------------------------------
+    def start_vagrant_env(self, app_data, user_data):
+        id_env_start = dpg.get_value(self.TAG_INPUT_START_ID)
+        with dpg.window(label="Starting the Vagrant environment", 
+                modal=True, 
+                show=False, 
+                tag=self.TAG_POPUP_START, 
+                no_title_bar=True, 
+                no_move=True,
+                no_resize=True):
+    
+                dpg.add_text("Booting up the Vagrant environment...")
+                dpg.add_spacer(width=100)
+                dpg.add_loading_indicator(pos=[170,50])
+                dpg.set_item_pos(self.TAG_POPUP_START, [720,400])
+                dpg.show_item(self.TAG_POPUP_START)
+                
+        try:
+            provision_check = dpg.get_value(self.TAG_CHECKBOX_PROVISION)
+
+            if provision_check:
+                cmd = f'start /wait cmd /c "vagrant up {id_env_start} --provision & pause"'
+            else:
+                cmd = f'start /wait cmd /c "vagrant up {id_env_start} & pause"'
+
+            subprocess.run(cmd, shell=True, check=True)
+
+        except subprocess.CalledProcessError as e:
+            messagebox.showerror("Error", f"Failed to start the environment (Vagrant error): {e}")
+        except Exception as e:
+            messagebox.showerror("Error", f"Unexpected error: {str(e)}")
+
+        dpg.delete_item(self.TAG_POPUP_START)
+
+# Stop function of an env-----------------------------------------------------------------------------------------------------------------------------------
+    def stop_vagrant_env(self, app_data, user_data):
+        id_env_stop = dpg.get_value(self.TAG_INPUT_STOP_ID)
+
+        with dpg.window(label="Stopping the environment",
+                        modal=True,
+                        show=False,
+                        tag=self.TAG_POPUP_STOP,
+                        no_title_bar=True,
+                        no_move=True,
+                        no_resize=True):
             
+            dpg.add_text("Stopping the Vagrant environment...")
+            dpg.add_spacer(width=100)
+            dpg.add_loading_indicator(pos=[170,50])
+            dpg.set_item_pos(self.TAG_POPUP_STOP, [720,400])
+            dpg.show_item(self.TAG_POPUP_STOP)
+
+        try:
+            force_stop_check_var =  dpg.get_value(self.TAG_CHECKBOX_STOP_FORCE)
+            if force_stop_check_var:
+                cmd = f"vagrant halt -f {id_env_stop}"
+            else:
+                cmd = f"vagrant halt {id_env_stop}"
+            
+            subprocess.run(cmd, check=True)
+        
+        except subprocess.CalledProcessError as e:
+            messagebox.showerror("Error", f"Failed to stop the environment (Vagrant error): {e}")
+        except Exception as e: 
+            messagebox.showerror(title='ERROR', message=f'The environment {id_env_stop} could not be stopped. Make sure Vagrant is installed.\n\n{e}')
+            
+        dpg.delete_item(self.TAG_POPUP_STOP)
+
 # Delete function of an env---------------------------------------------------------------------------------------------------------------------------
     def delete_vagrant_env(self, app_data, user_data):
         id_env_delete = dpg.get_value(self.TAG_INPUT_DELETE_ID)
@@ -244,44 +290,15 @@ class CallbacksGUI(MenuElementsGUI):  # Callbacks Class for the actions of the w
                 force_delete_check = dpg.get_value(self.TAG_CHECKBOX_DELETE_FORCE)
                 
                 if force_delete_check:
-                    subprocess.run(["vagrant", "destroy", f"{id_env_delete}", "-f"], capture_output=True, text=True)
+                    cmd: str = f"vagrant destroy {id_env_delete} -f"
                 else:
-                    subprocess.run(["vagrant", "destroy", f"{id_env_delete}"], capture_output=True, text=True)
-                    
-                dpg.delete_item(self.TAG_POPUP_DELETE)
-                    
+                    cmd : str = f"vagrant destroy {id_env_delete}"
+                
+                subprocess.run(cmd, check=True)
+            
+            except subprocess.CalledProcessError as e:
+                messagebox.showerror("Error", f"Failed to delete the environment (Vagrant error): {e}")
             except Exception as e:
                 messagebox.showerror("Error", f"Failed to delete the environment: {str(e)}")
-                dpg.delete_item(self.TAG_POPUP_DELETE)
                 
-# Stop function of an env-----------------------------------------------------------------------------------------------------------------------------------
-    def stop_vagrant_env(self, app_data, user_data):
-        id_env_stop = dpg.get_value(self.TAG_INPUT_STOP_ID)
-
-        with dpg.window(label="Stopping the environment",
-                        modal=True,
-                        show=False,
-                        tag=self.TAG_POPUP_STOP,
-                        no_title_bar=True,
-                        no_move=True,
-                        no_resize=True):
-            
-            dpg.add_text("Stopping the Vagrant environment...")
-            dpg.add_spacer(width=100)
-            dpg.add_loading_indicator(pos=[170,50])
-            dpg.set_item_pos(self.TAG_POPUP_STOP, [720,400])
-            dpg.show_item(self.TAG_POPUP_STOP)
-
-        try:
-            force_stop_check_var =  dpg.get_value(self.TAG_CHECKBOX_STOP_FORCE)
-            if force_stop_check_var:
-                subprocess.run(["vagrant", "halt", "-f", f"{id_env_stop}"], capture_output=True, text=True)
-                
-            else:
-                subprocess.run(["vagrant", "halt", f"{id_env_stop}"], capture_output=True, text=True)
-                
-            dpg.delete_item(self.TAG_POPUP_STOP)
-
-        except Exception as e: 
-            messagebox.showerror(title='ERROR', message=f'The environment {id_env_stop} could not be stopped. Make sure Vagrant is installed.\n\n{e}')
-            dpg.delete_item(self.TAG_POPUP_STOP)
+            dpg.delete_item(self.TAG_POPUP_DELETE)

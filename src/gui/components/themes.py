@@ -140,7 +140,13 @@ def dark_theme() -> Union[str, int]:
             dpg.add_theme_color(dpg.mvNodeCol_GridBackground, (40, 40, 50, 200), category=dpg.mvThemeCat_Nodes)
             dpg.add_theme_color(dpg.mvNodeCol_GridLine, (200, 200, 200, 40), category=dpg.mvThemeCat_Nodes)
             
-            dpg.add_theme_style(dpg.mvStyleVar_ItemSpacing, 18, 18) 
+            dpg.add_theme_style(dpg.mvStyleVar_ItemSpacing, 18, 18)
+            # Styles
+            dpg.add_theme_style(dpg.mvStyleVar_WindowRounding, 5)
+            dpg.add_theme_style(dpg.mvStyleVar_FrameRounding, 3)
+            dpg.add_theme_style(dpg.mvStyleVar_ScrollbarRounding, 3)
+            dpg.add_theme_style(dpg.mvStyleVar_GrabRounding, 3)
+            dpg.add_theme_style(dpg.mvStyleVar_ItemSpacing, 10, 10)  
             
     return theme_id
 
@@ -235,6 +241,13 @@ def light_theme() -> Union[str, int]:
             dpg.add_theme_color(dpg.mvNodeCol_GridLine, (180, 180, 180, 100), category=dpg.mvThemeCat_Nodes)
             
             dpg.add_theme_style(dpg.mvStyleVar_ItemSpacing, 18, 18) 
+            # Styles
+            dpg.add_theme_style(dpg.mvStyleVar_WindowRounding, 5)
+            dpg.add_theme_style(dpg.mvStyleVar_FrameRounding, 3)
+            dpg.add_theme_style(dpg.mvStyleVar_ScrollbarRounding, 3)
+            dpg.add_theme_style(dpg.mvStyleVar_GrabRounding, 3)
+            dpg.add_theme_style(dpg.mvStyleVar_ItemSpacing, 10, 10)  
+            
 
     return theme_id
 
@@ -269,6 +282,13 @@ def dracula_theme() -> Union[str, int]:
             dpg.add_theme_color(dpg.mvNodeCol_NodeOutline             , (98, 114, 164, 255), category=dpg.mvThemeCat_Nodes)
             
             dpg.add_theme_style(dpg.mvStyleVar_ItemSpacing, 18, 18) 
+            # Styles
+            dpg.add_theme_style(dpg.mvStyleVar_WindowRounding, 5)
+            dpg.add_theme_style(dpg.mvStyleVar_FrameRounding, 3)
+            dpg.add_theme_style(dpg.mvStyleVar_ScrollbarRounding, 3)
+            dpg.add_theme_style(dpg.mvStyleVar_GrabRounding, 3)
+            dpg.add_theme_style(dpg.mvStyleVar_ItemSpacing, 10, 10)  
+            
 
     return theme_id
 
@@ -301,7 +321,15 @@ def cyberpunk_theme() -> Union[str, int]:
             dpg.add_theme_color(dpg.mvNodeCol_NodeBackground          , (32, 32, 48, 255), category=dpg.mvThemeCat_Nodes)
             dpg.add_theme_color(dpg.mvNodeCol_NodeOutline             , (0, 255, 255, 255), category=dpg.mvThemeCat_Nodes)
             
-            dpg.add_theme_style(dpg.mvStyleVar_ItemSpacing, 18, 18) 
+            dpg.add_theme_style(dpg.mvStyleVar_ItemSpacing, 18, 18)
+            
+            # Styles
+            dpg.add_theme_style(dpg.mvStyleVar_WindowRounding, 5)
+            dpg.add_theme_style(dpg.mvStyleVar_FrameRounding, 3)
+            dpg.add_theme_style(dpg.mvStyleVar_ScrollbarRounding, 3)
+            dpg.add_theme_style(dpg.mvStyleVar_GrabRounding, 3)
+            dpg.add_theme_style(dpg.mvStyleVar_ItemSpacing, 10, 10)  
+             
 
     return theme_id
 
@@ -336,6 +364,13 @@ def gruvboxdark_theme() -> Union[str, int]:
             dpg.add_theme_color(dpg.mvNodeCol_NodeOutline             , (102, 92, 84, 255), category=dpg.mvThemeCat_Nodes)
 
 
+            # Styles
+            dpg.add_theme_style(dpg.mvStyleVar_WindowRounding, 5)
+            dpg.add_theme_style(dpg.mvStyleVar_FrameRounding, 3)
+            dpg.add_theme_style(dpg.mvStyleVar_ScrollbarRounding, 3)
+            dpg.add_theme_style(dpg.mvStyleVar_GrabRounding, 3)
+            dpg.add_theme_style(dpg.mvStyleVar_ItemSpacing, 10, 10)  
+            
             dpg.add_theme_style(dpg.mvStyleVar_ItemSpacing, 18, 18) 
             
     return theme_id
@@ -392,10 +427,11 @@ def nyx_theme() -> Union[str, int]:
             dpg.add_theme_color(dpg.mvNodeCol_NodeOutline, PURPLE, category=dpg.mvThemeCat_Nodes)  # Node outline
 
             # Styles
-            dpg.add_theme_style(dpg.mvStyleVar_WindowRounding, 6)
-            dpg.add_theme_style(dpg.mvStyleVar_FrameRounding, 4)
-            dpg.add_theme_style(dpg.mvStyleVar_ScrollbarRounding, 4)
-            dpg.add_theme_style(dpg.mvStyleVar_GrabRounding, 4)
+            dpg.add_theme_style(dpg.mvStyleVar_WindowRounding, 5)
+            dpg.add_theme_style(dpg.mvStyleVar_FrameRounding, 3)
+            dpg.add_theme_style(dpg.mvStyleVar_ScrollbarRounding, 3)
+            dpg.add_theme_style(dpg.mvStyleVar_GrabRounding, 3)
+            dpg.add_theme_style(dpg.mvStyleVar_ItemSpacing, 10, 10)  
             
             dpg.add_theme_style(dpg.mvStyleVar_ItemSpacing, 18, 18) 
             
