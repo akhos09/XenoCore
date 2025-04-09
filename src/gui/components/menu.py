@@ -35,7 +35,9 @@ class MenuElementsGUI: # Elements from GUI--------------------------------------
     THEME_ADV_SETTINGS_TAG = "theme_advance_settings"
     THEME_SETTINGS_ALERT_TAG = "theme_settings_alert"
     THEME_SETTINGS_BTN_TAG = "theme_settings"
-    
+    PACK_VB_INPUT_TAG = "id_input_pack_vboxname"
+    PACK_ENV_BTN_TAG = "pack_env_btn"
+    PACK_OUTPUT_INPUT_TAG = "output_input_name"
     
 # Initial settings (viewport)--------------------------------------------------------
     def initial_settings(self): 
@@ -75,6 +77,7 @@ class MenuElementsGUI: # Elements from GUI--------------------------------------
                                         tag=self.FOLDER_SELECTION_BTN_TAG
                                     )
                                     
+                            #------------------------------------------------------------------------------------        
                             with dpg.tree_node(label="Start environment"):
                                 with dpg.group(horizontal=True):
                                     dpg.add_text("Enter the ID of the machine you want to start: ", bullet=True)
@@ -86,7 +89,8 @@ class MenuElementsGUI: # Elements from GUI--------------------------------------
                                         tag=self.START_ENV_BTN_TAG
                                     )
                                     dpg.add_checkbox(label="Provision", tag=self.TAG_CHECKBOX_PROVISION)
-                                    
+                            
+                            #------------------------------------------------------------------------------------        
                             with dpg.tree_node(label="Halt/Stop environment"):
                                 with dpg.group(horizontal=True):
                                     dpg.add_text("Enter the ID of the machine you want to stop: ", bullet=True)
@@ -98,7 +102,8 @@ class MenuElementsGUI: # Elements from GUI--------------------------------------
                                         tag=self.STOP_ENV_BTN_TAG
                                     )
                                     dpg.add_checkbox(label="Force", tag=self.FORCE_STOP_CHECKBOX_TAG)
-                                    
+                            
+                            #------------------------------------------------------------------------------------        
                             with dpg.tree_node(label="Delete environment"):
                                 with dpg.group(horizontal=True):
                                     dpg.add_text("Enter the ID of the machine you want to delete: ", bullet=True)
@@ -110,6 +115,24 @@ class MenuElementsGUI: # Elements from GUI--------------------------------------
                                         tag=self.DELETE_ENV_BTN_TAG
                                     )
                                     dpg.add_checkbox(label="Force", tag=self.FORCE_DELETE_CHECKBOX_TAG)
+                            
+                            #------------------------------------------------------------------------------------
+                            with dpg.tree_node(label="Package environment"):
+                                with dpg.group(horizontal=False):
+                                    with dpg.group(horizontal=True):
+                                        dpg.add_text("Enter the name of the machine (IN VirtualBox GUI) you want to package:", bullet=True)
+                                        dpg.add_input_text(width=220, hint="Name (VboxGUI)", tag=self.PACK_VB_INPUT_TAG)
+                                    with dpg.group(horizontal=True):
+                                        dpg.add_text("Enter the name of the output box (without the .box format the end):", bullet=True)
+                                        dpg.add_input_text(width=220, hint="Output name (.box)", tag=self.PACK_OUTPUT_INPUT_TAG)
+                                    with dpg.group(horizontal=True):
+                                        dpg.add_spacer(height=10,width=23) 
+                                        dpg.add_button(
+                                            label="Package",
+                                            callback=self.pack_vagrant_env,
+                                            width=95,
+                                            tag=self.PACK_ENV_BTN_TAG
+                                        )
                                     
 # Plugins tab & Widgets-------------------------------------------------------------------------------------------------------------------------
                 with dpg.tab(label="Plugins", tag=self.PLUGINS_TAB):

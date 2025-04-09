@@ -33,10 +33,13 @@ class CallbacksCore(MenuElementsGUI):
     TAG_INPUT_DELETE_ID = "id_input_delete"
     TAG_INPUT_START_ID = "id_input_start"
     TAG_INPUT_STOP_ID = "id_input_stop"
+    TAG_INPUT_PACK_VB = "id_input_pack_vboxname"
+    TAG_INPUT_PACK_OUTPUT = "output_input_name"
     TAG_CHECKBOX_DELETE_FORCE = "force_check_delete"
     TAG_CHECKBOX_STOP_FORCE = "force_check_stop"
     TAG_CHECKBOX_PROVISION = "check_provision"
     SEARCH_MACHINES_BTN_TAG = "search_machines_button"
+    
 
 # Loading popup --------------------------------------------------------------------------------------------------------------------------------------
     def show_loading_popup(self, message, loading_pos, popup_tag):
@@ -176,7 +179,7 @@ class CallbacksCore(MenuElementsGUI):
                      
 # Vagrant env start -----------------------------------------------------------------------------------------------------------------------------------
     def start_vagrant_env(self, app_data, user_data):
-        id_env_start = dpg.get_value(self.TAG_INPUT_START_ID)
+        id_env_start: str = dpg.get_value(self.TAG_INPUT_START_ID)
         
         self.show_loading_popup(message="Booting up the Vagrant environment...", loading_pos=[170,50], popup_tag=self.TAG_POPUP_START)
                 
@@ -199,7 +202,7 @@ class CallbacksCore(MenuElementsGUI):
         
 # Stop function of an env-----------------------------------------------------------------------------------------------------------------------------------
     def stop_vagrant_env(self, app_data, user_data):
-        id_env_stop = dpg.get_value(self.TAG_INPUT_STOP_ID)
+        id_env_stop: str = dpg.get_value(self.TAG_INPUT_STOP_ID)
         
         self.show_loading_popup(message="Stopping the Vagrant environment...", loading_pos=[170,50], popup_tag=self.TAG_POPUP_STOP)
 
@@ -221,7 +224,7 @@ class CallbacksCore(MenuElementsGUI):
         
 # Delete function of an env---------------------------------------------------------------------------------------------------------------------------
     def delete_vagrant_env(self, app_data, user_data):
-        id_env_delete = dpg.get_value(self.TAG_INPUT_DELETE_ID)
+        id_env_delete: str = dpg.get_value(self.TAG_INPUT_DELETE_ID)
         check_delete = messagebox.askokcancel("Info",
         f"This option will delete all of the files (but not the Vagrantfile and the additional ones) of the environment {id_env_delete}\nAre you sure to do this?")
         
@@ -245,3 +248,8 @@ class CallbacksCore(MenuElementsGUI):
                 messagebox.showerror("Error", f"Failed to delete the environment: {str(e)}")
             finally:
                 self.refresh(popup_tag=self.TAG_POPUP_DELETE)
+    
+    def pack_vagrant_env (self, app_data, user_data):
+        env_name_vb: str = dpg.get_value(self.TAG_INPUT_PACK_VB)
+        box_output_name: str = dpg.get_value(self.TAG_INPUT_PACK_OUTPUT)
+        print(f"{env_name_vb},{box_output_name}")
