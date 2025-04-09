@@ -35,6 +35,7 @@ class CallbacksCore(MenuElementsGUI):
     TAG_INPUT_STOP_ID = "id_input_stop"
     TAG_INPUT_PACK_VB = "id_input_pack_vboxname"
     TAG_INPUT_PACK_OUTPUT = "output_input_name"
+    TAG_CHECKBOX_PRUNE_SEARCH = "check_prune_search"
     TAG_CHECKBOX_DELETE_FORCE = "force_check_delete"
     TAG_CHECKBOX_STOP_FORCE = "force_check_stop"
     TAG_CHECKBOX_PROVISION = "check_provision"
@@ -64,10 +65,14 @@ class CallbacksCore(MenuElementsGUI):
 # Vagrant env list -----------------------------------------------------------------------------------------------------------------------------------
     def get_vagrant_status(self, app_data, user_data):
         self.show_loading_popup(message="Updating Vagrant environments list...", loading_pos=[177,50], popup_tag=self.TAG_POPUP_STATUS)
-        
-        try:                
-            command_status = subprocess.run(["vagrant", "global-status"], capture_output=True, text=True)
-        
+        check_prune = dpg.get_value(self.PRUNE_SEARCH_CHECKBOX_TAG)
+
+        try:
+            if check_prune:               
+                command_status = subprocess.run(["vagrant", "global-status", "--prune"], capture_output=True, text=True)
+            else:
+                command_status = subprocess.run(["vagrant", "global-status"], capture_output=True, text=True)
+                
         except subprocess.CalledProcessError as e:
             messagebox.showerror("Error", f"Failed to search the environments (Vagrant error): {e}")
         except Exception as e:

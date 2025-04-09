@@ -18,6 +18,7 @@ class MenuElementsGUI: # Elements from GUI--------------------------------------
     MACHINES_WIN_TAG = "machines_win"
     ENV_HEADER_TAG = "env_header"
     SEARCH_MACHINES_BTN_TAG = "search_machines_button"
+    PRUNE_SEARCH_CHECKBOX_TAG = "check_prune_search"
     FOLDER_SELECTION_BTN_TAG = "folder_selection_btn"
     STOP_ENV_INPUT_TAG = "id_input_stop"
     STOP_ENV_BTN_TAG = "stop_env_btn"
@@ -59,12 +60,14 @@ class MenuElementsGUI: # Elements from GUI--------------------------------------
                 with dpg.tab(label="Machines", tag=self.MACHINES_TAB):
                     with dpg.child_window(tag=self.MACHINES_WIN_TAG, label="machineswin", use_internal_label=True, border=True, auto_resize_x=False, auto_resize_y=False):
                         with dpg.collapsing_header(label="List of environments", tag=self.ENV_HEADER_TAG):
-                            dpg.add_button(
-                                label="Search for Vagrant Machines",
-                                callback=self.get_vagrant_status,
-                                width=333,
-                                tag=self.SEARCH_MACHINES_BTN_TAG
-                            )
+                            with dpg.group(horizontal=True):
+                                dpg.add_button(
+                                    label="Search for Vagrant Machines",
+                                    callback=self.get_vagrant_status,
+                                    width=333,
+                                    tag=self.SEARCH_MACHINES_BTN_TAG
+                                )
+                                dpg.add_checkbox(label="Prune", tag=self.PRUNE_SEARCH_CHECKBOX_TAG)
                             
                         with dpg.collapsing_header(label="Main Options (Create Start Stop/Halt Delete Package Reload)"):
                             with dpg.tree_node(label="Create environment"):
