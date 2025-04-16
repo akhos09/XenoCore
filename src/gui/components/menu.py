@@ -19,13 +19,18 @@ class MenuElementsGUI: # Elements from GUI--------------------------------------
     ENV_HEADER_TAG = "env_header"
     SEARCH_MACHINES_BTN_TAG = "search_machines_button"
     PRUNE_SEARCH_CHECKBOX_TAG = "check_prune_search"
+    
     FOLDER_SELECTION_BTN_TAG = "folder_selection_btn"
+    
     STOP_ENV_INPUT_TAG = "id_input_stop"
     STOP_ENV_BTN_TAG = "stop_env_btn"
+    
     START_ENV_BTN_TAG = "start_env_btn"
     TAG_INPUT_START_ID = "id_input_start"
+    
     DELETE_ENV_INPUT_TAG = "id_input_delete"
     DELETE_ENV_BTN_TAG = "delete_env_btn"
+    
     TAG_CHECKBOX_PROVISION = "check_provision"
     FORCE_DELETE_CHECKBOX_TAG = "force_check_delete"
     FORCE_STOP_CHECKBOX_TAG = "force_check_stop"
@@ -39,6 +44,9 @@ class MenuElementsGUI: # Elements from GUI--------------------------------------
     PACK_VB_INPUT_TAG = "id_input_pack_vboxname"
     PACK_ENV_BTN_TAG = "pack_env_btn"
     PACK_OUTPUT_INPUT_TAG = "output_input_name"
+    
+    RELOAD_ENV_INPUT_TAG = "id_input_reload"
+    RELOAD_ENV_BTN_TAG = "reload_env_btn"
     
 # Initial settings (viewport)--------------------------------------------------------
     def initial_settings(self): 
@@ -59,7 +67,7 @@ class MenuElementsGUI: # Elements from GUI--------------------------------------
 # Machines tab & Widgets--------------------------------------------------------------------------------------------------------------------------
                 with dpg.tab(label="Machines", tag=self.MACHINES_TAB):
                     with dpg.child_window(tag=self.MACHINES_WIN_TAG, label="machineswin", use_internal_label=True, border=True, auto_resize_x=False, auto_resize_y=False):
-                        with dpg.collapsing_header(label="List of environments", tag=self.ENV_HEADER_TAG):
+                        with dpg.collapsing_header(label="List of environments", tag=self.ENV_HEADER_TAG, default_open=True):
                             with dpg.group(horizontal=True):
                                 dpg.add_button(
                                     label="Search for Vagrant Machines",
@@ -67,7 +75,10 @@ class MenuElementsGUI: # Elements from GUI--------------------------------------
                                     width=333,
                                     tag=self.SEARCH_MACHINES_BTN_TAG
                                 )
-                                dpg.add_checkbox(label="Prune", tag=self.PRUNE_SEARCH_CHECKBOX_TAG)
+                                dpg.add_checkbox(tag=self.PRUNE_SEARCH_CHECKBOX_TAG)
+                                dpg.add_text("Prune")
+                                with dpg.tooltip(parent=dpg.last_item(), hide_on_activity=True):
+                                    dpg.add_text("Refresh the cache of the vagrant global-status\nCheck the Help section for more info.")
                             
                         with dpg.collapsing_header(label="Main Options (Create Start Stop/Halt Delete Package Reload)"):
                             with dpg.tree_node(label="Create environment"):
@@ -137,6 +148,22 @@ class MenuElementsGUI: # Elements from GUI--------------------------------------
                                             tag=self.PACK_ENV_BTN_TAG
                                         )
                                     
+                            #------------------------------------------------------------------------------------        
+                            with dpg.tree_node(label="Reload environment"):
+                                with dpg.group(horizontal=True):
+                                    dpg.add_text("Enter the ID of the machine you want to reload: ", bullet=True)
+                                    dpg.add_input_text(width=200, hint="ID", tag=self.RELOAD_ENV_INPUT_TAG)
+                                    dpg.add_button(
+                                        label="Reload",
+                                        callback=self.reload_vagrant_env,
+                                        width=80,
+                                        tag=self.RELOAD_ENV_BTN_TAG,
+                                        enabled=False
+                                    )
+                                    dpg.add_text("?")
+                                    with dpg.tooltip(parent=dpg.last_item(), hide_on_activity=True):
+                                        dpg.add_text("Applies the changes made in the Vagrantfile of the box")
+                                    
 # Plugins tab & Widgets-------------------------------------------------------------------------------------------------------------------------
                 with dpg.tab(label="Plugins", tag=self.PLUGINS_TAB):
                     with dpg.child_window(label="pluginswin", use_internal_label=True, border=True, auto_resize_x=True, auto_resize_y=True, tag=self.PLUGINS_WIN_TAG):
@@ -198,12 +225,12 @@ class MenuElementsGUI: # Elements from GUI--------------------------------------
                                                 dpg.add_combo(
                                                     label="  Theme Selector",
                                                     items=["Default Theme", 
-                                                           "Dark Theme", 
-                                                           "Light Theme", 
-                                                           "Dracula Theme", 
-                                                           "CyberPunk Theme", 
-                                                           "Dark Gruvbox Theme", 
-                                                           "Nyx Theme"], 
+                                                        "Dark Theme", 
+                                                        "Light Theme", 
+                                                        "Dracula Theme", 
+                                                        "CyberPunk Theme", 
+                                                        "Dark Gruvbox Theme", 
+                                                        "Nyx Theme"], 
                                                     callback=self.theme_callback,
                                                     default_value="Default Theme",
                                                     width=300,
@@ -212,8 +239,8 @@ class MenuElementsGUI: # Elements from GUI--------------------------------------
                                                 dpg.add_combo(
                                                     label="  Font Selector",
                                                     items=["Default Font", 
-                                                           "Conthrax-SemiBold", 
-                                                           "Average-Regular"], 
+                                                        "Conthrax-SemiBold", 
+                                                        "Average-Regular"], 
                                                     callback=self.font_callback,
                                                     default_value="Default Font",
                                                     width=300,
@@ -221,11 +248,11 @@ class MenuElementsGUI: # Elements from GUI--------------------------------------
                                                 )
                                                 dpg.add_button(label="Advanced Appearance Settings", tag=self.THEME_ADV_SETTINGS_TAG)
                                             with dpg.popup(tag=self.THEME_SETTINGS_ALERT_TAG,
-                                                           modal=False, 
-                                                           mousebutton=0,
-                                                           parent=dpg.last_item(),
-                                                           max_size=[1000,300],
-                                                           no_move=True):
+                                                        modal=False, 
+                                                        mousebutton=0,
+                                                        parent=dpg.last_item(),
+                                                        max_size=[1000,300],
+                                                        no_move=True):
                                                 
                                                 dpg.set_item_pos(self.THEME_SETTINGS_ALERT_TAG, pos=[540,350])
                                                 dpg.add_spacer(height=20)

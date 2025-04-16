@@ -4,6 +4,7 @@ import subprocess
 import tkinter
 from tkinter import filedialog as fd
 from tkinter import Tk
+import pyperclip
 from contextlib import contextmanager
 
 import dearpygui.dearpygui as dpg
@@ -41,7 +42,17 @@ class CallbacksCore(MenuElementsGUI):
     TAG_CHECKBOX_STOP_FORCE = "force_check_stop"
     TAG_CHECKBOX_PROVISION = "check_provision"
     SEARCH_MACHINES_BTN_TAG = "search_machines_button"
+    RELOAD_ENV_INPUT_TAG = "id_input_reload"
+    RELOAD_ENV_BTN_TAG = "reload_env_btn"
     
+# Right click context --------------------------------------------------------------------------------------------------------------------------------
+    def right_click_context_menu(self, sender, app_data, user_data):
+        def copy():
+            pyperclip.copy(user_data)
+            dpg.delete_item(popup)
+
+        with dpg.window(popup=True, no_focus_on_appearing=False, no_background=True) as popup:
+            dpg.add_button(label="Copy ID: " + str(user_data), callback=copy)
 
 # Loading popup --------------------------------------------------------------------------------------------------------------------------------------
     def show_loading_popup(self, message, loading_pos, popup_tag):
@@ -125,10 +136,10 @@ class CallbacksCore(MenuElementsGUI):
 
         with dpg.child_window(auto_resize_x=True, auto_resize_y=True, parent=self.ENV_HEADER_TAG, tag=self.TAG_TEMP_WINDOW):
             with dpg.table(header_row=True, row_background=True, 
-                           borders_innerH=True, borders_outerH=True, 
-                           borders_innerV=True, borders_outerV=True, 
-                           tag=self.TAG_TABLE, policy=dpg.mvTable_SizingStretchProp, 
-                           context_menu_in_body=True):
+                        borders_innerH=True, borders_outerH=True, 
+                        borders_innerV=True, borders_outerV=True, 
+                        tag=self.TAG_TABLE, policy=dpg.mvTable_SizingStretchProp, 
+                        context_menu_in_body=True):
 
                 dpg.add_table_column(label="ID")
                 dpg.add_table_column(label="Name")
@@ -138,12 +149,19 @@ class CallbacksCore(MenuElementsGUI):
 
                 for machine in instances:
                     with dpg.table_row():
-                        dpg.add_text(machine["id"])
+                        id_row = dpg.add_text(machine["id"])
+                        dpg.set_item_user_data(id_row, machine["id"])
                         dpg.add_text(machine["name"])
                         dpg.add_text(machine["provider"])
                         dpg.add_text(machine["state"])
                         dpg.add_text(machine["directory"])
-        
+                        
+                    with dpg.item_handler_registry() as registry:
+                        dpg.add_item_clicked_handler(button=dpg.mvMouseButton_Right, 
+                                                    callback=self.right_click_context_menu, 
+                                                    user_data=machine["id"])  # Pass the actual ID as user_data
+                    dpg.bind_item_handler_registry(id_row, registry)
+                
         dpg.set_item_label(self.SEARCH_MACHINES_BTN_TAG,"Refresh")
         dpg.set_item_width(self.SEARCH_MACHINES_BTN_TAG,100)
 
@@ -183,7 +201,7 @@ class CallbacksCore(MenuElementsGUI):
             messagebox.showerror("Error", f"Failed to start Vagrant: {str(e)}")
         finally:
             self.refresh(popup_tag=self.TAG_POPUP_CREATE)
-                     
+
 # Vagrant env start -----------------------------------------------------------------------------------------------------------------------------------------
     def start_vagrant_env(self, app_data, user_data):
         id_env_start: str = dpg.get_value(self.TAG_INPUT_START_ID)
@@ -255,8 +273,14 @@ class CallbacksCore(MenuElementsGUI):
                 messagebox.showerror("Error", f"Failed to delete the environment: {str(e)}")
             finally:
                 self.refresh(popup_tag=self.TAG_POPUP_DELETE)
-    
+
+# Package function of an env ---------------------------------------------------------------------------------------------------------------------------------
     def pack_vagrant_env (self, app_data, user_data):
         env_name_vb: str = dpg.get_value(self.TAG_INPUT_PACK_VB)
         box_output_name: str = dpg.get_value(self.TAG_INPUT_PACK_OUTPUT)
         print(f"{env_name_vb},{box_output_name}")
+        
+# Reload function of an env ---------------------------------------------------------------------------------------------------------------------------------
+    def reload_vagrant_env (self, app_data, user_data):
+        id_env_reload: str = dpg.get_value(self.RELOAD_ENV_INPUT_TAG)
+        print(f"{id_env_reload}")
