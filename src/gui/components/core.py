@@ -4,7 +4,6 @@ import subprocess
 import tkinter
 from tkinter import filedialog as fd
 from tkinter import Tk
-import pyperclip
 from contextlib import contextmanager
 
 import dearpygui.dearpygui as dpg
@@ -45,36 +44,7 @@ class CallbacksCore(MenuElementsGUI):
     RELOAD_ENV_INPUT_TAG = "id_input_reload"
     RELOAD_ENV_BTN_TAG = "reload_env_btn"
     
-# Right click context --------------------------------------------------------------------------------------------------------------------------------
-    def right_click_context_menu(self, sender, app_data, user_data):
-        def copy():
-            pyperclip.copy(user_data)
-            dpg.delete_item(popup)
 
-        with dpg.window(popup=True, no_focus_on_appearing=False, no_background=True) as popup:
-            dpg.add_button(label="Copy ID: " + str(user_data), callback=copy)
-
-# Loading popup --------------------------------------------------------------------------------------------------------------------------------------
-    def show_loading_popup(self, message, loading_pos, popup_tag):
-        if dpg.does_item_exist(popup_tag):
-            dpg.delete_item(popup_tag)
-            
-        with dpg.window(label="Loading", modal=True, show=True, tag=popup_tag, 
-                    no_title_bar=True, no_move=True, no_resize=True):
-            
-            dpg.add_text(message)
-            dpg.add_spacer(width=100)
-            dpg.add_loading_indicator(pos= loading_pos)
-            dpg.set_item_pos(popup_tag, [720,400])
-            dpg.split_frame()
-            
-# Refresh method -------------------------------------------------------------------------------------------------------------------------------------
-    def refresh(self, popup_tag):
-        dpg.delete_item(popup_tag)
-        self.show_loading_popup(message="Updating Vagrant environments list...", loading_pos=[177,50], popup_tag=self.TAG_POPUP_STATUS)
-        self.get_vagrant_status(None, "search_machines_button")
-        dpg.delete_item(self.TAG_POPUP_STATUS)
-            
 # Vagrant env list ------------------------------------------------------------------------------------------------------------------------------------
     def get_vagrant_status(self, app_data, user_data):
         self.show_loading_popup(message="Updating Vagrant environments list...", loading_pos=[177,50], popup_tag=self.TAG_POPUP_STATUS)
