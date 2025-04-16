@@ -12,6 +12,7 @@ from tkinter import messagebox
 
 from . import MenuElementsGUI
 
+#Decorator (stays in the app's pwd after executing a vagrant up that changes the dir in order to execute it)
 @contextmanager
 def change_directory(target_dir):
     current_dir: str  = os.getcwd()
@@ -51,14 +52,15 @@ class CallbacksCore(MenuElementsGUI):
             dpg.add_loading_indicator(pos= loading_pos)
             dpg.set_item_pos(popup_tag, [720,400])
             dpg.split_frame()
-    
+            
+# Refresh method -------------------------------------------------------------------------------------------------------------------------------------
     def refresh(self, popup_tag):
         dpg.delete_item(popup_tag)
         self.show_loading_popup(message="Updating Vagrant environments list...", loading_pos=[177,50], popup_tag=self.TAG_POPUP_STATUS)
         self.get_vagrant_status(None, "search_machines_button")
         dpg.delete_item(self.TAG_POPUP_STATUS)
             
-# Vagrant env list -----------------------------------------------------------------------------------------------------------------------------------
+# Vagrant env list ------------------------------------------------------------------------------------------------------------------------------------
     def get_vagrant_status(self, app_data, user_data):
         self.show_loading_popup(message="Updating Vagrant environments list...", loading_pos=[177,50], popup_tag=self.TAG_POPUP_STATUS)
         
@@ -137,7 +139,7 @@ class CallbacksCore(MenuElementsGUI):
         dpg.set_item_label(self.SEARCH_MACHINES_BTN_TAG,"Refresh")
         dpg.set_item_width(self.SEARCH_MACHINES_BTN_TAG,100)
 
-# Create function of an env---------------------------------------------------------------------------------------------------------------------------
+# Create function of an env --------------------------------------------------------------------------------------------------------------------------
     def create_vagrant_env(self, app_data, user_data):
         def select_folder():
             root = Tk()
@@ -174,7 +176,7 @@ class CallbacksCore(MenuElementsGUI):
         finally:
             self.refresh(popup_tag=self.TAG_POPUP_CREATE)
                      
-# Vagrant env start -----------------------------------------------------------------------------------------------------------------------------------
+# Vagrant env start -----------------------------------------------------------------------------------------------------------------------------------------
     def start_vagrant_env(self, app_data, user_data):
         id_env_start = dpg.get_value(self.TAG_INPUT_START_ID)
         
@@ -197,7 +199,7 @@ class CallbacksCore(MenuElementsGUI):
         finally:
             self.refresh(popup_tag=self.TAG_POPUP_START)
         
-# Stop function of an env-----------------------------------------------------------------------------------------------------------------------------------
+# Stop function of an env -----------------------------------------------------------------------------------------------------------------------------------
     def stop_vagrant_env(self, app_data, user_data):
         id_env_stop = dpg.get_value(self.TAG_INPUT_STOP_ID)
         
@@ -219,7 +221,7 @@ class CallbacksCore(MenuElementsGUI):
         finally:
             self.refresh(popup_tag=self.TAG_POPUP_STOP)
         
-# Delete function of an env---------------------------------------------------------------------------------------------------------------------------
+# Delete function of an env ---------------------------------------------------------------------------------------------------------------------------------
     def delete_vagrant_env(self, app_data, user_data):
         id_env_delete = dpg.get_value(self.TAG_INPUT_DELETE_ID)
         check_delete = messagebox.askokcancel("Info",
