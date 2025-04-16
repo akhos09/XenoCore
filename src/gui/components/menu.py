@@ -12,28 +12,32 @@ class MenuElementsGUI: # Elements from GUI--------------------------------------
     HELP_TAB = "help_tab"
     ABOUT_TAB = "about_tab"
     APPEARANCE_TAB = "appearance_tab"
-    
+    # Tabs --------------------------------------
     MAIN_WINDOW_TAG = "main_window"
     TAB_BAR_TAG = "tab_bar"
     MACHINES_WIN_TAG = "machines_win"
     ENV_HEADER_TAG = "env_header"
-    SEARCH_MACHINES_BTN_TAG = "search_machines_button"
-    PRUNE_SEARCH_CHECKBOX_TAG = "check_prune_search"
-    
-    FOLDER_SELECTION_BTN_TAG = "folder_selection_btn"
-    
-    STOP_ENV_INPUT_TAG = "id_input_stop"
-    STOP_ENV_BTN_TAG = "stop_env_btn"
-    
+    # Buttons --------------------------------------
+    SEARCH_MACHINES_BTN_TAG = "search_machines_btn"
     START_ENV_BTN_TAG = "start_env_btn"
-    TAG_INPUT_START_ID = "id_input_start"
-    
-    DELETE_ENV_INPUT_TAG = "id_input_delete"
+    STOP_ENV_BTN_TAG = "stop_env_btn"
     DELETE_ENV_BTN_TAG = "delete_env_btn"
-    
-    TAG_CHECKBOX_PROVISION = "check_provision"
-    FORCE_DELETE_CHECKBOX_TAG = "force_check_delete"
+    FOLDER_SELECTION_BTN_TAG = "folder_selection_btn"
+    PACK_ENV_BTN_TAG = "pack_env_btn"
+    RELOAD_ENV_BTN_TAG = "reload_env_btn"
+    # Checkboxes --------------------------------------
+    PRUNE_CHECKBOX_TAG = "check_prune_search"
+    PROVISION_CHECKBOX_TAG = "check_provision"
     FORCE_STOP_CHECKBOX_TAG = "force_check_stop"
+    FORCE_DELETE_CHECKBOX_TAG = "force_check_delete"
+    # Inputs ------------------------------------------
+    START_ENV_INPUT_TAG = "id_input_start"
+    STOP_ENV_INPUT_TAG = "id_input_stop"
+    DELETE_ENV_INPUT_TAG = "id_input_delete"
+    RELOAD_ENV_INPUT_TAG = "id_input_reload"
+    PACK_VB_INPUT_TAG = "id_input_pack_vboxname"
+    PACK_OUTPUT_INPUT_TAG = "output_input_name"
+    # Misc ------------------------------------------
     PLUGINS_WIN_TAG = "pluginswin"
     OTHER_WIN_TAG = "otherwin"
     THEME_SELECTOR_TAG = "theme_selector"
@@ -41,13 +45,7 @@ class MenuElementsGUI: # Elements from GUI--------------------------------------
     THEME_ADV_SETTINGS_TAG = "theme_advance_settings"
     THEME_SETTINGS_ALERT_TAG = "theme_settings_alert"
     THEME_SETTINGS_BTN_TAG = "theme_settings"
-    PACK_VB_INPUT_TAG = "id_input_pack_vboxname"
-    PACK_ENV_BTN_TAG = "pack_env_btn"
-    PACK_OUTPUT_INPUT_TAG = "output_input_name"
-    
-    RELOAD_ENV_INPUT_TAG = "id_input_reload"
-    RELOAD_ENV_BTN_TAG = "reload_env_btn"
-    
+
 # Initial settings (viewport)--------------------------------------------------------
     def initial_settings(self): 
         dpg.create_context()
@@ -75,7 +73,7 @@ class MenuElementsGUI: # Elements from GUI--------------------------------------
                                     width=333,
                                     tag=self.SEARCH_MACHINES_BTN_TAG
                                 )
-                                dpg.add_checkbox(tag=self.PRUNE_SEARCH_CHECKBOX_TAG)
+                                dpg.add_checkbox(tag=self.PRUNE_CHECKBOX_TAG)
                                 dpg.add_text("Prune")
                                 with dpg.tooltip(parent=dpg.last_item(), hide_on_activity=True):
                                     dpg.add_text("Refresh the cache of the vagrant global-status\nCheck the Help section for more info.")
@@ -95,14 +93,14 @@ class MenuElementsGUI: # Elements from GUI--------------------------------------
                             with dpg.tree_node(label="Start environment"):
                                 with dpg.group(horizontal=True):
                                     dpg.add_text("Enter the ID of the machine you want to start: ", bullet=True)
-                                    dpg.add_input_text(width=200, hint="ID", tag=self.TAG_INPUT_START_ID)
+                                    dpg.add_input_text(width=200, hint="ID", tag=self.START_ENV_INPUT_TAG)
                                     dpg.add_button(
                                         label="Start",
                                         callback=self.start_vagrant_env,
                                         width=80,
                                         tag=self.START_ENV_BTN_TAG
                                     )
-                                    dpg.add_checkbox(label="Provision", tag=self.TAG_CHECKBOX_PROVISION)
+                                    dpg.add_checkbox(label="Provision", tag=self.PROVISION_CHECKBOX_TAG)
                             
                             #------------------------------------------------------------------------------------        
                             with dpg.tree_node(label="Halt/Stop environment"):
@@ -157,8 +155,7 @@ class MenuElementsGUI: # Elements from GUI--------------------------------------
                                         label="Reload",
                                         callback=self.reload_vagrant_env,
                                         width=80,
-                                        tag=self.RELOAD_ENV_BTN_TAG,
-                                        enabled=False
+                                        tag=self.RELOAD_ENV_BTN_TAG
                                     )
                                     dpg.add_text("?")
                                     with dpg.tooltip(parent=dpg.last_item(), hide_on_activity=True):

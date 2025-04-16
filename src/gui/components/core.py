@@ -23,32 +23,34 @@ def change_directory(target_dir):
         os.chdir(current_dir)
         
 class CallbacksCore(MenuElementsGUI):
-    # Constants for tags
-    TAG_TABLE = "vagrant_table"
-    TAG_POPUP_STATUS = "searching_machines"
-    TAG_POPUP_STOP = "stopping_machine"
-    TAG_POPUP_DELETE = "destroying_machine"
-    TAG_POPUP_CREATE = "creating_machine"
-    TAG_POPUP_START = "starting_machine"
-    TAG_TEMP_WINDOW = "table_tempwin"
-    TAG_INPUT_DELETE_ID = "id_input_delete"
-    TAG_INPUT_START_ID = "id_input_start"
-    TAG_INPUT_STOP_ID = "id_input_stop"
-    TAG_INPUT_PACK_VB = "id_input_pack_vboxname"
-    TAG_INPUT_PACK_OUTPUT = "output_input_name"
-    TAG_CHECKBOX_PRUNE_SEARCH = "check_prune_search"
-    TAG_CHECKBOX_DELETE_FORCE = "force_check_delete"
-    TAG_CHECKBOX_STOP_FORCE = "force_check_stop"
-    TAG_CHECKBOX_PROVISION = "check_provision"
-    SEARCH_MACHINES_BTN_TAG = "search_machines_button"
+    # Misc---------------------------------------------
+    TABLE_TAG = "vagrant_table"
+    TEMP_WINDOW_TAG = "table_tempwin"
+    SEARCH_MACHINES_BTN_TAG = "search_machines_btn"
+    # Popups ------------------------------------------
+    POPUP_STATUS_TAG = "searching_machines"
+    POPUP_CREATE_TAG = "creating_machine"
+    POPUP_START_TAG = "starting_machine"
+    POPUP_STOP_TAG = "stopping_machine"
+    POPUP_DELETE_TAG = "destroying_machine"
+    POPUP_RELOAD_TAG = "reloading_machine"    
+    # Inputs ------------------------------------------
+    START_ENV_INPUT_TAG = "id_input_start"
+    STOP_ENV_INPUT_TAG = "id_input_stop"
+    DELETE_ENV_INPUT_TAG = "id_input_delete"
+    PACK_VB_INPUT_TAG = "id_input_pack_vboxname"
+    PACK_OUTPUT_INPUT_TAG = "output_input_name"
     RELOAD_ENV_INPUT_TAG = "id_input_reload"
-    RELOAD_ENV_BTN_TAG = "reload_env_btn"
+    # Checkboxes --------------------------------------
+    PRUNE_CHECKBOX_TAG = "check_prune_search"
+    FORCE_DELETE_CHECKBOX_TAG = "force_check_delete"
+    FORCE_STOP_CHECKBOX_TAG = "force_check_stop"
+    PROVISION_CHECKBOX_TAG = "check_provision"
     
-
 # Vagrant env list ------------------------------------------------------------------------------------------------------------------------------------
     def get_vagrant_status(self, app_data, user_data):
-        self.show_loading_popup(message="Updating Vagrant environments list...", loading_pos=[177,50], popup_tag=self.TAG_POPUP_STATUS)
-        check_prune = dpg.get_value(self.PRUNE_SEARCH_CHECKBOX_TAG)
+        self.show_loading_popup(message="Updating Vagrant environments list...", loading_pos=[177,50], popup_tag=self.POPUP_STATUS_TAG)
+        check_prune = dpg.get_value(self.PRUNE_CHECKBOX_TAG)
 
         try:
             if check_prune:               
@@ -60,18 +62,18 @@ class CallbacksCore(MenuElementsGUI):
             messagebox.showerror("Error", f"Failed to search the environments (Vagrant error): {e}")
         except Exception as e:
             messagebox.showerror(title='ERROR', message=f'Machines on your system could not be found. Make sure Vagrant is installed\n\n{e}')
-            dpg.delete_item(self.TAG_POPUP_STATUS)
+            dpg.delete_item(self.POPUP_STATUS_TAG)
             return
         
-        dpg.delete_item(self.TAG_POPUP_STATUS)
+        dpg.delete_item(self.POPUP_STATUS_TAG)
         
         if "no active Vagrant environments" in command_status.stdout:
             messagebox.showinfo(title='INFO', 
                             message='You don’t have any Vagrant environment in your computer. Try creating one with the options below.')
-            if dpg.does_item_exist(self.TAG_TABLE):
-                dpg.delete_item(self.TAG_TABLE)
-            if dpg.does_item_exist(self.TAG_TEMP_WINDOW):
-                dpg.delete_item(self.TAG_TEMP_WINDOW)
+            if dpg.does_item_exist(self.TABLE_TAG):
+                dpg.delete_item(self.TABLE_TAG)
+            if dpg.does_item_exist(self.TEMP_WINDOW_TAG):
+                dpg.delete_item(self.TEMP_WINDOW_TAG)
             return
         
         lines = command_status.stdout.splitlines() 
@@ -99,16 +101,16 @@ class CallbacksCore(MenuElementsGUI):
             }
             instances.append(instance)
 
-        if dpg.does_item_exist(self.TAG_TABLE):
-            dpg.delete_item(self.TAG_TABLE)
-        if dpg.does_item_exist(self.TAG_TEMP_WINDOW):
-            dpg.delete_item(self.TAG_TEMP_WINDOW)
+        if dpg.does_item_exist(self.TABLE_TAG):
+            dpg.delete_item(self.TABLE_TAG)
+        if dpg.does_item_exist(self.TEMP_WINDOW_TAG):
+            dpg.delete_item(self.TEMP_WINDOW_TAG)
 
-        with dpg.child_window(auto_resize_x=True, auto_resize_y=True, parent=self.ENV_HEADER_TAG, tag=self.TAG_TEMP_WINDOW):
+        with dpg.child_window(auto_resize_x=True, auto_resize_y=True, parent=self.ENV_HEADER_TAG, tag=self.TEMP_WINDOW_TAG):
             with dpg.table(header_row=True, row_background=True, 
                         borders_innerH=True, borders_outerH=True, 
                         borders_innerV=True, borders_outerV=True, 
-                        tag=self.TAG_TABLE, policy=dpg.mvTable_SizingStretchProp, 
+                        tag=self.TABLE_TAG, policy=dpg.mvTable_SizingStretchProp, 
                         context_menu_in_body=True):
 
                 dpg.add_table_column(label="ID")
@@ -158,7 +160,7 @@ class CallbacksCore(MenuElementsGUI):
             messagebox.showerror("Error", f"Directory does not exist: {folder_selected}")
             return
             
-        self.show_loading_popup(message="Creating the Vagrant environment...", loading_pos=[170,50], popup_tag=self.TAG_POPUP_CREATE)
+        self.show_loading_popup(message="Creating the Vagrant environment...", loading_pos=[170,50], popup_tag=self.POPUP_CREATE_TAG)
             
         try:
             with change_directory(folder_selected):
@@ -170,16 +172,16 @@ class CallbacksCore(MenuElementsGUI):
         except Exception as e:
             messagebox.showerror("Error", f"Failed to start Vagrant: {str(e)}")
         finally:
-            self.refresh(popup_tag=self.TAG_POPUP_CREATE)
+            self.refresh(popup_tag=self.POPUP_CREATE_TAG)
 
 # Vagrant env start -----------------------------------------------------------------------------------------------------------------------------------------
     def start_vagrant_env(self, app_data, user_data):
-        id_env_start: str = dpg.get_value(self.TAG_INPUT_START_ID)
+        id_env_start: str = dpg.get_value(self.START_ENV_INPUT_TAG)
         
-        self.show_loading_popup(message="Booting up the Vagrant environment...", loading_pos=[170,50], popup_tag=self.TAG_POPUP_START)
+        self.show_loading_popup(message="Booting up the Vagrant environment...", loading_pos=[170,50], popup_tag=self.POPUP_START_TAG)
                 
         try:
-            provision_check = dpg.get_value(self.TAG_CHECKBOX_PROVISION)
+            provision_check = dpg.get_value(self.PROVISION_CHECKBOX_TAG)
 
             if provision_check:
                 cmd = f'start /wait cmd /c "vagrant up {id_env_start} --provision & pause"'
@@ -193,16 +195,16 @@ class CallbacksCore(MenuElementsGUI):
         except Exception as e:
             messagebox.showerror("Error", f"Unexpected error: {str(e)}")
         finally:
-            self.refresh(popup_tag=self.TAG_POPUP_START)
+            self.refresh(popup_tag=self.POPUP_START_TAG)
         
 # Stop function of an env -----------------------------------------------------------------------------------------------------------------------------------
     def stop_vagrant_env(self, app_data, user_data):
-        id_env_stop: str = dpg.get_value(self.TAG_INPUT_STOP_ID)
+        id_env_stop: str = dpg.get_value(self.STOP_ENV_INPUT_TAG)
         
-        self.show_loading_popup(message="Stopping the Vagrant environment...", loading_pos=[170,50], popup_tag=self.TAG_POPUP_STOP)
+        self.show_loading_popup(message="Stopping the Vagrant environment...", loading_pos=[170,50], popup_tag=self.POPUP_STOP_TAG)
 
         try:
-            force_stop_check_var =  dpg.get_value(self.TAG_CHECKBOX_STOP_FORCE)
+            force_stop_check_var =  dpg.get_value(self.FORCE_STOP_CHECKBOX_TAG)
             if force_stop_check_var:
                 cmd = f"vagrant halt -f {id_env_stop}"
             else:
@@ -215,20 +217,20 @@ class CallbacksCore(MenuElementsGUI):
         except Exception as e: 
             messagebox.showerror(title='ERROR', message=f'The environment {id_env_stop} could not be stopped. Make sure Vagrant is installed.\n\n{e}')
         finally:
-            self.refresh(popup_tag=self.TAG_POPUP_STOP)
+            self.refresh(popup_tag=self.POPUP_STOP_TAG)
         
 # Delete function of an env ---------------------------------------------------------------------------------------------------------------------------------
     def delete_vagrant_env(self, app_data, user_data):
-        id_env_delete: str = dpg.get_value(self.TAG_INPUT_DELETE_ID)
+        id_env_delete: str = dpg.get_value(self.DELETE_ENV_INPUT_TAG)
         check_delete = messagebox.askokcancel("Info",
         f"This option will delete all of the files (but not the Vagrantfile and the additional ones) of the environment {id_env_delete}\nAre you sure to do this?")
         
         if check_delete:
             
-            self.show_loading_popup(message="Destroying the Vagrant environment...", loading_pos=[170,50], popup_tag=self.TAG_POPUP_DELETE)
+            self.show_loading_popup(message="Destroying the Vagrant environment...", loading_pos=[170,50], popup_tag=self.POPUP_DELETE_TAG)
             
             try:
-                force_delete_check = dpg.get_value(self.TAG_CHECKBOX_DELETE_FORCE)
+                force_delete_check = dpg.get_value(self.FORCE_DELETE_CHECKBOX_TAG)
                 
                 if force_delete_check:
                     cmd: str = f"vagrant destroy {id_env_delete} -f"
@@ -242,15 +244,26 @@ class CallbacksCore(MenuElementsGUI):
             except Exception as e:
                 messagebox.showerror("Error", f"Failed to delete the environment: {str(e)}")
             finally:
-                self.refresh(popup_tag=self.TAG_POPUP_DELETE)
+                self.refresh(popup_tag=self.POPUP_DELETE_TAG)
 
 # Package function of an env ---------------------------------------------------------------------------------------------------------------------------------
     def pack_vagrant_env (self, app_data, user_data):
-        env_name_vb: str = dpg.get_value(self.TAG_INPUT_PACK_VB)
-        box_output_name: str = dpg.get_value(self.TAG_INPUT_PACK_OUTPUT)
+        env_name_vb: str = dpg.get_value(self.PACK_VB_INPUT_TAG)
+        box_output_name: str = dpg.get_value(self.PACK_OUTPUT_INPUT_TAG)
         print(f"{env_name_vb},{box_output_name}")
         
 # Reload function of an env ---------------------------------------------------------------------------------------------------------------------------------
     def reload_vagrant_env (self, app_data, user_data):
         id_env_reload: str = dpg.get_value(self.RELOAD_ENV_INPUT_TAG)
-        print(f"{id_env_reload}")
+        self.show_loading_popup(message="Reloading the Vagrant environment...", loading_pos=[170,50], popup_tag=self.POPUP_RELOAD_TAG)
+                
+        try:
+            cmd = f'start /wait cmd /c "vagrant reload {id_env_reload} & pause"'
+            subprocess.run(cmd, shell=True, check=True)
+
+        except subprocess.CalledProcessError as e:
+            messagebox.showerror("Error", f"Failed to reload the environment (Vagrant error): {e}")
+        except Exception as e:
+            messagebox.showerror("Error", f"Unexpected error: {str(e)}")
+        finally:
+            self.refresh(popup_tag=self.POPUP_RELOAD_TAG)
