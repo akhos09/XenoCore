@@ -27,6 +27,7 @@ class CallbacksCore(MenuElementsGUI):
     TABLE_TAG = "vagrant_table"
     TEMP_WINDOW_TAG = "table_tempwin"
     SEARCH_MACHINES_BTN_TAG = "search_machines_btn"
+    ROW_GROUP_TAG = "row_group"
     # Popups ------------------------------------------
     POPUP_STATUS_TAG = "searching_machines"
     POPUP_CREATE_TAG = "creating_machine"
@@ -123,16 +124,19 @@ class CallbacksCore(MenuElementsGUI):
                     with dpg.table_row():
                         id_row = dpg.add_text(machine["id"])
                         dpg.set_item_user_data(id_row, machine["id"])
-                        dpg.add_text(machine["name"])
-                        dpg.add_text(machine["provider"])
-                        dpg.add_text(machine["state"])
-                        dpg.add_text(machine["directory"])
+                        name_row = dpg.add_text(machine["name"])
+                        provider_row = dpg.add_text(machine["provider"])
+                        machine_row = dpg.add_text(machine["state"])
+                        dir_row = dpg.add_text(machine["directory"])
                         
                     with dpg.item_handler_registry() as registry:
                         dpg.add_item_clicked_handler(button=dpg.mvMouseButton_Right, 
                                                     callback=self.right_click_context_menu, 
-                                                    user_data=machine["id"])  # Pass the actual ID as user_data
-                    dpg.bind_item_handler_registry(id_row, registry)
+                                                    user_data=machine["id"])
+                        
+                    rows = [id_row, name_row, provider_row, machine_row, dir_row]
+                    for row in rows:
+                        dpg.bind_item_handler_registry(row, registry)
                 
         dpg.set_item_label(self.SEARCH_MACHINES_BTN_TAG,"Refresh")
         dpg.set_item_width(self.SEARCH_MACHINES_BTN_TAG,100)

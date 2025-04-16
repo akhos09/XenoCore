@@ -53,8 +53,8 @@ class CallbacksGUI(MenuElementsGUI):  # Callbacks Class for the actions of the w
             dpg.delete_item("right_click_popup")
 
         with dpg.window(tag="right_click_popup", popup=True, no_focus_on_appearing=False, height=90, width=100):
-            dpg.add_button(label="Copy ID: " + str(user_data), callback=copy)
-            dpg.add_button(label="Connect: " + str(user_data), callback=connect)
+            dpg.add_button(label="Copy " + str(user_data), callback=copy)
+            dpg.add_button(label="Connect " + str(user_data), callback=connect)
 
 # Loading popup --------------------------------------------------------------------------------------------------------------------------------------
     def show_loading_popup(self, message, loading_pos, popup_tag):
