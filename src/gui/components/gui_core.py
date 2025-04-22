@@ -14,7 +14,6 @@ class CallbacksGUI(MenuElementsGUI):  # Callbacks Class for the actions of the w
         "Dark Theme": dark_theme,
         "Light Theme": light_theme,
         "Default Theme": default_theme,
-        "Dracula Theme": dracula_theme,
         "CyberPunk Theme": cyberpunk_theme,
         "Dark Gruvbox Theme": gruvboxdark_theme,
         "Nyx Theme": nyx_theme
@@ -28,7 +27,7 @@ class CallbacksGUI(MenuElementsGUI):  # Callbacks Class for the actions of the w
             
 # Fonts selector--------------------------------------------------------------------------------------------------------------------------------------
     def font_callback(self, app_data, user_data): 
-        reset_font_binding (None if user_data == "Default Font" else user_data)
+        reset_font_binding (None if user_data == "Default Theme" else user_data)
         
 # Advanced theme settings ----------------------------------------------------------------------------------------------------------------------------
     def advanced_theme_callback(self, app_data, user_data):

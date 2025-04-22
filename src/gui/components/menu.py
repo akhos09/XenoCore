@@ -88,7 +88,7 @@ class MenuElementsGUI: # Elements from GUI--------------------------------------
                                         width=155,
                                         tag=self.FOLDER_SELECTION_BTN_TAG
                                     )
-                                    
+                            dpg.add_separator()
                             #------------------------------------------------------------------------------------        
                             with dpg.tree_node(label="Start environment"):
                                 with dpg.group(horizontal=True):
@@ -101,7 +101,7 @@ class MenuElementsGUI: # Elements from GUI--------------------------------------
                                         tag=self.START_ENV_BTN_TAG
                                     )
                                     dpg.add_checkbox(label="Provision", tag=self.PROVISION_CHECKBOX_TAG)
-                            
+                            dpg.add_separator()
                             #------------------------------------------------------------------------------------        
                             with dpg.tree_node(label="Halt/Stop environment"):
                                 with dpg.group(horizontal=True):
@@ -114,7 +114,7 @@ class MenuElementsGUI: # Elements from GUI--------------------------------------
                                         tag=self.STOP_ENV_BTN_TAG
                                     )
                                     dpg.add_checkbox(label="Force", tag=self.FORCE_STOP_CHECKBOX_TAG)
-                            
+                            dpg.add_separator()
                             #------------------------------------------------------------------------------------        
                             with dpg.tree_node(label="Delete environment"):
                                 with dpg.group(horizontal=True):
@@ -127,7 +127,7 @@ class MenuElementsGUI: # Elements from GUI--------------------------------------
                                         tag=self.DELETE_ENV_BTN_TAG
                                     )
                                     dpg.add_checkbox(label="Force", tag=self.FORCE_DELETE_CHECKBOX_TAG)
-                            
+                            dpg.add_separator()
                             #------------------------------------------------------------------------------------
                             with dpg.tree_node(label="Package environment"):
                                 with dpg.group(horizontal=False):
@@ -145,7 +145,7 @@ class MenuElementsGUI: # Elements from GUI--------------------------------------
                                             width=95,
                                             tag=self.PACK_ENV_BTN_TAG
                                         )
-                                    
+                            dpg.add_separator()        
                             #------------------------------------------------------------------------------------        
                             with dpg.tree_node(label="Reload environment"):
                                 with dpg.group(horizontal=True):
@@ -160,7 +160,7 @@ class MenuElementsGUI: # Elements from GUI--------------------------------------
                                     dpg.add_text("?")
                                     with dpg.tooltip(parent=dpg.last_item(), hide_on_activity=True):
                                         dpg.add_text("Applies the changes made in the Vagrantfile of the box")
-                                    
+                            dpg.add_separator()        
 # Plugins tab & Widgets-------------------------------------------------------------------------------------------------------------------------
                 with dpg.tab(label="Plugins", tag=self.PLUGINS_TAB):
                     with dpg.child_window(label="pluginswin", use_internal_label=True, border=True, auto_resize_x=True, auto_resize_y=True, tag=self.PLUGINS_WIN_TAG):
@@ -223,8 +223,7 @@ class MenuElementsGUI: # Elements from GUI--------------------------------------
                                                     label="  Theme Selector",
                                                     items=["Default Theme", 
                                                         "Dark Theme", 
-                                                        "Light Theme", 
-                                                        "Dracula Theme", 
+                                                        "Light Theme",
                                                         "CyberPunk Theme", 
                                                         "Dark Gruvbox Theme", 
                                                         "Nyx Theme"], 

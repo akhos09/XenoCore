@@ -6,47 +6,50 @@ def default_theme() -> Union[str, int]:
     with dpg.theme() as theme_id:
         with dpg.theme_component(0):
             # Text and Background Colors
-            dpg.add_theme_color(dpg.mvThemeCol_Text                   , (220, 220, 220, 255))  # Light gray text
-            dpg.add_theme_color(dpg.mvThemeCol_TextDisabled           , (128, 128, 128, 255))  # Disabled text
-            dpg.add_theme_color(dpg.mvThemeCol_WindowBg               , (45, 45, 45, 255))     # Dark background
-            dpg.add_theme_color(dpg.mvThemeCol_ChildBg                , (35, 35, 35, 255))     # Slightly darker child background
-            dpg.add_theme_color(dpg.mvThemeCol_PopupBg                , (50, 50, 50, 230))     # Popup background
+            dpg.add_theme_color(dpg.mvThemeCol_Text                   , (248, 248, 242, 255))  # Dracula Foreground
+            dpg.add_theme_color(dpg.mvThemeCol_TextDisabled           , (98, 114, 164, 255))  # Dracula Comment
+            dpg.add_theme_color(dpg.mvThemeCol_WindowBg               , (40, 42, 54, 255))   # Dracula Background
+            dpg.add_theme_color(dpg.mvThemeCol_ChildBg                , (33, 34, 44, 255))   # Slightly darker background
+            dpg.add_theme_color(dpg.mvThemeCol_PopupBg                , (40, 42, 54, 230))   # Popup with slight transparency
             
+            dpg.add_theme_color(dpg.mvThemeCol_HeaderHovered          , (98, 114, 164, 220))  # When hovered
+            dpg.add_theme_color(dpg.mvThemeCol_HeaderActive           , (98, 114, 164, 255))  # When active/expanded
+            dpg.add_theme_color(dpg.mvThemeCol_Header, (100, 100, 145, 255)) 
+
             # Interactive Elements
-            dpg.add_theme_color(dpg.mvThemeCol_Button                 , (70, 70, 70, 180))     # Button color
-            dpg.add_theme_color(dpg.mvThemeCol_ButtonHovered          , (90, 90, 90, 220))     # Button hover
-            dpg.add_theme_color(dpg.mvThemeCol_ButtonActive           , (100, 100, 100, 255))  # Button active
+            dpg.add_theme_color(dpg.mvThemeCol_Button                 , (98, 114, 164, 180)) # Dracula Purple
+            dpg.add_theme_color(dpg.mvThemeCol_ButtonHovered          , (189, 147, 249, 220)) # Dracula Purple Bright
+            dpg.add_theme_color(dpg.mvThemeCol_ButtonActive           , (255, 121, 198, 255)) # Dracula Pink
             
             # Frames and Borders
-            dpg.add_theme_color(dpg.mvThemeCol_Border                 , (80, 80, 80, 150))     # Border color
-            dpg.add_theme_color(dpg.mvThemeCol_FrameBg                , (55, 55, 55, 200))     # Frame background
-            dpg.add_theme_color(dpg.mvThemeCol_FrameBgHovered         , (75, 75, 75, 180))     # Frame hover
-            dpg.add_theme_color(dpg.mvThemeCol_FrameBgActive          , (65, 65, 65, 255))     # Frame active
+            dpg.add_theme_color(dpg.mvThemeCol_Border                 , (98, 114, 164, 150)) # Dracula Purple
+            dpg.add_theme_color(dpg.mvThemeCol_FrameBg                , (68, 71, 90, 200))   # Dark frame background
+            dpg.add_theme_color(dpg.mvThemeCol_FrameBgHovered         , (98, 114, 164, 100)) # Dracula Purple
             
-            # Scrollbar and Resize Grip
-            dpg.add_theme_color(dpg.mvThemeCol_ScrollbarBg            , (40, 40, 40, 255))     # Scrollbar background
-            dpg.add_theme_color(dpg.mvThemeCol_ScrollbarGrab          , (80, 80, 80, 255))     # Scrollbar grab
-            dpg.add_theme_color(dpg.mvThemeCol_ScrollbarGrabHovered   , (100, 100, 100, 255))  # Scrollbar grab hover
-            dpg.add_theme_color(dpg.mvThemeCol_ScrollbarGrabActive    , (120, 120, 120, 255))  # Scrollbar grab active
+            # Highlights and Selections
+            dpg.add_theme_color(dpg.mvThemeCol_CheckMark              , (80, 250, 123, 255)) # Dracula Green
+            dpg.add_theme_color(dpg.mvThemeCol_SliderGrab             , (189, 147, 249, 200)) # Dracula Purple
+            dpg.add_theme_color(dpg.mvThemeCol_TextSelectedBg         , (255, 121, 198, 100)) # Dracula Pink
             
-            # Highlights and Accents
-            dpg.add_theme_color(dpg.mvThemeCol_CheckMark              , (150, 150, 150, 255))  # Checkbox mark
-            dpg.add_theme_color(dpg.mvThemeCol_SliderGrab             , (120, 120, 120, 200))  # Slider grab
-            dpg.add_theme_color(dpg.mvThemeCol_SliderGrabActive       , (150, 150, 150, 255))  # Slider grab active
-            dpg.add_theme_color(dpg.mvThemeCol_TextSelectedBg         , (100, 100, 100, 100))  # Text selection background
+            # Special Categories
+            dpg.add_theme_color(dpg.mvPlotCol_Line                    , (139, 233, 253, 255), category=dpg.mvThemeCat_Plots) # Dracula Cyan
+            dpg.add_theme_color(dpg.mvNodeCol_NodeBackground          , (68, 71, 90, 255), category=dpg.mvThemeCat_Nodes)
+            dpg.add_theme_color(dpg.mvNodeCol_NodeOutline             , (98, 114, 164, 255), category=dpg.mvThemeCat_Nodes)
             
-            # Header and Separator
-            dpg.add_theme_color(dpg.mvThemeCol_Header                 , (60, 60, 60, 255))     # Header
-            dpg.add_theme_color(dpg.mvThemeCol_HeaderHovered          , (70, 70, 70, 255))     # Header hover
-            dpg.add_theme_color(dpg.mvThemeCol_HeaderActive           , (80, 80, 80, 255))     # Header active
-            dpg.add_theme_color(dpg.mvThemeCol_Separator              , (80, 80, 80, 255))     # Separator
-            
+            dpg.add_theme_style(dpg.mvStyleVar_ItemSpacing, 18, 18) 
             # Styles
             dpg.add_theme_style(dpg.mvStyleVar_WindowRounding, 5)
             dpg.add_theme_style(dpg.mvStyleVar_FrameRounding, 3)
             dpg.add_theme_style(dpg.mvStyleVar_ScrollbarRounding, 3)
             dpg.add_theme_style(dpg.mvStyleVar_GrabRounding, 3)
-            dpg.add_theme_style(dpg.mvStyleVar_ItemSpacing, 10, 10) 
+            dpg.add_theme_style(dpg.mvStyleVar_ItemSpacing, 10, 10)
+            
+            dpg.add_theme_style(dpg.mvStyleVar_ItemSpacing, 12, 12)
+            dpg.add_theme_style(dpg.mvStyleVar_IndentSpacing, 25)  # Spacing for indentation
+            # Separator styling
+            dpg.add_theme_color(dpg.mvThemeCol_Separator, (98, 114, 164, 530))  # Dracula Purple for separators
+            dpg.add_theme_style(dpg.mvStyleVar_SeparatorTextBorderSize, 1)  # Border size for text separators
+            dpg.add_theme_style(dpg.mvStyleVar_SeparatorTextAlign, 0.5)  # Center alignment for text separators
             
     return theme_id
 
@@ -251,46 +254,6 @@ def light_theme() -> Union[str, int]:
 
     return theme_id
 
-def dracula_theme() -> Union[str, int]:
-    with dpg.theme() as theme_id:
-        with dpg.theme_component(0):
-            # Text and Background Colors
-            dpg.add_theme_color(dpg.mvThemeCol_Text                   , (248, 248, 242, 255))  # Dracula Foreground
-            dpg.add_theme_color(dpg.mvThemeCol_TextDisabled           , (98, 114, 164, 255))  # Dracula Comment
-            dpg.add_theme_color(dpg.mvThemeCol_WindowBg               , (40, 42, 54, 255))   # Dracula Background
-            dpg.add_theme_color(dpg.mvThemeCol_ChildBg                , (33, 34, 44, 255))   # Slightly darker background
-            dpg.add_theme_color(dpg.mvThemeCol_PopupBg                , (40, 42, 54, 230))   # Popup with slight transparency
-            
-            # Interactive Elements
-            dpg.add_theme_color(dpg.mvThemeCol_Button                 , (98, 114, 164, 180)) # Dracula Purple
-            dpg.add_theme_color(dpg.mvThemeCol_ButtonHovered          , (189, 147, 249, 220)) # Dracula Purple Bright
-            dpg.add_theme_color(dpg.mvThemeCol_ButtonActive           , (255, 121, 198, 255)) # Dracula Pink
-            
-            # Frames and Borders
-            dpg.add_theme_color(dpg.mvThemeCol_Border                 , (98, 114, 164, 150)) # Dracula Purple
-            dpg.add_theme_color(dpg.mvThemeCol_FrameBg                , (68, 71, 90, 200))   # Dark frame background
-            dpg.add_theme_color(dpg.mvThemeCol_FrameBgHovered         , (98, 114, 164, 100)) # Dracula Purple
-            
-            # Highlights and Selections
-            dpg.add_theme_color(dpg.mvThemeCol_CheckMark              , (80, 250, 123, 255)) # Dracula Green
-            dpg.add_theme_color(dpg.mvThemeCol_SliderGrab             , (189, 147, 249, 200)) # Dracula Purple
-            dpg.add_theme_color(dpg.mvThemeCol_TextSelectedBg         , (255, 121, 198, 100)) # Dracula Pink
-            
-            # Special Categories
-            dpg.add_theme_color(dpg.mvPlotCol_Line                    , (139, 233, 253, 255), category=dpg.mvThemeCat_Plots) # Dracula Cyan
-            dpg.add_theme_color(dpg.mvNodeCol_NodeBackground          , (68, 71, 90, 255), category=dpg.mvThemeCat_Nodes)
-            dpg.add_theme_color(dpg.mvNodeCol_NodeOutline             , (98, 114, 164, 255), category=dpg.mvThemeCat_Nodes)
-            
-            dpg.add_theme_style(dpg.mvStyleVar_ItemSpacing, 18, 18) 
-            # Styles
-            dpg.add_theme_style(dpg.mvStyleVar_WindowRounding, 5)
-            dpg.add_theme_style(dpg.mvStyleVar_FrameRounding, 3)
-            dpg.add_theme_style(dpg.mvStyleVar_ScrollbarRounding, 3)
-            dpg.add_theme_style(dpg.mvStyleVar_GrabRounding, 3)
-            dpg.add_theme_style(dpg.mvStyleVar_ItemSpacing, 10, 10)  
-            
-
-    return theme_id
 
 def cyberpunk_theme() -> Union[str, int]:
     with dpg.theme() as theme_id:
