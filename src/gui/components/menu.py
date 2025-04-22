@@ -78,7 +78,7 @@ class MenuElementsGUI: # Elements from GUI--------------------------------------
                                 with dpg.tooltip(parent=dpg.last_item(), hide_on_activity=True):
                                     dpg.add_text("Refresh the cache of the vagrant global-status\nCheck the Help section for more info.")
                             
-                        with dpg.collapsing_header(label="Main Options (Create Start Stop/Halt Delete Package Reload)"):
+                        with dpg.collapsing_header(label="Main Options (Create Start Halt/Stop Delete Package Reload)"):
                             with dpg.tree_node(label="Create environment"):
                                 with dpg.group(horizontal=True):
                                     dpg.add_text("Select the folder containing the Vagrantfile", bullet=True)
@@ -135,7 +135,7 @@ class MenuElementsGUI: # Elements from GUI--------------------------------------
                                         dpg.add_text("Enter the name of the machine (IN VirtualBox GUI) you want to package:", bullet=True)
                                         dpg.add_input_text(width=220, hint="Name (VboxGUI)", tag=self.PACK_VB_INPUT_TAG)
                                     with dpg.group(horizontal=True):
-                                        dpg.add_text("Enter the name of the output box (without the .box format the end):", bullet=True)
+                                        dpg.add_text("Enter the name of the output box (without the .box format at the end):", bullet=True)
                                         dpg.add_input_text(width=220, hint="Output name (.box)", tag=self.PACK_OUTPUT_INPUT_TAG)
                                     with dpg.group(horizontal=True):
                                         dpg.add_spacer(height=10,width=23) 

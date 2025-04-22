@@ -1,13 +1,10 @@
 import os
-import sys
 import subprocess
-import tkinter
 from tkinter import filedialog as fd
 from tkinter import Tk
 from contextlib import contextmanager
 
 import dearpygui.dearpygui as dpg
-import ctypes
 from tkinter import messagebox
 
 from . import MenuElementsGUI
@@ -21,7 +18,7 @@ def change_directory(target_dir):
         yield
     finally:
         os.chdir(current_dir)
-        
+
 class CallbacksCore(MenuElementsGUI):
     # Misc---------------------------------------------
     TABLE_TAG = "vagrant_table"
@@ -35,6 +32,7 @@ class CallbacksCore(MenuElementsGUI):
     POPUP_STOP_TAG = "stopping_machine"
     POPUP_DELETE_TAG = "destroying_machine"
     POPUP_RELOAD_TAG = "reloading_machine"    
+    POPUP_PACK_TAG = "packaging_machine"
     # Inputs ------------------------------------------
     START_ENV_INPUT_TAG = "id_input_start"
     STOP_ENV_INPUT_TAG = "id_input_stop"
@@ -47,7 +45,7 @@ class CallbacksCore(MenuElementsGUI):
     FORCE_DELETE_CHECKBOX_TAG = "force_check_delete"
     FORCE_STOP_CHECKBOX_TAG = "force_check_stop"
     PROVISION_CHECKBOX_TAG = "check_provision"
-    
+
 # Vagrant env list ------------------------------------------------------------------------------------------------------------------------------------
     def get_vagrant_status(self, app_data, user_data):
         self.show_loading_popup(message="Updating Vagrant environments list...", loading_pos=[177,50], popup_tag=self.POPUP_STATUS_TAG)
@@ -153,7 +151,7 @@ class CallbacksCore(MenuElementsGUI):
                 return folder_selected
             finally:
                 root.destroy()
-
+        
         folder_selected = select_folder()
         
         if not folder_selected:
@@ -200,7 +198,7 @@ class CallbacksCore(MenuElementsGUI):
             messagebox.showerror("Error", f"Unexpected error: {str(e)}")
         finally:
             self.refresh(popup_tag=self.POPUP_START_TAG)
-        
+
 # Stop function of an env -----------------------------------------------------------------------------------------------------------------------------------
     def stop_vagrant_env(self, app_data, user_data):
         id_env_stop: str = dpg.get_value(self.STOP_ENV_INPUT_TAG)
@@ -222,7 +220,7 @@ class CallbacksCore(MenuElementsGUI):
             messagebox.showerror(title='ERROR', message=f'The environment {id_env_stop} could not be stopped. Make sure Vagrant is installed.\n\n{e}')
         finally:
             self.refresh(popup_tag=self.POPUP_STOP_TAG)
-        
+
 # Delete function of an env ---------------------------------------------------------------------------------------------------------------------------------
     def delete_vagrant_env(self, app_data, user_data):
         id_env_delete: str = dpg.get_value(self.DELETE_ENV_INPUT_TAG)
@@ -252,10 +250,42 @@ class CallbacksCore(MenuElementsGUI):
 
 # Package function of an env ---------------------------------------------------------------------------------------------------------------------------------
     def pack_vagrant_env (self, app_data, user_data):
+        def select_folder():
+            root = Tk()
+            root.withdraw()
+            root.wm_attributes("-topmost", 1)
+            
+            try:
+                folder_selected = fd.askdirectory(title="Select the destination of the .box file")
+                return folder_selected
+            finally:
+                root.destroy()
+
+        folder_selected = select_folder()
+        
+        if not folder_selected:
+            messagebox.showwarning("Warning", "No directory selected")
+            return
+
+        if not os.path.exists(folder_selected):
+            messagebox.showerror("Error", f"Directory does not exist: {folder_selected}")
+            return
+        
         env_name_vb: str = dpg.get_value(self.PACK_VB_INPUT_TAG)
         box_output_name: str = dpg.get_value(self.PACK_OUTPUT_INPUT_TAG)
-        print(f"{env_name_vb},{box_output_name}")
-        
+        self.show_loading_popup(message="Packaging the Vagrant environment...", loading_pos=[170,50], popup_tag=self.POPUP_PACK_TAG)
+
+        try:
+            cmd = f'start /wait cmd /c vagrant package --base {env_name_vb} --output {folder_selected}/{box_output_name}.box'
+            subprocess.run(cmd, shell=True, check=True)
+            
+        except subprocess.CalledProcessError as e:
+            messagebox.showerror("Error", f"Failed to pack the environment (Vagrant error): {e}")
+        except Exception as e:
+            messagebox.showerror("Error", f"Unexpected error: {str(e)}")
+        finally:
+            self.refresh(popup_tag=self.POPUP_PACK_TAG)
+
 # Reload function of an env ---------------------------------------------------------------------------------------------------------------------------------
     def reload_vagrant_env (self, app_data, user_data):
         id_env_reload: str = dpg.get_value(self.RELOAD_ENV_INPUT_TAG)

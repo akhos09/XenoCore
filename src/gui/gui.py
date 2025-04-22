@@ -4,11 +4,9 @@ from tkinter import messagebox
 
 import ctypes
 
-from .components import MenuElementsGUI
 from .components.core import CallbacksCore
 from .components.gui_core import CallbacksGUI
 from .components.themes import *
-from .components.fonts import reset_font_binding
 
 # Main GUI class (Screen and Icon settings)------------------------------------------------------------------
 class XenoVagrantGUI(CallbacksGUI, CallbacksCore):
@@ -30,6 +28,3 @@ def main():
         app.menu()
     finally:
         dpg.destroy_context()
-
-if __name__ == "__main__":
-    main()
