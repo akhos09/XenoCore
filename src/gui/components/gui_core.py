@@ -61,7 +61,7 @@ class CallbacksGUI(MenuElementsGUI):  # Callbacks Class for the actions of the w
             dpg.delete_item(popup_tag)
             
         with dpg.window(label="Loading", modal=True, show=True, tag=popup_tag, 
-                    no_title_bar=True, no_move=True, no_resize=True):
+                    no_title_bar=True, no_move=True, no_resize=True,autosize=True):
             
             dpg.add_text(message)
             dpg.add_spacer(width=100)

@@ -25,6 +25,7 @@ class CallbacksCore(MenuElementsGUI):
     TEMP_WINDOW_TAG = "table_tempwin"
     SEARCH_MACHINES_BTN_TAG = "search_machines_btn"
     ROW_GROUP_TAG = "row_group"
+    ENV_HEADER_TAG = "env_header"
     # Popups ------------------------------------------
     POPUP_STATUS_TAG = "searching_machines"
     POPUP_CREATE_TAG = "creating_machine"
@@ -325,15 +326,14 @@ class CallbacksCore(MenuElementsGUI):
             self.refresh(popup_tag=self.POPUP_RELOAD_TAG)
 
 #PLUGINS-----------------------------------------------------------------------------------------------------------------------------------------------------
-
+# Install plugin function -----------------------------------------------------------------------------------------------------------------------------------
     def install_vagrant_plg(self, app_data, user_data):
         name_plg_install: str = dpg.get_value(self.INSTALL_PLG_INPUT_TAG)
-        
         self.show_loading_popup(message=f"Installing the {name_plg_install} plugin...", loading_pos=[170,50], popup_tag=self.POPUP_INSTALL_PLG_TAG)
 
         try:
-            cmd = f"vagrant plugin uninstall {name_plg_install}"
-            subprocess.run(cmd, check=True)
+            cmd = f'start /wait cmd /c "set VAGRANT_DISABLE_STRICT_DEPENDENCY_ENFORCEMENT=1 && vagrant plugin install {name_plg_install} && pause"'
+            subprocess.run(cmd, shell=True, check=True)
         
         except subprocess.CalledProcessError as e:
             messagebox.showerror("Error", f"Failed to install the plugin (Vagrant error): {e}")
@@ -341,15 +341,17 @@ class CallbacksCore(MenuElementsGUI):
         except Exception as e: 
             messagebox.showerror(title='ERROR', message=f'The plugin {name_plg_install} could not be installed. Make sure Vagrant is installed.\n\n{e}')
             return
-        
+        finally:
+            dpg.delete_item(self.POPUP_INSTALL_PLG_TAG)
+
+# Uninstall plugin function -----------------------------------------------------------------------------------------------------------------------------------
     def uninstall_vagrant_plg(self, app_data, user_data):
         name_plg_uninstall: str = dpg.get_value(self.UNINSTALL_PLG_INPUT_TAG)
-        
-        self.show_loading_popup(message=f"Uninstalling the {name_plg_uninstall} plugin/s...", loading_pos=[170,50], popup_tag=self.POPUP_UNINSTALL_PLG_TAG)
+        self.show_loading_popup(message=f"Uninstalling plugin/s...", loading_pos=[170,50], popup_tag=self.POPUP_UNINSTALL_PLG_TAG)
 
         try:
-            cmd = f"vagrant plugin uninstall {name_plg_uninstall}"
-            subprocess.run(cmd, check=True)
+            cmd = f'start /wait cmd /c "vagrant plugin uninstall {name_plg_uninstall} && pause"'
+            subprocess.run(cmd, shell=True, check=True)
         
         except subprocess.CalledProcessError as e:
             messagebox.showerror("Error", f"Failed to uninstall the plugin/s (Vagrant error): {e}")
@@ -359,11 +361,16 @@ class CallbacksCore(MenuElementsGUI):
             return
         
         finally:
-            pass
+            dpg.delete_item(self.POPUP_UNINSTALL_PLG_TAG)
             
+# Install plugin function -----------------------------------------------------------------------------------------------------------------------------------
     def update_vagrant_plg(self, app_data, user_data):
         pass
+
+# Install plugin function -----------------------------------------------------------------------------------------------------------------------------------
     def repair_vagrant_plg(self, app_data, user_data):
         pass
+
+# Install plugin function -----------------------------------------------------------------------------------------------------------------------------------
     def expunge_vagrant_plg(self, app_data, user_data):
         pass

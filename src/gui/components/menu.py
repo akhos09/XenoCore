@@ -69,7 +69,7 @@ class MenuElementsGUI: # Elements from GUI--------------------------------------
 # Machines tab & Widgets--------------------------------------------------------------------------------------------------------------------------
                 with dpg.tab(label="Machines", tag=self.MACHINES_TAB):
                     with dpg.child_window(tag=self.MACHINES_WIN_TAG, label="machineswin", use_internal_label=True, border=True, auto_resize_x=False, auto_resize_y=False):
-                        with dpg.collapsing_header(label="List of environments", default_open=True):
+                        with dpg.collapsing_header(label="List of environments", default_open=True, tag=self.ENV_HEADER_TAG):
                             with dpg.group(horizontal=True):
                                 dpg.add_button(
                                     label="Search for Vagrant Machines",
@@ -216,7 +216,7 @@ class MenuElementsGUI: # Elements from GUI--------------------------------------
                                         )
                                         dpg.add_text("?")
                                     with dpg.tooltip(parent=dpg.last_item(), hide_on_activity=True):
-                                        dpg.add_text("If you want to uninstall multiple plugins, enter the names of them separated by spaces")                                                                            
+                                        dpg.add_text("If you want to uninstall multiple plugins, enter their names separated by spaces")                                                                            
                                 dpg.add_separator()
                                 
                                 #------------------------------------------------------------------------------------
