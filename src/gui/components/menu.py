@@ -194,7 +194,7 @@ class MenuElementsGUI: # Elements from GUI--------------------------------------
                                         dpg.add_input_text(width=200, hint="Name", tag=self.INSTALL_PLG_INPUT_TAG)
                                         dpg.add_button(
                                             label="Install",
-                                            # callback=self.install_vagrant_plg,
+                                            callback=self.install_vagrant_plg,
                                             width=95,
                                             tag=self.INSTALL_PLG_BTN_TAG
                                         )
@@ -202,6 +202,7 @@ class MenuElementsGUI: # Elements from GUI--------------------------------------
                                     with dpg.tooltip(parent=dpg.last_item(), hide_on_activity=True):
                                         dpg.add_text("Check in the Other tab the plugins section if you want to see the available plugins.")                                                                            
                                 dpg.add_separator()
+                                
                                 #------------------------------------------------------------------------------------        
                                 with dpg.tree_node(label="Uninstall plugins"):
                                     with dpg.group(horizontal=True):
@@ -209,7 +210,7 @@ class MenuElementsGUI: # Elements from GUI--------------------------------------
                                         dpg.add_input_text(width=200, hint="Name", tag=self.UNINSTALL_PLG_INPUT_TAG)
                                         dpg.add_button(
                                             label="Uninstall",
-                                            # callback=self.install_vagrant_plg,
+                                            callback=self.uninstall_vagrant_plg,
                                             width=110,
                                             tag=self.UNINSTALL_PLG_BTN_TAG
                                         )
@@ -217,6 +218,7 @@ class MenuElementsGUI: # Elements from GUI--------------------------------------
                                     with dpg.tooltip(parent=dpg.last_item(), hide_on_activity=True):
                                         dpg.add_text("If you want to uninstall multiple plugins, enter the names of them separated by spaces")                                                                            
                                 dpg.add_separator()
+                                
                                 #------------------------------------------------------------------------------------
                                 with dpg.tree_node(label="Update plugins"):
                                     pass

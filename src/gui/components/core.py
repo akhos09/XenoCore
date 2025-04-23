@@ -33,6 +33,8 @@ class CallbacksCore(MenuElementsGUI):
     POPUP_DELETE_TAG = "destroying_machine"
     POPUP_RELOAD_TAG = "reloading_machine"    
     POPUP_PACK_TAG = "packaging_machine"
+    POPUP_INSTALL_PLG_TAG = "installing_plg"
+    POPUP_UNINSTALL_PLG_TAG = "uninstalling_plg"
     # Inputs ------------------------------------------
     START_ENV_INPUT_TAG = "id_input_start"
     STOP_ENV_INPUT_TAG = "id_input_stop"
@@ -40,6 +42,8 @@ class CallbacksCore(MenuElementsGUI):
     PACK_VB_INPUT_TAG = "id_input_pack_vboxname"
     PACK_OUTPUT_INPUT_TAG = "output_input_name"
     RELOAD_ENV_INPUT_TAG = "id_input_reload"
+    
+    UNINSTALL_PLG_INPUT_TAG = "id_input_plg_uninstall"
     # Checkboxes --------------------------------------
     PRUNE_CHECKBOX_TAG = "check_prune_search"
     FORCE_DELETE_CHECKBOX_TAG = "force_check_delete"
@@ -171,8 +175,11 @@ class CallbacksCore(MenuElementsGUI):
                 
         except subprocess.CalledProcessError as e:
             messagebox.showerror("Error", f"Failed to create the environment (Vagrant error): {e}")
+            return
         except Exception as e:
             messagebox.showerror("Error", f"Failed to start Vagrant: {str(e)}")
+            return
+        
         finally:
             self.refresh(popup_tag=self.POPUP_CREATE_TAG)
 
@@ -194,8 +201,11 @@ class CallbacksCore(MenuElementsGUI):
 
         except subprocess.CalledProcessError as e:
             messagebox.showerror("Error", f"Failed to start the environment (Vagrant error): {e}")
+            return
         except Exception as e:
             messagebox.showerror("Error", f"Unexpected error: {str(e)}")
+            return
+        
         finally:
             self.refresh(popup_tag=self.POPUP_START_TAG)
 
@@ -216,8 +226,11 @@ class CallbacksCore(MenuElementsGUI):
         
         except subprocess.CalledProcessError as e:
             messagebox.showerror("Error", f"Failed to stop the environment (Vagrant error): {e}")
+            return
         except Exception as e: 
             messagebox.showerror(title='ERROR', message=f'The environment {id_env_stop} could not be stopped. Make sure Vagrant is installed.\n\n{e}')
+            return
+        
         finally:
             self.refresh(popup_tag=self.POPUP_STOP_TAG)
 
@@ -243,8 +256,11 @@ class CallbacksCore(MenuElementsGUI):
             
             except subprocess.CalledProcessError as e:
                 messagebox.showerror("Error", f"Failed to delete the environment (Vagrant error): {e}")
+                return    
             except Exception as e:
                 messagebox.showerror("Error", f"Failed to delete the environment: {str(e)}")
+                return
+
             finally:
                 self.refresh(popup_tag=self.POPUP_DELETE_TAG)
 
@@ -281,8 +297,11 @@ class CallbacksCore(MenuElementsGUI):
             
         except subprocess.CalledProcessError as e:
             messagebox.showerror("Error", f"Failed to pack the environment (Vagrant error): {e}")
+            return
         except Exception as e:
             messagebox.showerror("Error", f"Unexpected error: {str(e)}")
+            return
+        
         finally:
             self.refresh(popup_tag=self.POPUP_PACK_TAG)
 
@@ -297,7 +316,54 @@ class CallbacksCore(MenuElementsGUI):
 
         except subprocess.CalledProcessError as e:
             messagebox.showerror("Error", f"Failed to reload the environment (Vagrant error): {e}")
+            return
         except Exception as e:
             messagebox.showerror("Error", f"Unexpected error: {str(e)}")
+            return
+        
         finally:
             self.refresh(popup_tag=self.POPUP_RELOAD_TAG)
+
+#PLUGINS-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+    def install_vagrant_plg(self, app_data, user_data):
+        name_plg_install: str = dpg.get_value(self.INSTALL_PLG_INPUT_TAG)
+        
+        self.show_loading_popup(message=f"Installing the {name_plg_install} plugin...", loading_pos=[170,50], popup_tag=self.POPUP_INSTALL_PLG_TAG)
+
+        try:
+            cmd = f"vagrant plugin uninstall {name_plg_install}"
+            subprocess.run(cmd, check=True)
+        
+        except subprocess.CalledProcessError as e:
+            messagebox.showerror("Error", f"Failed to install the plugin (Vagrant error): {e}")
+            return
+        except Exception as e: 
+            messagebox.showerror(title='ERROR', message=f'The plugin {name_plg_install} could not be installed. Make sure Vagrant is installed.\n\n{e}')
+            return
+        
+    def uninstall_vagrant_plg(self, app_data, user_data):
+        name_plg_uninstall: str = dpg.get_value(self.UNINSTALL_PLG_INPUT_TAG)
+        
+        self.show_loading_popup(message=f"Uninstalling the {name_plg_uninstall} plugin/s...", loading_pos=[170,50], popup_tag=self.POPUP_UNINSTALL_PLG_TAG)
+
+        try:
+            cmd = f"vagrant plugin uninstall {name_plg_uninstall}"
+            subprocess.run(cmd, check=True)
+        
+        except subprocess.CalledProcessError as e:
+            messagebox.showerror("Error", f"Failed to uninstall the plugin/s (Vagrant error): {e}")
+            return
+        except Exception as e: 
+            messagebox.showerror(title='ERROR', message=f'The plugin/s {name_plg_uninstall} could not be uninstalled. Make sure Vagrant is installed.\n\n{e}')
+            return
+        
+        finally:
+            pass
+            
+    def update_vagrant_plg(self, app_data, user_data):
+        pass
+    def repair_vagrant_plg(self, app_data, user_data):
+        pass
+    def expunge_vagrant_plg(self, app_data, user_data):
+        pass
