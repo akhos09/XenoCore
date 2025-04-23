@@ -16,15 +16,17 @@ class MenuElementsGUI: # Elements from GUI--------------------------------------
     MAIN_WINDOW_TAG = "main_window"
     TAB_BAR_TAG = "tab_bar"
     MACHINES_WIN_TAG = "machines_win"
-    ENV_HEADER_TAG = "env_header"
     # Buttons --------------------------------------
     SEARCH_MACHINES_BTN_TAG = "search_machines_btn"
+    SEARCH_PLUGINS_BTN_TAG = "search_plugins_btn"
     START_ENV_BTN_TAG = "start_env_btn"
     STOP_ENV_BTN_TAG = "stop_env_btn"
     DELETE_ENV_BTN_TAG = "delete_env_btn"
     FOLDER_SELECTION_BTN_TAG = "folder_selection_btn"
     PACK_ENV_BTN_TAG = "pack_env_btn"
     RELOAD_ENV_BTN_TAG = "reload_env_btn"
+    INSTALL_PLG_BTN_TAG = "install_plg_btn"
+    UNINSTALL_PLG_BTN_TAG = "uninstall_plg_btn"
     # Checkboxes --------------------------------------
     PRUNE_CHECKBOX_TAG = "check_prune_search"
     PROVISION_CHECKBOX_TAG = "check_provision"
@@ -37,6 +39,8 @@ class MenuElementsGUI: # Elements from GUI--------------------------------------
     RELOAD_ENV_INPUT_TAG = "id_input_reload"
     PACK_VB_INPUT_TAG = "id_input_pack_vboxname"
     PACK_OUTPUT_INPUT_TAG = "output_input_name"
+    INSTALL_PLG_INPUT_TAG = "id_input_plg_install"
+    UNINSTALL_PLG_INPUT_TAG = "id_input_plg_uninstall"
     # Misc ------------------------------------------
     PLUGINS_WIN_TAG = "pluginswin"
     OTHER_WIN_TAG = "otherwin"
@@ -65,7 +69,7 @@ class MenuElementsGUI: # Elements from GUI--------------------------------------
 # Machines tab & Widgets--------------------------------------------------------------------------------------------------------------------------
                 with dpg.tab(label="Machines", tag=self.MACHINES_TAB):
                     with dpg.child_window(tag=self.MACHINES_WIN_TAG, label="machineswin", use_internal_label=True, border=True, auto_resize_x=False, auto_resize_y=False):
-                        with dpg.collapsing_header(label="List of environments", tag=self.ENV_HEADER_TAG, default_open=True):
+                        with dpg.collapsing_header(label="List of environments", default_open=True):
                             with dpg.group(horizontal=True):
                                 dpg.add_button(
                                     label="Search for Vagrant Machines",
@@ -76,7 +80,7 @@ class MenuElementsGUI: # Elements from GUI--------------------------------------
                                 dpg.add_checkbox(tag=self.PRUNE_CHECKBOX_TAG)
                                 dpg.add_text("Prune")
                                 with dpg.tooltip(parent=dpg.last_item(), hide_on_activity=True):
-                                    dpg.add_text("Refresh the cache of the vagrant global-status\nCheck the Help section for more info.")
+                                    dpg.add_text("Refresh the cache of the vagrant global-status\nCheck the Help section for more info")
                             
                         with dpg.collapsing_header(label="Main Options (Create Start Halt/Stop Delete Package Reload)"):
                             with dpg.tree_node(label="Create environment"):
@@ -101,6 +105,8 @@ class MenuElementsGUI: # Elements from GUI--------------------------------------
                                         tag=self.START_ENV_BTN_TAG
                                     )
                                     dpg.add_checkbox(label="Provision", tag=self.PROVISION_CHECKBOX_TAG)
+                                    with dpg.tooltip(parent=dpg.last_item(), hide_on_activity=True):
+                                        dpg.add_text("Runs again the provisioners (scripts, commands, etc.)")
                             dpg.add_separator()
                             #------------------------------------------------------------------------------------        
                             with dpg.tree_node(label="Halt/Stop environment"):
@@ -139,12 +145,16 @@ class MenuElementsGUI: # Elements from GUI--------------------------------------
                                         dpg.add_input_text(width=220, hint="Output name (.box)", tag=self.PACK_OUTPUT_INPUT_TAG)
                                     with dpg.group(horizontal=True):
                                         dpg.add_spacer(height=10,width=23) 
-                                        dpg.add_button(
-                                            label="Package",
-                                            callback=self.pack_vagrant_env,
-                                            width=95,
-                                            tag=self.PACK_ENV_BTN_TAG
-                                        )
+                                        with dpg.group(horizontal=True):
+                                            dpg.add_button(
+                                                label="Package",
+                                                callback=self.pack_vagrant_env,
+                                                width=95,
+                                                tag=self.PACK_ENV_BTN_TAG
+                                            )
+                                            dpg.add_text("?")
+                                        with dpg.tooltip(parent=dpg.last_item(), hide_on_activity=True):
+                                            dpg.add_text("Package the environment as a reusable box for your Vagrantfiles")
                             dpg.add_separator()        
                             #------------------------------------------------------------------------------------        
                             with dpg.tree_node(label="Reload environment"):
@@ -159,13 +169,66 @@ class MenuElementsGUI: # Elements from GUI--------------------------------------
                                     )
                                     dpg.add_text("?")
                                     with dpg.tooltip(parent=dpg.last_item(), hide_on_activity=True):
-                                        dpg.add_text("Applies the changes made in the Vagrantfile of the box")
+                                        dpg.add_text("Applies the changes made in the Vagrantfile of the environment")
                             dpg.add_separator()        
 # Plugins tab & Widgets-------------------------------------------------------------------------------------------------------------------------
                 with dpg.tab(label="Plugins", tag=self.PLUGINS_TAB):
-                    with dpg.child_window(label="pluginswin", use_internal_label=True, border=True, auto_resize_x=True, auto_resize_y=True, tag=self.PLUGINS_WIN_TAG):
+                    with dpg.child_window(label="pluginswin", use_internal_label=True, border=True, auto_resize_x=False, auto_resize_y=False, tag=self.PLUGINS_WIN_TAG):
                         with dpg.group(horizontal=True):
-                            dpg.add_text("Plugins Management")
+                            with dpg.collapsing_header(label="Plugin Options (List Install Uninstall Update Repair Expunge)", default_open=True):
+                                dpg.add_separator()
+                                #------------------------------------------------------------------------------------        
+                                with dpg.tree_node(label="List plugins"):
+                                    with dpg.group(horizontal=True):
+                                        dpg.add_button(
+                                            label="Search for plugins",
+                                            # callback=self.get_list_plugins,
+                                            width=215,
+                                            tag=self.SEARCH_PLUGINS_BTN_TAG
+                                        )
+                                dpg.add_separator()
+                                #------------------------------------------------------------------------------------        
+                                with dpg.tree_node(label="Install plugins"):
+                                    with dpg.group(horizontal=True):
+                                        dpg.add_text("Enter the name of the plugin you want to install: ", bullet=True)
+                                        dpg.add_input_text(width=200, hint="Name", tag=self.INSTALL_PLG_INPUT_TAG)
+                                        dpg.add_button(
+                                            label="Install",
+                                            # callback=self.install_vagrant_plg,
+                                            width=95,
+                                            tag=self.INSTALL_PLG_BTN_TAG
+                                        )
+                                        dpg.add_text("?")
+                                    with dpg.tooltip(parent=dpg.last_item(), hide_on_activity=True):
+                                        dpg.add_text("Check in the Other tab the plugins section if you want to see the available plugins.")                                                                            
+                                dpg.add_separator()
+                                #------------------------------------------------------------------------------------        
+                                with dpg.tree_node(label="Uninstall plugins"):
+                                    with dpg.group(horizontal=True):
+                                        dpg.add_text("Enter the name/s of the plugin/s you want to uninstall: ", bullet=True)
+                                        dpg.add_input_text(width=200, hint="Name", tag=self.UNINSTALL_PLG_INPUT_TAG)
+                                        dpg.add_button(
+                                            label="Uninstall",
+                                            # callback=self.install_vagrant_plg,
+                                            width=110,
+                                            tag=self.UNINSTALL_PLG_BTN_TAG
+                                        )
+                                        dpg.add_text("?")
+                                    with dpg.tooltip(parent=dpg.last_item(), hide_on_activity=True):
+                                        dpg.add_text("If you want to uninstall multiple plugins, enter the names of them separated by spaces")                                                                            
+                                dpg.add_separator()
+                                #------------------------------------------------------------------------------------
+                                with dpg.tree_node(label="Update plugins"):
+                                    pass
+                                dpg.add_separator()        
+                                #------------------------------------------------------------------------------------        
+                                with dpg.tree_node(label="Repair plugins"):
+                                    pass
+                                dpg.add_separator()        
+                                #------------------------------------------------------------------------------------        
+                                with dpg.tree_node(label="Expunge plugins"):
+                                    pass
+                                dpg.add_separator()        
                             
 # Other tab & Widgets---------------------------------------------------------------------------------------------------------------------------
                 with dpg.tab(label="Other", tag=self.OTHER_TAB):
