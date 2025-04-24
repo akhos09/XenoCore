@@ -3,11 +3,12 @@ import subprocess
 from tkinter import filedialog as fd
 from tkinter import Tk
 from contextlib import contextmanager
+import pyperclip
 
 import dearpygui.dearpygui as dpg
 from tkinter import messagebox
 
-from . import MenuElementsGUI
+from .menu import MenuElementsGUI
 
 #Decorator (stays in the app's pwd after executing a vagrant up that changes the dir in order to execute it)
 @contextmanager
@@ -57,7 +58,7 @@ class CallbacksCore(MenuElementsGUI):
 
 # Vagrant env list ------------------------------------------------------------------------------------------------------------------------------------
     def get_vagrant_status(self, app_data, user_data):
-        self.show_loading_popup(message="Updating Vagrant environments list...", loading_pos=[177,50], popup_tag=self.POPUP_STATUS_TAG)
+        self.show_loading_popup(message="Updating Vagrant environments list...", loading_pos=[170,50], popup_tag=self.POPUP_STATUS_TAG)
         check_prune = dpg.get_value(self.PRUNE_CHECKBOX_TAG)
 
         try:
@@ -75,8 +76,8 @@ class CallbacksCore(MenuElementsGUI):
             dpg.delete_item(self.POPUP_STATUS_TAG)
         
         if "no active Vagrant environments" in command_status.stdout:
-            messagebox.showinfo(title='INFO', 
-                            message='You don’t have any Vagrant environment in your computer. Try creating one with the options below.')
+            self.show_topmost_messagebox('INFO', 
+                                        'You don’t have any Vagrant environment in your computer. Try creating one with the options below.')
             if dpg.does_item_exist(self.ENV_TABLE_TAG):
                 dpg.delete_item(self.ENV_TABLE_TAG)
             if dpg.does_item_exist(self.TEMP_ENV_WINDOW_TAG):
@@ -326,8 +327,8 @@ class CallbacksCore(MenuElementsGUI):
             dpg.delete_item(self.POPUP_PLG_LIST_TAG)
         
         if "No plugins installed" in command_status.stdout:
-            messagebox.showinfo(title='INFO', 
-                            message='You don’t have any Vagrant plugin in your computer. Try installing one with the options below.')
+            self.show_topmost_messagebox(title='INFO',message='You don’t have any Vagrant plugin in your computer. Try installing one with the options below.')
+
             if dpg.does_item_exist(self.PLG_TABLE_TAG):
                 dpg.delete_item(self.PLG_TABLE_TAG)
             if dpg.does_item_exist(self.TEMP_PLG_WINDOW_TAG):
@@ -403,8 +404,9 @@ class CallbacksCore(MenuElementsGUI):
 
 # Install plugin function -----------------------------------------------------------------------------------------------------------------------------------    
     def install_vagrant_plg(self, app_data, user_data):
+        dpg.delete_item("right_click_popup")
         name_plg_install: str = dpg.get_value(self.INSTALL_PLG_INPUT_TAG)
-        self.show_loading_popup(message=f"Installing the {name_plg_install} plugin...", loading_pos=[170,50], popup_tag=self.POPUP_INSTALL_PLG_TAG)
+        self.show_loading_popup(message="       Installing the plugin...      ", loading_pos=[177,50], popup_tag=self.POPUP_INSTALL_PLG_TAG)
 
         try:
             cmd = f'start /wait cmd /c "set VAGRANT_DISABLE_STRICT_DEPENDENCY_ENFORCEMENT=1 && vagrant plugin install {name_plg_install} && pause"'
@@ -417,27 +419,52 @@ class CallbacksCore(MenuElementsGUI):
             messagebox.showerror(title='ERROR', message=f'The plugin {name_plg_install} could not be installed. Make sure Vagrant is installed.\n\n{e}')
             return
         finally:
+            self.get_list_plugins(None, "search_plugins_button")
             dpg.delete_item(self.POPUP_INSTALL_PLG_TAG)
 
 # Uninstall plugin function -----------------------------------------------------------------------------------------------------------------------------------
-    def uninstall_vagrant_plg(self, app_data, user_data):
+    def uninstall_vagrant_plg(self, sender, app_data, user_data):
+        dpg.delete_item("right_click_popup")
         name_plg_uninstall: str = user_data
-        self.show_loading_popup(message=f"Uninstalling plugin/s...", loading_pos=[170,50], popup_tag=self.POPUP_UNINSTALL_PLG_TAG)
+        self.show_loading_popup(message="Uninstalling....", loading_pos=[170,50], popup_tag=self.POPUP_UNINSTALL_PLG_TAG)
 
         try:
             cmd = f'start /wait cmd /c "vagrant plugin uninstall {name_plg_uninstall} && pause"'
             subprocess.run(cmd, shell=True, check=True)
-        
+
         except subprocess.CalledProcessError as e:
-            messagebox.showerror("Error", f"Failed to uninstall the plugin/s (Vagrant error): {e}")
+            messagebox.showerror("Error", f"Failed to uninstall plugin '{name_plg_uninstall}':\n{e}")
             return
-        except Exception as e: 
-            messagebox.showerror(title='ERROR', message=f'The plugin/s {name_plg_uninstall} could not be uninstalled. Make sure Vagrant is installed.\n\n{e}')
+        except Exception as e:  
+            messagebox.showerror("Error", f"An unexpected error occurred while uninstalling plugin '{name_plg_uninstall}':\n{e}")
             return
         
         finally:
+            self.get_list_plugins(None, "search_plugins_button")
             dpg.delete_item(self.POPUP_UNINSTALL_PLG_TAG)
-            
+# Plugins Right click context menu ---------------------------------------------------------------------------------------------------------------------------
+    def plg_right_click_context_menu(self, sender, app_data, user_data):
+        def copy():
+            pyperclip.copy(user_data)
+            dpg.delete_item("right_click_popup")
+
+        def connect():
+            try:
+                cmd = f'start powershell -NoExit -Command "$Env:VAGRANT_PREFER_SYSTEM_BIN=0; vagrant ssh {user_data}"'
+                subprocess.run(cmd, shell=True, check=True)
+            except subprocess.CalledProcessError as e:
+                messagebox.showerror("Error", f"Failed to connect to the environment (Vagrant error): {e}")
+            except Exception as e:
+                messagebox.showerror("Error", f"Unexpected error: {str(e)}")
+
+        if dpg.does_item_exist("right_click_popup"):
+            dpg.delete_item("right_click_popup")
+
+        with dpg.window(tag="right_click_popup", popup=True, no_focus_on_appearing=False, height=90, width=100,no_background=False):
+            dpg.add_button(label="Uninstall " + str(user_data), callback=self.uninstall_vagrant_plg, user_data=user_data)
+            dpg.add_button(label="Update " + str(user_data), callback=connect)   
+            dpg.add_button(label="Repair "+ str(user_data), callback=connect)
+
 # Update plugin function -----------------------------------------------------------------------------------------------------------------------------------
     def update_vagrant_plg(self, app_data, user_data):
         pass
