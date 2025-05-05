@@ -15,7 +15,7 @@ class MenuElementsGUI(CallbacksCoreEnv, CallbacksCorePlg):
     def initial_settings(self): 
         dpg.create_context()
         dpg.create_viewport(
-            title="XenoVagrant", 
+            title="XenoCore", 
             width=1400, 
             height=900,
             small_icon=self.icon_path,
