@@ -1,5 +1,3 @@
-import platform
-import subprocess
 import threading
 from tkinter import filedialog as fd
 from tkinter import Tk, messagebox

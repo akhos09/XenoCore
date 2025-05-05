@@ -2,10 +2,9 @@ import os
 import subprocess
 import sys
 from contextlib import contextmanager
-import threading
+from tkinter import messagebox
+
 import dearpygui.dearpygui as dpg
-from tkinter import messagebox, filedialog
-import tkinter as Tk
 
 from gui.components.constants import TagsCoreGUI
 from gui.components.gui_core import CallbacksGUI
