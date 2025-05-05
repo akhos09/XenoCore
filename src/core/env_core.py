@@ -23,7 +23,7 @@ class CallbacksCoreEnv(CallbacksGUI):
     
 # Vagrant env list ------------------------------------------------------------------------------------------------------------------------------------
     def get_vagrant_status(self, app_data, user_data):
-        self.show_loading_popup(message="Updating Vagrant environments list...", loading_pos=[170,50], popup_tag=self.POPUP_STATUS_TAG)
+        self.show_loading_popup(message="Updating Vagrant environments list...", loading_pos=[170,50], popup_tag=self.POPUP_STATUS_TAG, )
         check_prune = dpg.get_value(self.PRUNE_CHECKBOX_TAG)
 
         try:
@@ -118,7 +118,7 @@ class CallbacksCoreEnv(CallbacksGUI):
         folder_selected = self.select_folder(text="Select the directory containing the Vagrantfile")
         
         if not folder_selected:
-            messagebox.showwarning("Warning", "No directory selected")
+            self.show_topmost_messagebox("ERROR", f"Directory not selected", error=True)
             return
 
         if not os.path.exists(folder_selected):
@@ -236,7 +236,7 @@ class CallbacksCoreEnv(CallbacksGUI):
         folder_selected = self.select_folder(text="Select the destination of the .box file")
         
         if not folder_selected:
-            messagebox.showwarning("Warning", "No directory selected")
+            self.show_topmost_messagebox("ERROR", f"No directory selected", error=True)
             return
 
         if not os.path.exists(folder_selected):

@@ -1,5 +1,6 @@
 import platform
 import subprocess
+import threading
 from tkinter import filedialog as fd
 from tkinter import Tk, messagebox
 
@@ -39,7 +40,7 @@ class CallbacksGUI(TagsCoreGUI):
         if check_settings:
             dpg.show_style_editor()
 
-# Unified right click context menu-----------------------------------------------------------------------------------
+# Loading popup function -----------------------------------------------------------------------------------
     def show_loading_popup(self, message, loading_pos, popup_tag):
         if dpg.does_item_exist(popup_tag):
             dpg.delete_item(popup_tag)
@@ -52,42 +53,58 @@ class CallbacksGUI(TagsCoreGUI):
             dpg.set_item_pos(popup_tag, [720, 400])
             dpg.split_frame()
             
-# Unified right click context menu-----------------------------------------------------------------------------------
+# Refresh table function ----------------------------------------------------------------------------------
     def refresh(self, popup_tag):
         dpg.delete_item(popup_tag)
         self.show_loading_popup(message="Updating Vagrant environments list...", loading_pos=[177, 50], popup_tag=self.POPUP_STATUS_TAG)
         self.get_vagrant_status(None, "search_machines_btn")
         dpg.delete_item(self.POPUP_STATUS_TAG)
         
-# Unified right click context menu-----------------------------------------------------------------------------------
+# Show tooltip function -----------------------------------------------------------------------------------
     def tooltip(self, text):
         with dpg.tooltip(parent=dpg.last_item(), hide_on_activity=True):
             dpg.add_text(text)
             
-# Unified right click context menu-----------------------------------------------------------------------------------
-    def select_folder(self, text):
-        root = Tk()
-        root.withdraw()
-        root.wm_attributes("-topmost", 1)
-        try:
-            messagebox.showinfo(title='INFO', message=f'{text}')
-            folder_selected = fd.askdirectory(title=f"{text}")
-            return folder_selected
-        finally:
-            root.destroy()
+# Select folder function ----------------------------------------------------------------------------------
+    def select_folder(self, text="Select a folder"):
+        from tkinter import Tk, filedialog
+
+        result = {"path": None}
+
+        def run_dialog():
+            try:
+                root = Tk()
+                root.withdraw()
+                result["path"] = filedialog.askdirectory(title=text, parent=root)
+            finally:
+                root.destroy()
+
+        thread = threading.Thread(target=run_dialog)
+        thread.start()
+        thread.join()
+        
+        return result["path"]
             
-# Unified right click context menu-----------------------------------------------------------------------------------
+# Topmost Tk messagebox -----------------------------------------------------------------------------------
     def show_topmost_messagebox(self, title, message, error=False):
-        root = Tk()
-        root.withdraw()
-        root.wm_attributes("-topmost", 1)
+        def run_messagebox():
+            try:
+                root = Tk()
+                root.withdraw()
+                root.wm_attributes("-topmost", 1)
 
-        if error:
-            messagebox.showerror(title, message, parent=root)
-        else:
-            messagebox.showinfo(title, message, parent=root)
+                if error:
+                    messagebox.showerror(title, message, parent=root)
+                else:
+                    messagebox.showinfo(title, message, parent=root)
+            finally:
+                try:
+                    root.destroy()
+                except:
+                    pass
 
-        root.destroy()
+        thread = threading.Thread(target=run_messagebox)
+        thread.start()
 
 # Unified right click context menu-----------------------------------------------------------------------------------
     def right_click_context_menu(self, sender, app_data, user_data, menu_type):

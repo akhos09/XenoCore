@@ -1,5 +1,4 @@
 import os
-import platform
 import sys
 import shutil
 from tkinter import messagebox
@@ -12,7 +11,7 @@ from .components.themes import *
 
 class XenoVagrantGUI(MenuElementsGUI):
     def __init__(self):
-        if platform.system == "Windows":
+        if sys.platform == "win32":
             try:
                 ctypes.windll.shcore.SetProcessDpiAwareness(1)
             except Exception as e:
