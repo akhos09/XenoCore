@@ -9,7 +9,7 @@ import dearpygui.dearpygui as dpg
 from .components.menu import MenuElementsGUI
 from .components.themes import *
 
-class XenoVagrantGUI(MenuElementsGUI):
+class XenoCoreGUI(MenuElementsGUI):
     def __init__(self):
         if sys.platform == "win32":
             try:
@@ -28,7 +28,7 @@ def main():
         sys.exit(1)
         
     try:
-        app = XenoVagrantGUI()
+        app = XenoCoreGUI()
         app.menu()
     finally:
         dpg.destroy_context()
