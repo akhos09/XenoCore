@@ -16,6 +16,7 @@ class MenuElementsGUI: # Elements from GUI--------------------------------------
     MAIN_WINDOW_TAG = "main_window"
     TAB_BAR_TAG = "tab_bar"
     MACHINES_WIN_TAG = "machines_win"
+    RECOMMENDED_PLUGINS_TABLE_TAG = "rec_plugins_table"
     # Buttons --------------------------------------
     SEARCH_MACHINES_BTN_TAG = "search_machines_btn"
     SEARCH_PLUGINS_BTN_TAG = "search_plugins_btn"
@@ -183,6 +184,8 @@ class MenuElementsGUI: # Elements from GUI--------------------------------------
                                 dpg.add_text("Local")
                                 dpg.add_text("?")
                                 self.tooltip(text="Displays the plugins that are only installed in a local environment.\nCheck Vagrant documentation for more info.")
+                                dpg.add_text("Right click any of the installed plugins to see the available options", color=[255, 255, 0])
+                                
                                 
                             with dpg.group(horizontal=True):
                                 dpg.add_text("Enter the name of the plugin you want to install: ")
@@ -195,9 +198,55 @@ class MenuElementsGUI: # Elements from GUI--------------------------------------
                                 )
                                 
                                 dpg.add_text("?")
-                            self.tooltip(text="Check in the Other tab the plugins section if you want to see the available plugins.")
-                            dpg.add_separator()
+                                self.tooltip(text="Check the recommended plugins if you want to try new ones.")
+                                
+                                
 
+                            dpg.add_separator()
+                            
+                            with dpg.collapsing_header(label="List of recommended plugins"):
+                                with dpg.group(horizontal=False):
+
+                                    with dpg.table(tag=self.RECOMMENDED_PLUGINS_TABLE_TAG, header_row=True, 
+                                                borders_innerH=True, borders_outerH=True, borders_innerV=True, 
+                                                borders_outerV=True, resizable=True, policy=dpg.mvTable_SizingStretchProp):
+                                        
+                                        dpg.add_table_column(label="Plugin Name")
+                                        dpg.add_table_column(label="Description")
+                                        
+                                        with dpg.table_row():
+                                            dpg.add_text("vagrant-vbguest")
+                                            dpg.add_text("Automatically installs VirtualBox guest additions")
+                                            
+                                        with dpg.table_row():
+                                            dpg.add_text("vagrant-disksize")
+                                            dpg.add_text("Modify disk size for VirtualBox VMs")
+                                            
+                                        with dpg.table_row():
+                                            dpg.add_text("vagrant-hostmanager")
+                                            dpg.add_text("Manages hosts file entries for VMs")
+                                            
+                                        with dpg.table_row():
+                                            dpg.add_text("vagrant-share")
+                                            dpg.add_text("Share Vagrant environments with others")
+                                            
+                                        with dpg.table_row():
+                                            dpg.add_text("vagrant-scp")
+                                            dpg.add_text("Copy files to/from Vagrant VMs via SCP")
+                                            
+                                            
+                                        with dpg.table_row():
+                                            dpg.add_text("vagrant-vbguest")
+                                            dpg.add_text("Automatically installs VirtualBox guest additions")
+                                            
+                                        with dpg.table_row():
+                                            dpg.add_text("vagrant-env")
+                                            dpg.add_text("Loads environment variables from .env files")
+                                            
+                                        with dpg.table_row():
+                                            dpg.add_text("vagrant-proxyconf")
+                                            dpg.add_text("Auto-configure proxy settings in VMs")
+                                dpg.add_separator()
                             #     with dpg.tree_node(label="Uninstall plugins"):
                             #         with dpg.group(horizontal=True):
                             #             dpg.add_text("Enter the name/s of the plugin/s you want to uninstall: ", bullet=True)
