@@ -8,8 +8,8 @@ import pyperclip
 import dearpygui.dearpygui as dpg
 from tkinter import messagebox
 
-from .constants import TagsCoreGUI
-from .gui_core import CallbacksGUI
+from gui.components.constants import TagsCoreGUI
+from gui.components.gui_core import CallbacksGUI
 
 class CallbacksCorePlg(CallbacksGUI):
     

@@ -4,9 +4,8 @@ import dearpygui.dearpygui as dpg
 
 from .themes import *
 from .fonts import *
-from .constants import TagsCoreGUI
-from .env_core import CallbacksCoreEnv
-from .plg_core import CallbacksCorePlg
+from core.env_core import CallbacksCoreEnv
+from core.plg_core import CallbacksCorePlg
 
 
 # Elements from GUI--------------------------------------------------------------------------------
