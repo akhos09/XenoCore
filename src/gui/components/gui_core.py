@@ -6,13 +6,11 @@ from tkinter import messagebox
 
 import dearpygui.dearpygui as dpg
 
-from .menu import MenuElementsGUI
-from .plg_core import CallbacksCorePlg
-from .env_core import CallbacksCoreEnv
 from .themes import default_theme, dark_theme, light_theme, cyberpunk_theme, gruvboxdark_theme, nyx_theme
 from .fonts import reset_font_binding
+from .constants import TagsCoreGUI
 
-class CallbacksGUI(MenuElementsGUI):  # Callbacks Class for the actions of the widgets
+class CallbacksGUI(TagsCoreGUI):  # Callbacks Class for the actions of the widgets
 
     THEMES = { # Themes constants
         "Dark Theme": dark_theme,

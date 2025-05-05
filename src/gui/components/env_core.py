@@ -8,8 +8,8 @@ import pyperclip
 import dearpygui.dearpygui as dpg
 from tkinter import messagebox
 
-from .menu import MenuElementsGUI
 from .constants import TagsCoreGUI
+from .gui_core import CallbacksGUI
 
 #Decorator (stays in the app's pwd after executing a vagrant up that changes the dir in order to execute it)
 @contextmanager
@@ -21,7 +21,7 @@ def change_directory(target_dir):
     finally:
         os.chdir(current_dir)
 
-class CallbacksCoreEnv(MenuElementsGUI, TagsCoreGUI):
+class CallbacksCoreEnv(CallbacksGUI):
     
 # Vagrant env list ------------------------------------------------------------------------------------------------------------------------------------
     def get_vagrant_status(self, app_data, user_data):

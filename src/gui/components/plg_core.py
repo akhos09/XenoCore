@@ -8,41 +8,31 @@ import pyperclip
 import dearpygui.dearpygui as dpg
 from tkinter import messagebox
 
-from .menu import MenuElementsGUI
 from .constants import TagsCoreGUI
+from .gui_core import CallbacksGUI
 
-#Decorator (stays in the app's pwd after executing a vagrant up that changes the dir in order to execute it)
-@contextmanager
-def change_directory(target_dir):
-    current_dir: str  = os.getcwd()
-    os.chdir(target_dir)
-    try:
-        yield
-    finally:
-        os.chdir(current_dir)
-
-class CallbacksCorePlg(MenuElementsGUI, TagsCoreGUI):
+class CallbacksCorePlg(CallbacksGUI):
     
 # Get list plugin function -----------------------------------------------------------------------------------------------------------------------------------
     def get_list_plugins(self, app_data, user_data):
-        self.show_loading_popup(message="   Updating Vagrant plugins list...  ", loading_pos=[170,50], popup_tag=self.POPUP_PLG_LIST_TAG)
+        self.show_loading_popup(message="   Updating Vagrant plugins list...  ", loading_pos=[177,50], popup_tag=self.POPUP_PLG_LIST_TAG)
         check_local = dpg.get_value(self.LOCAL_PLG_CHECKBOX_TAG)
         try:
             cmd = ["vagrant", "plugin", "list", "--local"] if check_local else ["vagrant", "plugin", "list", "--local"]
             command_status = subprocess.run(cmd, capture_output=True, text=True)
                 
         except subprocess.CalledProcessError as e:
-            messagebox.showerror("Error", f"Failed to search the plugins (Vagrant error): {e}")
+            self.show_topmost_messagebox(title='ERROR', message=f'Failed to search the plugins (Vagrant error): {e}', error=True)
             return
         except Exception as e:
-            messagebox.showerror(title='ERROR', message=f'Machines on your system could not be found. Make sure Vagrant is installed\n\n{e}')
+            self.show_topmost_messagebox(title='ERROR', message=f'Machines on your system could not be found. Make sure Vagrant is installed\n\n{e}', error=True)
             return
         
         finally:
             dpg.delete_item(self.POPUP_PLG_LIST_TAG)
         
         if "No plugins installed" in command_status.stdout:
-            self.show_topmost_messagebox(title='INFO',message='You don’t have any Vagrant plugin in your computer. Try installing one with the options below.')
+            self.show_topmost_messagebox(title='INFO', message='You don’t have any Vagrant plugin in your computer. Try installing one with the options below.')
 
             if dpg.does_item_exist(self.PLG_TABLE_TAG):
                 dpg.delete_item(self.PLG_TABLE_TAG)
@@ -128,11 +118,12 @@ class CallbacksCorePlg(MenuElementsGUI, TagsCoreGUI):
             subprocess.run(cmd, shell=True, check=True)
         
         except subprocess.CalledProcessError as e:
-            messagebox.showerror("Error", f"Failed to install the plugin (Vagrant error): {e}")
+            self.show_topmost_messagebox(title='ERROR', message=f"Failed to install the plugin (Vagrant error): {e}", error=True)
             return
         except Exception as e: 
-            messagebox.showerror(title='ERROR', message=f'The plugin {name_plg_install} could not be installed. Make sure Vagrant is installed.\n\n{e}')
+            self.show_topmost_messagebox(title='ERROR', message=f'The plugin {name_plg_install} could not be installed. Make sure Vagrant is installed.\n\n{e}', error=True)
             return
+        
         finally:
             self.get_list_plugins(None, "search_plugins_button")
             dpg.delete_item(self.POPUP_INSTALL_PLG_TAG)
@@ -148,10 +139,10 @@ class CallbacksCorePlg(MenuElementsGUI, TagsCoreGUI):
             subprocess.run(cmd, shell=True, check=True)
 
         except subprocess.CalledProcessError as e:
-            messagebox.showerror("Error", f"Failed to uninstall plugin '{name_plg_uninstall}':\n{e}")
+            self.show_topmost_messagebox(title='ERROR', message=f"Failed to uninstall plugin '{name_plg_uninstall}':\n{e}", error=True)
             return
-        except Exception as e:  
-            messagebox.showerror("Error", f"An unexpected error occurred while uninstalling plugin '{name_plg_uninstall}':\n{e}")
+        except Exception as e:
+            self.show_topmost_messagebox(title='ERROR', message=f"An unexpected error occurred while uninstalling plugin '{name_plg_uninstall}':\n{e}", error=True)  
             return
         
         finally:
