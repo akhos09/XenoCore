@@ -43,7 +43,9 @@ class MenuElementsGUI(CallbacksCoreEnv, CallbacksCorePlg):
                                 dpg.add_text("?")
                                 self.tooltip(text="Refreshes the cache of the environments on your system.\nCheck help if you need more info")  
                                 dpg.add_text("Right click any of the local environments to see the available options", color=[255, 255, 0], tag=self.ENV_HELP_RCLK_TAG) 
-                                
+                            
+                        dpg.add_separator()  
+                        
                         with dpg.group(horizontal=False):
                             with dpg.group(horizontal=True):
                                 dpg.add_text("Create an environment (Vagrantfile):")
@@ -73,7 +75,7 @@ class MenuElementsGUI(CallbacksCoreEnv, CallbacksCorePlg):
 # Plugins tab & Widgets-------------------------------------------------------------------------------------------------------------------------
                 with dpg.tab(label="Plugins", tag=self.PLUGINS_TAB):
                     with dpg.child_window(label="pluginswin", use_internal_label=True, border=True, auto_resize_x=False, auto_resize_y=False, tag=self.PLUGINS_WIN_TAG):
-                            with dpg.group(horizontal=True):
+                            with dpg.group(horizontal=True, tag=self.OPTIONS_PLG_TAG):
                                 dpg.add_button(
                                     label="Search for plugins",
                                     callback=self.get_list_plugins,
@@ -84,9 +86,25 @@ class MenuElementsGUI(CallbacksCoreEnv, CallbacksCorePlg):
                                 dpg.add_text("Local")
                                 dpg.add_text("?")
                                 self.tooltip(text="Displays the plugins that are only installed in a local environment.\nCheck Vagrant documentation for more info.")
-                                dpg.add_text("Right click any of the installed plugins to see the available options", color=[255, 255, 0])
-                                
-                                
+                                dpg.add_text("Right click any of the installed plugins to see the available options", color=[255, 255, 0], tag=self.PLG_HELP_RCLK_TAG)
+                            
+                            dpg.add_separator()
+                            
+                            with dpg.group(horizontal=True):
+                                dpg.add_text("Repair all the plugins")
+                                dpg.add_button(
+                                    label="Repair",
+                                    callback=self.repair_vagrant_plg,
+                                    width=95,
+                                    tag=self.REPAIR_PLG_BTN_TAG
+                                )
+                                dpg.add_checkbox(tag=self.LOCAL_PLG_REPAIR_CHECKBOX_TAG)   
+                                dpg.add_text("Local")
+                                dpg.add_text("?")
+                                self.tooltip(text="Repair tries to uninstall and install all the plugins of the system (Local is for a local plugin).")
+                            
+                            dpg.add_separator()  
+                            
                             with dpg.group(horizontal=True):
                                 dpg.add_text("Enter the name of the plugin you want to install: ")
                                 dpg.add_input_text(width=200, hint="Name", tag=self.INSTALL_PLG_INPUT_TAG)
@@ -99,7 +117,7 @@ class MenuElementsGUI(CallbacksCoreEnv, CallbacksCorePlg):
                                 
                                 dpg.add_text("?")
                                 self.tooltip(text="Check the recommended plugins if you want to try new ones.")
-                                
+
                             dpg.add_separator()
                             
                             with dpg.collapsing_header(label="List of recommended plugins", default_open=True):

@@ -42,6 +42,12 @@ class TagsCoreGUI:
     PACKAGING_ENV_TEXT_TAG = "packaging_env"
     RELOADING_ENV_TEXT_TAG = "reloading_env"
     
+    LOADING_PLG_TEXT_TAG = "loading_plg"
+    INSTALLING_PLG_TEXT_TAG = "installing_plg"
+    UNINSTALLING_PLG_TEXT_TAG = "uninstalling_plg"
+    UPDATING_PLG_TEXT_TAG = "updating_plg"
+    REPAIRING_PLG_TEXT_TAG = "repairing_plg"
+    
     # Buttons --------------------------------------
     SEARCH_MACHINES_BTN_TAG = "search_machines_btn"
     SEARCH_PLUGINS_BTN_TAG = "search_plugins_btn"
@@ -53,6 +59,7 @@ class TagsCoreGUI:
     RELOAD_ENV_BTN_TAG = "reload_env_btn"
     INSTALL_PLG_BTN_TAG = "install_plg_btn"
     UNINSTALL_PLG_BTN_TAG = "uninstall_plg_btn"
+    REPAIR_PLG_BTN_TAG = "repair_plg_btn"
     THEME_SETTINGS_BTN_TAG = "theme_settings"
     
     # Inputs ------------------------------------------
@@ -71,6 +78,7 @@ class TagsCoreGUI:
     FORCE_STOP_CHECKBOX_TAG = "force_check_stop"
     PROVISION_CHECKBOX_TAG = "check_provision"
     LOCAL_PLG_CHECKBOX_TAG = "local_plg_search"
+    LOCAL_PLG_REPAIR_CHECKBOX_TAG = "local_plg_repair"
     
     # Misc --------------------------------------
     ROW_GROUP_TAG = "row_group"
@@ -80,5 +88,7 @@ class TagsCoreGUI:
     THEME_ADV_SETTINGS_TAG = "theme_advance_settings"
     THEME_SETTINGS_ALERT_TAG = "theme_settings_alert"
     OPTIONS_ENV_TAG = "options_env"
-    ENV_HELP_RCLK_TAG = "help_rgk"
+    OPTIONS_PLG_TAG = "options_plg"
+    ENV_HELP_RCLK_TAG = "env_help_rgk"
+    PLG_HELP_RCLK_TAG = "plg_help_rgk"
     ENV_HANDLER_RGCK_TAG = "right_click_popup"

@@ -15,6 +15,9 @@ class CallbacksGUI(TagsCoreGUI):
     ENV_DIS_ITEMS = [TagsCoreGUI.PACK_ENV_BTN_TAG, TagsCoreGUI.SEARCH_MACHINES_BTN_TAG, TagsCoreGUI.FOLDER_SELECTION_BTN_TAG]
     ENV_HID_ITEMS =  [TagsCoreGUI.PLUGINS_TAB, TagsCoreGUI.OTHER_TAB, TagsCoreGUI.ENV_HELP_RCLK_TAG]
     
+    PLG_DIS_ITEMS = [TagsCoreGUI.SEARCH_PLUGINS_BTN_TAG, TagsCoreGUI.INSTALL_PLG_BTN_TAG]
+    PLG_HID_ITEMS =  [TagsCoreGUI.MACHINES_TAB, TagsCoreGUI.OTHER_TAB, TagsCoreGUI.PLG_HELP_RCLK_TAG]
+    
     THEMES = {
         "Dark Theme": dark_theme,
         "Light Theme": light_theme,
@@ -131,10 +134,8 @@ class CallbacksGUI(TagsCoreGUI):
 
                 
             elif menu_type == "plugin":
-                pass
-                # dpg.add_button(label="Uninstall " + str(user_data), callback=uninstall)
-                # dpg.add_button(label="Update " + str(user_data), callback=update)
-                # dpg.add_button(label="Repair " + str(user_data), callback=repair)
+                dpg.add_button(label="Update " + str(user_data), callback=self.update_vagrant_plg, user_data=user_data)
+                dpg.add_button(label="Uninstall " + str(user_data), callback=self.uninstall_vagrant_plg, user_data=user_data)
 
 # Disable gui env ----------------------------------------------------------------------------------------------------
     def env_disable_gui (self,text,text_tag):
@@ -142,36 +143,34 @@ class CallbacksGUI(TagsCoreGUI):
         
         for i in self.ENV_HID_ITEMS:
             dpg.hide_item(i)
-            
         for i in self.ENV_DIS_ITEMS:
             dpg.disable_item(i)
-            
+    
     def env_enable_gui (self, text_tag):
         dpg.delete_item(text_tag)
         self.get_vagrant_status(None, "search_machines_btn")
         
         for i in self.ENV_HID_ITEMS:    
             dpg.show_item(i)
-            
         for i in self.ENV_DIS_ITEMS:
-
             dpg.enable_item(i)
+            
 # Disable gui plgs ----------------------------------------------------------------------------------------------------
     def plg_disable_gui (self,text,text_tag):
-        dpg.add_text(f'{text}', color=[255, 255, 0], parent=self.OPTIONS_ENV_TAG, tag=text_tag)
+        dpg.add_text(f'{text}', color=[255, 255, 0], parent=self.OPTIONS_PLG_TAG, tag=text_tag)
         
-        for i in self.ENV_HID_ITEMS:
+        for i in self.PLG_HID_ITEMS:
             dpg.hide_item(i)
             
-        for i in self.ENV_DIS_ITEMS:
+        for i in self.PLG_DIS_ITEMS:
             dpg.disable_item(i)
             
     def plg_enable_gui (self, text_tag):
         dpg.delete_item(text_tag)
-        self.get_vagrant_status(None, "search_machines_btn")
+        self.get_list_plugins(None, "search_plugins_btn")
         
-        for i in self.ENV_HID_ITEMS:    
+        for i in self.PLG_HID_ITEMS:    
             dpg.show_item(i)
             
-        for i in self.ENV_DIS_ITEMS:
+        for i in self.PLG_DIS_ITEMS:
             dpg.enable_item(i)

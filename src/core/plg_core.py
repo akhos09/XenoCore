@@ -6,25 +6,34 @@ import dearpygui.dearpygui as dpg
 from gui.components.gui_core import CallbacksGUI
 
 class CallbacksCorePlg(CallbacksGUI):
-    
+
 # Get list plugin function -----------------------------------------------------------------------------------------------------------------------------------
     def get_list_plugins(self, app_data, user_data):
-        self.show_loading_popup(message="   Updating Vagrant plugins list...  ", loading_pos=[177, 50], popup_tag=self.POPUP_PLG_LIST_TAG)
+        dpg.delete_item("right_click_popup")
+        dpg.set_item_label(self.SEARCH_PLUGINS_BTN_TAG,"Loading...")
+        dpg.set_item_width(self.SEARCH_PLUGINS_BTN_TAG,125)
+        self.plg_disable_gui(text="Loading installed plugins...", text_tag=self.LOADING_PLG_TEXT_TAG)
+        
         check_local = dpg.get_value(self.LOCAL_PLG_CHECKBOX_TAG)
+                
         try:
             cmd = ["vagrant", "plugin", "list", "--local"] if check_local else ["vagrant", "plugin", "list"]
             command_status = subprocess.run(cmd, capture_output=True, text=True)
 
         except subprocess.CalledProcessError as e:
             self.show_topmost_messagebox(title='ERROR', message=f'Failed to search the plugins (Vagrant error): {e}', error=True)
-            return
         except Exception as e:
             self.show_topmost_messagebox(title='ERROR', message=f'Machines on your system could not be found. Make sure Vagrant is installed\n\n{e}', error=True)
-            return
-
+            
         finally:
-            dpg.delete_item(self.POPUP_PLG_LIST_TAG)
-
+            dpg.set_item_label(self.SEARCH_PLUGINS_BTN_TAG,"Refresh")
+            dpg.set_item_width(self.SEARCH_PLUGINS_BTN_TAG,100)
+            dpg.delete_item(self.LOADING_PLG_TEXT_TAG)
+            for i in self.PLG_HID_ITEMS:    
+                dpg.show_item(i)
+            for i in self.PLG_DIS_ITEMS:
+                dpg.enable_item(i)
+                
         if "No plugins installed" in command_status.stdout:
             self.show_topmost_messagebox(title='INFO', message='You don’t have any Vagrant plugin in your computer. Try installing one with the options below.')
 
@@ -98,14 +107,11 @@ class CallbacksCorePlg(CallbacksGUI):
                     for row in rows:
                         dpg.bind_item_handler_registry(row, registry)
 
-        dpg.set_item_label(self.SEARCH_PLUGINS_BTN_TAG, "Refresh")
-        dpg.set_item_width(self.SEARCH_PLUGINS_BTN_TAG, 100)
-        
 # Install plugin function ----------------------------------------------------------------------------------------------------------------------------------- 
-    def install_vagrant_plg(self, app_data, user_data):
+    def install_vagrant_plg(self, sender, app_data, user_data):
         dpg.delete_item("right_click_popup")
         name_plg_install: str = dpg.get_value(self.INSTALL_PLG_INPUT_TAG)
-        self.show_loading_popup(message="      Installing the plugin...      ", loading_pos=[177, 50], popup_tag=self.POPUP_INSTALL_PLG_TAG)
+        self.plg_disable_gui(text=f"Installing the {name_plg_install} plugin...", text_tag=self.INSTALLING_PLG_TEXT_TAG)
 
         try:
             if sys.platform == "win32":
@@ -117,48 +123,83 @@ class CallbacksCorePlg(CallbacksGUI):
 
         except subprocess.CalledProcessError as e:
             self.show_topmost_messagebox(title='ERROR', message=f"Failed to install the plugin (Vagrant error): {e}", error=True)
-            return
         except Exception as e:
             self.show_topmost_messagebox(title='ERROR', message=f'The plugin {name_plg_install} could not be installed. Make sure Vagrant is installed.\n\n{e}', error=True)
-            return
 
         finally:
-            self.get_list_plugins(None, "search_plugins_button")
-            dpg.delete_item(self.POPUP_INSTALL_PLG_TAG)
-            
+            self.plg_enable_gui(text_tag=self.INSTALLING_PLG_TEXT_TAG)
+
 # Uninstall plugin function -----------------------------------------------------------------------------------------------------------------------------------
     def uninstall_vagrant_plg(self, sender, app_data, user_data):
         dpg.delete_item("right_click_popup")
         name_plg_uninstall: str = user_data
-        self.show_loading_popup(message="Uninstalling....", loading_pos=[170, 50], popup_tag=self.POPUP_UNINSTALL_PLG_TAG)
-
+        
+        self.plg_disable_gui(text=f"Uninstalling the {name_plg_uninstall} plugin...", text_tag=self.UNINSTALLING_PLG_TEXT_TAG)
+        
         try:
+            cmd = f'vagrant plugin uninstall {name_plg_uninstall}'
             if sys.platform == "win32":
-                cmd = f'cmd /c "vagrant plugin uninstall {name_plg_uninstall}"'
-            else:
-                cmd = f'vagrant plugin uninstall {name_plg_uninstall}'
-
+                cmd = f'start /wait cmd /c "{cmd} & pause"'                
+                
             subprocess.run(cmd, shell=True, check=True)
 
         except subprocess.CalledProcessError as e:
             self.show_topmost_messagebox(title='ERROR', message=f"Failed to uninstall plugin '{name_plg_uninstall}':\n{e}", error=True)
-            return
         except Exception as e:
             self.show_topmost_messagebox(title='ERROR', message=f"An unexpected error occurred while uninstalling plugin '{name_plg_uninstall}':\n{e}", error=True)
-            return
 
         finally:
-            self.get_list_plugins(None, "search_plugins_button")
-            dpg.delete_item(self.POPUP_UNINSTALL_PLG_TAG)
+            self.plg_enable_gui(text_tag=self.UNINSTALLING_PLG_TEXT_TAG)
             
 # Update plugin function -----------------------------------------------------------------------------------------------------------------------------------
-    def update_vagrant_plg(self, app_data, user_data):
-        pass
-    
+    def update_vagrant_plg(self, sender, app_data, user_data):
+        dpg.delete_item("right_click_popup")
+        name_plg_update: str = user_data
+        
+        self.plg_disable_gui(text=f"Updating the {name_plg_update} plugin...", text_tag=self.UPDATING_PLG_TEXT_TAG)
+        
+        try:
+            cmd = f'vagrant plugin update {name_plg_update}'
+            if sys.platform == "win32":
+                cmd = f'start /wait cmd /c "{cmd} & pause"'  
+
+            subprocess.run(cmd, shell=True, check=True)
+
+        except subprocess.CalledProcessError as e:
+            self.show_topmost_messagebox(title='ERROR', message=f"Failed to update plugin '{name_plg_update}':\n{e}", error=True)
+        except Exception as e:
+            self.show_topmost_messagebox(title='ERROR', message=f"An unexpected error occurred while updating plugin '{name_plg_update}':\n{e}", error=True)
+
+        finally:
+            self.plg_enable_gui(text_tag=self.UPDATING_PLG_TEXT_TAG)
+
 # Repair plugin function -----------------------------------------------------------------------------------------------------------------------------------
-    def repair_vagrant_plg(self, app_data, user_data):
-        pass
-    
+    def repair_vagrant_plg(self, sender, app_data, user_data):
+        dpg.delete_item("right_click_popup")
+        name_plg_repair: str = user_data
+        
+        self.plg_disable_gui(text=f"Repairing the plugins...", text_tag=self.REPAIRING_PLG_TEXT_TAG)
+        
+        check_local = dpg.get_value(self.LOCAL_PLG_REPAIR_CHECKBOX_TAG)
+        
+        try:
+            cmd = f'vagrant plugin repair'
+            if check_local:
+                cmd = f'vagrant plugin repair --local'
+                
+            if sys.platform == "win32":
+                cmd = f'start /wait cmd /c "{cmd} & pause"'  
+                
+            subprocess.run(cmd, shell=True, check=True)
+
+        except subprocess.CalledProcessError as e:
+            self.show_topmost_messagebox(title='ERROR', message=f"Failed to repair plugin '{name_plg_repair}':\n{e}", error=True)
+        except Exception as e:
+            self.show_topmost_messagebox(title='ERROR', message=f"An unexpected error occurred while repairing plugin '{name_plg_repair}':\n{e}", error=True)
+
+        finally:
+            self.plg_enable_gui(text_tag=self.REPAIRING_PLG_TEXT_TAG)
+
 # Expunge plugin function -----------------------------------------------------------------------------------------------------------------------------------
     def expunge_vagrant_plg(self, app_data, user_data):
         pass
