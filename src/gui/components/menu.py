@@ -5,52 +5,8 @@ import dearpygui.dearpygui as dpg
 from .themes import *
 from .fonts import *
 
-class MenuElementsGUI: # Elements from GUI--------------------------------------------------------------------------------
-    MACHINES_TAB = "machines"
-    PLUGINS_TAB = "plugins"
-    OTHER_TAB = "other"
-    HELP_TAB = "help_tab"
-    ABOUT_TAB = "about_tab"
-    APPEARANCE_TAB = "appearance_tab"
-    # Tabs --------------------------------------
-    MAIN_WINDOW_TAG = "main_window"
-    TAB_BAR_TAG = "tab_bar"
-    MACHINES_WIN_TAG = "machines_win"
-    RECOMMENDED_PLUGINS_TABLE_TAG = "rec_plugins_table"
-    # Buttons --------------------------------------
-    SEARCH_MACHINES_BTN_TAG = "search_machines_btn"
-    SEARCH_PLUGINS_BTN_TAG = "search_plugins_btn"
-    START_ENV_BTN_TAG = "start_env_btn"
-    STOP_ENV_BTN_TAG = "stop_env_btn"
-    DELETE_ENV_BTN_TAG = "delete_env_btn"
-    FOLDER_SELECTION_BTN_TAG = "folder_selection_btn"
-    PACK_ENV_BTN_TAG = "pack_env_btn"
-    RELOAD_ENV_BTN_TAG = "reload_env_btn"
-    INSTALL_PLG_BTN_TAG = "install_plg_btn"
-    UNINSTALL_PLG_BTN_TAG = "uninstall_plg_btn"
-    # Checkboxes --------------------------------------
-    PRUNE_CHECKBOX_TAG = "check_prune_search"
-    PROVISION_CHECKBOX_TAG = "check_provision"
-    FORCE_STOP_CHECKBOX_TAG = "force_check_stop"
-    FORCE_DELETE_CHECKBOX_TAG = "force_check_delete"
-    LOCAL_PLG_CHECKBOX_TAG = "local_plg_search"
-    # Inputs ------------------------------------------
-    START_ENV_INPUT_TAG = "id_input_start"
-    STOP_ENV_INPUT_TAG = "id_input_stop"
-    DELETE_ENV_INPUT_TAG = "id_input_delete"
-    RELOAD_ENV_INPUT_TAG = "id_input_reload"
-    PACK_VB_INPUT_TAG = "id_input_pack_vboxname"
-    PACK_OUTPUT_INPUT_TAG = "output_input_name"
-    INSTALL_PLG_INPUT_TAG = "id_input_plg_install"
-    UNINSTALL_PLG_INPUT_TAG = "id_input_plg_uninstall"
-    # Misc ------------------------------------------
-    PLUGINS_WIN_TAG = "pluginswin"
-    OTHER_WIN_TAG = "otherwin"
-    THEME_SELECTOR_TAG = "theme_selector"
-    FONT_SELECTOR_TAG = "font_selector"
-    THEME_ADV_SETTINGS_TAG = "theme_advance_settings"
-    THEME_SETTINGS_ALERT_TAG = "theme_settings_alert"
-    THEME_SETTINGS_BTN_TAG = "theme_settings"
+# Elements from GUI--------------------------------------------------------------------------------
+class MenuElementsGUI: 
 
 # Initial settings (viewport)--------------------------------------------------------
     def initial_settings(self): 

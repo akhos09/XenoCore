@@ -9,6 +9,7 @@ import dearpygui.dearpygui as dpg
 from tkinter import messagebox
 
 from .menu import MenuElementsGUI
+from .constants import TagsCoreGUI
 
 #Decorator (stays in the app's pwd after executing a vagrant up that changes the dir in order to execute it)
 @contextmanager
@@ -20,42 +21,8 @@ def change_directory(target_dir):
     finally:
         os.chdir(current_dir)
 
-class CallbacksCoreEnv(MenuElementsGUI):
-    # Misc---------------------------------------------
-    ENV_TABLE_TAG = "vagrant_table"
-    PLG_TABLE_TAG = "plg_table"
-    TEMP_ENV_WINDOW_TAG = "table_tempwin"
-    TEMP_PLG_WINDOW_TAG = "table_plg_tempwin"
-    SEARCH_MACHINES_BTN_TAG = "search_machines_btn"
-    ROW_GROUP_TAG = "row_group"
-    ENV_HEADER_TAG = "env_header"
-    # Popups ------------------------------------------
-    POPUP_STATUS_TAG = "searching_machines"
-    POPUP_CREATE_TAG = "creating_machine"
-    POPUP_START_TAG = "starting_machine"
-    POPUP_STOP_TAG = "stopping_machine"
-    POPUP_DELETE_TAG = "destroying_machine"
-    POPUP_RELOAD_TAG = "reloading_machine"    
-    POPUP_PACK_TAG = "packaging_machine"
-    POPUP_PLG_LIST_TAG = "searching_plg"
-    POPUP_INSTALL_PLG_TAG = "installing_plg"
-    POPUP_UNINSTALL_PLG_TAG = "uninstalling_plg"
-    # Inputs ------------------------------------------
-    START_ENV_INPUT_TAG = "id_input_start"
-    STOP_ENV_INPUT_TAG = "id_input_stop"
-    DELETE_ENV_INPUT_TAG = "id_input_delete"
-    PACK_VB_INPUT_TAG = "id_input_pack_vboxname"
-    PACK_OUTPUT_INPUT_TAG = "output_input_name"
-    RELOAD_ENV_INPUT_TAG = "id_input_reload"
+class CallbacksCoreEnv(MenuElementsGUI, TagsCoreGUI):
     
-    UNINSTALL_PLG_INPUT_TAG = "id_input_plg_uninstall"
-    # Checkboxes --------------------------------------
-    PRUNE_CHECKBOX_TAG = "check_prune_search"
-    FORCE_DELETE_CHECKBOX_TAG = "force_check_delete"
-    FORCE_STOP_CHECKBOX_TAG = "force_check_stop"
-    PROVISION_CHECKBOX_TAG = "check_provision"
-    LOCAL_PLG_CHECKBOX_TAG = "local_plg_search"
-
 # Vagrant env list ------------------------------------------------------------------------------------------------------------------------------------
     def get_vagrant_status(self, app_data, user_data):
         self.show_loading_popup(message="Updating Vagrant environments list...", loading_pos=[170,50], popup_tag=self.POPUP_STATUS_TAG)

@@ -292,7 +292,6 @@ def cyberpunk_theme() -> Union[str, int]:
             dpg.add_theme_style(dpg.mvStyleVar_ScrollbarRounding, 3)
             dpg.add_theme_style(dpg.mvStyleVar_GrabRounding, 3)
             dpg.add_theme_style(dpg.mvStyleVar_ItemSpacing, 10, 10)  
-             
 
     return theme_id
 
