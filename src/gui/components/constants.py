@@ -34,6 +34,14 @@ class TagsCoreGUI:
     POPUP_INSTALL_PLG_TAG = "installing_plg"
     POPUP_UNINSTALL_PLG_TAG = "uninstalling_plg"
     
+    LOADING_ENV_TEXT_TAG = "loading_env"
+    CREATING_ENV_TEXT_TAG = "creating_env"
+    BOOTING_ENV_TEXT_TAG = "booting_env"
+    STOPPING_ENV_TEXT_TAG = "stopping_env"
+    DESTROYING_ENV_TEXT_TAG = "destroying_env"
+    PACKAGING_ENV_TEXT_TAG = "packaging_env"
+    RELOADING_ENV_TEXT_TAG = "reloading_env"
+    
     # Buttons --------------------------------------
     SEARCH_MACHINES_BTN_TAG = "search_machines_btn"
     SEARCH_PLUGINS_BTN_TAG = "search_plugins_btn"
@@ -52,9 +60,9 @@ class TagsCoreGUI:
     STOP_ENV_INPUT_TAG = "id_input_stop"
     DELETE_ENV_INPUT_TAG = "id_input_delete"
     RELOAD_ENV_INPUT_TAG = "id_input_reload"
-    PACK_VB_INPUT_TAG = "id_input_pack_vboxname"
+    PACK_VB_INPUT_TAG = "id_input_pack_vboxname" #--------
     PACK_OUTPUT_INPUT_TAG = "output_input_name"
-    INSTALL_PLG_INPUT_TAG = "id_input_plg_install"
+    INSTALL_PLG_INPUT_TAG = "id_input_plg_install" #--------
     UNINSTALL_PLG_INPUT_TAG = "id_input_plg_uninstall"
     
     # Checkboxes --------------------------------------
@@ -71,3 +79,6 @@ class TagsCoreGUI:
     FONT_SELECTOR_TAG = "font_selector"
     THEME_ADV_SETTINGS_TAG = "theme_advance_settings"
     THEME_SETTINGS_ALERT_TAG = "theme_settings_alert"
+    OPTIONS_ENV_TAG = "options_env"
+    ENV_HELP_RCLK_TAG = "help_rgk"
+    ENV_HANDLER_RGCK_TAG = "right_click_popup"

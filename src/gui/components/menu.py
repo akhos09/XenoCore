@@ -31,7 +31,7 @@ class MenuElementsGUI(CallbacksCoreEnv, CallbacksCorePlg):
                 with dpg.tab(label="Machines", tag=self.MACHINES_TAB):
                     with dpg.child_window(tag=self.MACHINES_WIN_TAG, label="machineswin", use_internal_label=True, border=True, auto_resize_x=False, auto_resize_y=False):
                         with dpg.group(horizontal=False):
-                            with dpg.group(horizontal=True):
+                            with dpg.group(horizontal=True, tag=self.OPTIONS_ENV_TAG):
                                 dpg.add_button(
                                     label="Search for Vagrant Machines",
                                     callback=self.get_vagrant_status,
@@ -41,7 +41,9 @@ class MenuElementsGUI(CallbacksCoreEnv, CallbacksCorePlg):
                                 dpg.add_checkbox(tag=self.PRUNE_CHECKBOX_TAG)
                                 dpg.add_text("Prune")
                                 dpg.add_text("?")
-                                self.tooltip(text="Refreshes the cache of the environments on your system.\nCheck help if you need more info")   
+                                self.tooltip(text="Refreshes the cache of the environments on your system.\nCheck help if you need more info")  
+                                dpg.add_text("Right click any of the local environments to see the available options", color=[255, 255, 0], tag=self.ENV_HELP_RCLK_TAG) 
+                                
                         with dpg.group(horizontal=False):
                             with dpg.group(horizontal=True):
                                 dpg.add_text("Create an environment (Vagrantfile):")
@@ -56,10 +58,6 @@ class MenuElementsGUI(CallbacksCoreEnv, CallbacksCorePlg):
                                 with dpg.group(horizontal=True):
                                     dpg.add_text("Enter the name of the machine (IN VirtualBox GUI) you want to package:")
                                     dpg.add_input_text(width=220, hint="Name (VboxGUI)", tag=self.PACK_VB_INPUT_TAG)
-                                
-                                with dpg.group(horizontal=True):
-                                    dpg.add_text("Enter the name of the output box (without the .box format at the end):")
-                                    dpg.add_input_text(width=220, hint="Output name (.box)", tag=self.PACK_OUTPUT_INPUT_TAG)
                                 with dpg.group(horizontal=True):
                                     with dpg.group(horizontal=True):
                                         dpg.add_button(
@@ -102,11 +100,9 @@ class MenuElementsGUI(CallbacksCoreEnv, CallbacksCorePlg):
                                 dpg.add_text("?")
                                 self.tooltip(text="Check the recommended plugins if you want to try new ones.")
                                 
-                                
-
                             dpg.add_separator()
                             
-                            with dpg.collapsing_header(label="List of recommended plugins"):
+                            with dpg.collapsing_header(label="List of recommended plugins", default_open=True):
                                 with dpg.group(horizontal=False):
 
                                     with dpg.table(tag=self.RECOMMENDED_PLUGINS_TABLE_TAG, header_row=True, 

@@ -1,4 +1,4 @@
-import platform
+import sys
 import subprocess
 
 import dearpygui.dearpygui as dpg
@@ -80,8 +80,8 @@ class CallbacksCorePlg(CallbacksGUI):
                         tag=self.PLG_TABLE_TAG, policy=dpg.mvTable_SizingStretchProp,
                         context_menu_in_body=True):
 
-                dpg.add_table_column(label="Name")
-                dpg.add_table_column(label="Version")
+                dpg.add_table_column(label=" Installed plugins ")
+                dpg.add_table_column(label=" Version ")
 
                 for plugin in plugins:
                     with dpg.table_row():
@@ -108,8 +108,8 @@ class CallbacksCorePlg(CallbacksGUI):
         self.show_loading_popup(message="      Installing the plugin...      ", loading_pos=[177, 50], popup_tag=self.POPUP_INSTALL_PLG_TAG)
 
         try:
-            if platform.system == "Windows":
-                cmd = f'cmd /c "set VAGRANT_DISABLE_STRICT_DEPENDENCY_ENFORCEMENT=1 && vagrant plugin install {name_plg_install}"'
+            if sys.platform == "win32":
+                cmd = f'start /wait cmd /c "set VAGRANT_DISABLE_STRICT_DEPENDENCY_ENFORCEMENT=1 && vagrant plugin install {name_plg_install} && pause"'
             else:
                 cmd = f'VAGRANT_DISABLE_STRICT_DEPENDENCY_ENFORCEMENT=1 vagrant plugin install {name_plg_install}'
 
@@ -133,7 +133,7 @@ class CallbacksCorePlg(CallbacksGUI):
         self.show_loading_popup(message="Uninstalling....", loading_pos=[170, 50], popup_tag=self.POPUP_UNINSTALL_PLG_TAG)
 
         try:
-            if platform.system == "Windows":
+            if sys.platform == "win32":
                 cmd = f'cmd /c "vagrant plugin uninstall {name_plg_uninstall}"'
             else:
                 cmd = f'vagrant plugin uninstall {name_plg_uninstall}'
@@ -162,3 +162,7 @@ class CallbacksCorePlg(CallbacksGUI):
 # Expunge plugin function -----------------------------------------------------------------------------------------------------------------------------------
     def expunge_vagrant_plg(self, app_data, user_data):
         pass
+    
+# Right click context menu plgs -----------------------------------------------------------------------------------------------------------------------------
+    def plg_right_click_context_menu(self, sender, app_data, user_data):
+        self.right_click_context_menu(sender, app_data, user_data, menu_type="plugin")

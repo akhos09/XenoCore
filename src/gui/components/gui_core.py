@@ -5,14 +5,16 @@ from tkinter import filedialog as fd
 from tkinter import Tk, messagebox
 
 import dearpygui.dearpygui as dpg
-import pyperclip
 
 from .themes import default_theme, dark_theme, light_theme, cyberpunk_theme, gruvboxdark_theme, nyx_theme
 from .fonts import reset_font_binding
 from .constants import TagsCoreGUI
 
 class CallbacksGUI(TagsCoreGUI):
-
+    
+    ENV_DIS_ITEMS = [TagsCoreGUI.PACK_ENV_BTN_TAG, TagsCoreGUI.SEARCH_MACHINES_BTN_TAG, TagsCoreGUI.FOLDER_SELECTION_BTN_TAG]
+    ENV_HID_ITEMS =  [TagsCoreGUI.PLUGINS_TAB, TagsCoreGUI.OTHER_TAB, TagsCoreGUI.ENV_HELP_RCLK_TAG]
+    
     THEMES = {
         "Dark Theme": dark_theme,
         "Light Theme": light_theme,
@@ -40,26 +42,6 @@ class CallbacksGUI(TagsCoreGUI):
         if check_settings:
             dpg.show_style_editor()
 
-# Loading popup function -----------------------------------------------------------------------------------
-    def show_loading_popup(self, message, loading_pos, popup_tag):
-        if dpg.does_item_exist(popup_tag):
-            dpg.delete_item(popup_tag)
-
-        with dpg.window(label="Loading", modal=True, show=True, tag=popup_tag,
-                        no_title_bar=True, no_move=True, no_resize=True, autosize=True):
-            dpg.add_text(message)
-            dpg.add_spacer(width=100)
-            dpg.add_loading_indicator(pos=loading_pos)
-            dpg.set_item_pos(popup_tag, [720, 400])
-            dpg.split_frame()
-            
-# Refresh table function ----------------------------------------------------------------------------------
-    def refresh(self, popup_tag):
-        dpg.delete_item(popup_tag)
-        self.show_loading_popup(message="Updating Vagrant environments list...", loading_pos=[177, 50], popup_tag=self.POPUP_STATUS_TAG)
-        self.get_vagrant_status(None, "search_machines_btn")
-        dpg.delete_item(self.POPUP_STATUS_TAG)
-        
 # Show tooltip function -----------------------------------------------------------------------------------
     def tooltip(self, text):
         with dpg.tooltip(parent=dpg.last_item(), hide_on_activity=True):
@@ -67,7 +49,6 @@ class CallbacksGUI(TagsCoreGUI):
             
 # Select folder function ----------------------------------------------------------------------------------
     def select_folder(self, text="Select a folder"):
-        from tkinter import Tk, filedialog
 
         result = {"path": None}
 
@@ -75,7 +56,7 @@ class CallbacksGUI(TagsCoreGUI):
             try:
                 root = Tk()
                 root.withdraw()
-                result["path"] = filedialog.askdirectory(title=text, parent=root)
+                result["path"] = fd.askdirectory(title=text, parent=root)
             finally:
                 root.destroy()
 
@@ -105,55 +86,92 @@ class CallbacksGUI(TagsCoreGUI):
 
         thread = threading.Thread(target=run_messagebox)
         thread.start()
+        
+    def ask_save_path(self, default_name="output.box"):
+        def run_dialog():
+            try:
+                root = Tk()
+                root.withdraw()
+                root.wm_attributes("-topmost", 1)
+
+                path = fd.asksaveasfilename(
+                    title="Save .box file",
+                    defaultextension=".box",
+                    initialfile=default_name,
+                    filetypes=[("Vagrant Box", "*.box")]
+                )
+                self.save_path = path  # store result
+            finally:
+                try:
+                    root.destroy()
+                except:
+                    pass
+
+        thread = threading.Thread(target=run_dialog)
+        thread.start()
+        thread.join()
+        return getattr(self, "save_path", None)
+
 
 # Unified right click context menu-----------------------------------------------------------------------------------
     def right_click_context_menu(self, sender, app_data, user_data, menu_type):
-        def copy():
-            pyperclip.copy(user_data)
-            dpg.delete_item("right_click_popup")
-
-        def connect(user_data):
-            try:
-                if platform.system() == "Windows":
-                    # Windows: Use PowerShell to run the Vagrant SSH command
-                    cmd = f'start powershell -NoExit -Command "$Env:VAGRANT_PREFER_SYSTEM_BIN=0; vagrant ssh {user_data}"'
-                else:
-                    # Linux/Mac: Just run the Vagrant SSH command
-                    cmd = f"vagrant ssh {user_data}"
-
-                subprocess.run(cmd, shell=True, check=True)
-            
-            except subprocess.CalledProcessError as e:
-                self.show_topmost_messagebox(title='ERROR', message=f"Failed to connect to the environment (Vagrant error): {e}", error=True)
-            except Exception as e:
-                self.show_topmost_messagebox(title='ERROR', message=f"Unexpected error: {str(e)}", error=True)
-
-        def uninstall():
-            self.uninstall_vagrant_plg(user_data)
-        
-        def update():
-            self.update_vagrant_plg(user_data)
-        
-        def repair():
-            self.repair_vagrant_plg(user_data)
-
+                
         if dpg.does_item_exist("right_click_popup"):
             dpg.delete_item("right_click_popup")
 
         with dpg.window(tag="right_click_popup", popup=True, no_focus_on_appearing=False,
                         height=120 if menu_type == "plugin" else 90, width=130, no_background=False):
-            dpg.add_button(label="Copy " + str(user_data), callback=copy)
 
             if menu_type == "env":
-                dpg.add_button(label="Connect " + str(user_data), callback=connect)
+                dpg.add_button(label="Start " + str(user_data), callback=self.start_vagrant_env, user_data=user_data)
+                dpg.add_button(label="Stop " + str(user_data), callback=self.stop_vagrant_env, user_data=user_data)
+                dpg.add_button(label="Reload " + str(user_data), callback=self.reload_vagrant_env, user_data=user_data)
+                dpg.add_button(label="Delete " + str(user_data), callback=self.delete_vagrant_env, user_data=user_data)
+                dpg.add_button(label="Connect " + str(user_data), callback=self.connect_vagrant_env, user_data=user_data)
+
+                
             elif menu_type == "plugin":
-                dpg.add_button(label="Uninstall " + str(user_data), callback=uninstall)
-                dpg.add_button(label="Update " + str(user_data), callback=update)
-                dpg.add_button(label="Repair " + str(user_data), callback=repair)
+                pass
+                # dpg.add_button(label="Uninstall " + str(user_data), callback=uninstall)
+                # dpg.add_button(label="Update " + str(user_data), callback=update)
+                # dpg.add_button(label="Repair " + str(user_data), callback=repair)
 
-# Aliases for the right click context menus--------------------------------------------------------------
-    def env_right_click_context_menu(self, sender, app_data, user_data):
-        self.right_click_context_menu(sender, app_data, user_data, menu_type="env")
+# Disable gui env ----------------------------------------------------------------------------------------------------
+    def env_disable_gui (self,text,text_tag):
+        dpg.add_text(f'{text}', color=[255, 255, 0], parent=self.OPTIONS_ENV_TAG, tag=text_tag)
+        
+        for i in self.ENV_HID_ITEMS:
+            dpg.hide_item(i)
+            
+        for i in self.ENV_DIS_ITEMS:
+            dpg.disable_item(i)
+            
+    def env_enable_gui (self, text_tag):
+        dpg.delete_item(text_tag)
+        self.get_vagrant_status(None, "search_machines_btn")
+        
+        for i in self.ENV_HID_ITEMS:    
+            dpg.show_item(i)
+            
+        for i in self.ENV_DIS_ITEMS:
 
-    def plg_right_click_context_menu(self, sender, app_data, user_data):
-        self.right_click_context_menu(sender, app_data, user_data, menu_type="plugin")
+            dpg.enable_item(i)
+# Disable gui plgs ----------------------------------------------------------------------------------------------------
+    def plg_disable_gui (self,text,text_tag):
+        dpg.add_text(f'{text}', color=[255, 255, 0], parent=self.OPTIONS_ENV_TAG, tag=text_tag)
+        
+        for i in self.ENV_HID_ITEMS:
+            dpg.hide_item(i)
+            
+        for i in self.ENV_DIS_ITEMS:
+            dpg.disable_item(i)
+            
+    def plg_enable_gui (self, text_tag):
+        dpg.delete_item(text_tag)
+        self.get_vagrant_status(None, "search_machines_btn")
+        
+        for i in self.ENV_HID_ITEMS:    
+            dpg.show_item(i)
+            
+        for i in self.ENV_DIS_ITEMS:
+            dpg.enable_item(i)
