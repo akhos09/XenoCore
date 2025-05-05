@@ -1,5 +1,7 @@
 import os
+import platform
 import sys
+import shutil
 from tkinter import messagebox
 
 import ctypes
@@ -8,21 +10,24 @@ import dearpygui.dearpygui as dpg
 from .components.menu import MenuElementsGUI
 from .components.themes import *
 
-# Main GUI class (Screen and Icon settings)------------------------------------------------------------------
 class XenoVagrantGUI(MenuElementsGUI):
     def __init__(self):
-        try:
-            ctypes.windll.shcore.SetProcessDpiAwareness(1)  # Enable DPI awareness for high-resolution screens
-        except Exception as e:
-            messagebox.showerror(title='ERROR', message=f'DPI Awareness could not be set. Contact @akhos09 or open an issue in the repo.\n\n{e}')
-        
+        if platform.system == "Windows":
+            try:
+                ctypes.windll.shcore.SetProcessDpiAwareness(1)
+            except Exception as e:
+                self.show_topmost_messagebox(title='ERROR', message=f'DPI Awareness could not be set.\n\n{e}', error=True)
+
         self.icon_path = os.path.join(os.path.dirname(__file__), "../assets/img/test.ico")
         if not os.path.exists(self.icon_path):
-            messagebox.showerror(title='ERROR', message='Assets folder not found. Make sure it exists inside src folder.')
+            self.show_topmost_messagebox(title='ERROR', message='Assets folder not found. Make sure it exists inside the src folder.', error=True)
             sys.exit(1)
 
-# Main function------------------------------------------------------------------
 def main():
+    if not shutil.which("vagrant"):
+        messagebox.showerror(title='ERROR', message='Vagrant is not installed. Ensure is installed and registered in the PATH.')
+        sys.exit(1)
+        
     try:
         app = XenoVagrantGUI()
         app.menu()

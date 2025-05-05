@@ -1,9 +1,7 @@
 import os
 import subprocess
-from tkinter import filedialog as fd
-from tkinter import Tk
+import platform
 from contextlib import contextmanager
-import pyperclip
 
 import dearpygui.dearpygui as dpg
 from tkinter import messagebox
@@ -11,10 +9,10 @@ from tkinter import messagebox
 from gui.components.constants import TagsCoreGUI
 from gui.components.gui_core import CallbacksGUI
 
-#Decorator (stays in the app's pwd after executing a vagrant up that changes the dir in order to execute it)
+# Decorator (stays in the app's pwd after executing a vagrant up that changes the dir in order to execute it)
 @contextmanager
 def change_directory(target_dir):
-    current_dir: str  = os.getcwd()
+    current_dir: str = os.getcwd()
     os.chdir(target_dir)
     try:
         yield
@@ -33,10 +31,10 @@ class CallbacksCoreEnv(CallbacksGUI):
             command_status = subprocess.run(cmd, capture_output=True, text=True)
             
         except subprocess.CalledProcessError as e:
-            messagebox.showerror("Error", f"Failed to search the environments (Vagrant error): {e}")
+            self.show_topmost_messagebox(title='ERROR', message=f'Failed to search the environments (Vagrant error): {e}', error=True)
             return
         except Exception as e:
-            messagebox.showerror(title='ERROR', message=f'Machines on your system could not be found. Make sure Vagrant is installed\n\n{e}')
+            self.show_topmost_messagebox(title='ERROR', message=f'Machines on your system could not be found. Make sure Vagrant is installed\n\n{e}', error=True)
             return
         
         finally:
@@ -124,27 +122,31 @@ class CallbacksCoreEnv(CallbacksGUI):
             return
 
         if not os.path.exists(folder_selected):
-            messagebox.showerror("Error", f"Directory does not exist: {folder_selected}")
+            self.show_topmost_messagebox("ERROR", f"Directory does not exist: {folder_selected}", error=True)
             return
             
         self.show_loading_popup(message="Creating the Vagrant environment...", loading_pos=[170,50], popup_tag=self.POPUP_CREATE_TAG)
             
         try:
             with change_directory(folder_selected):
-                cmd = f'start /wait cmd /c "vagrant up & pause"'
-                subprocess.run(cmd ,shell=True, check=True)
+                if platform.system() == "Windows":
+                    cmd = f'start /wait cmd /c "vagrant up & pause"'
+                else:
+                    cmd = "vagrant up"
+                
+                subprocess.run(cmd, shell=True, check=True)
                 
         except subprocess.CalledProcessError as e:
-            messagebox.showerror("Error", f"Failed to create the environment (Vagrant error): {e}")
+            self.show_topmost_messagebox("ERROR", f"Failed to create the environment (Vagrant error): {e}", error=True)
             return
         except Exception as e:
-            messagebox.showerror("Error", f"Failed to start Vagrant: {str(e)}")
+            self.show_topmost_messagebox("ERROR", f"Failed to start Vagrant: {str(e)}", error=True)
             return
         
         finally:
             self.refresh(popup_tag=self.POPUP_CREATE_TAG)
 
-# Vagrant env start -----------------------------------------------------------------------------------------------------------------------------------------
+# Start function of an env -------------------------------------------------------------------------------------------------------------------------
     def start_vagrant_env(self, app_data, user_data):
         id_env_start: str = dpg.get_value(self.START_ENV_INPUT_TAG)
         
@@ -154,23 +156,27 @@ class CallbacksCoreEnv(CallbacksGUI):
             provision_check = dpg.get_value(self.PROVISION_CHECKBOX_TAG)
 
             if provision_check:
-                cmd = f'start /wait cmd /c "vagrant up {id_env_start} --provision & pause"'
+                cmd = f"vagrant up {id_env_start} --provision"
             else:
-                cmd = f'start /wait cmd /c "vagrant up {id_env_start} & pause"'
+                cmd = f"vagrant up {id_env_start}"
 
+            # Platform check-------------------------------
+            if platform.system() == "Windows":
+                cmd = f'start /wait cmd /c "{cmd} & pause"'
+            
             subprocess.run(cmd, shell=True, check=True)
 
         except subprocess.CalledProcessError as e:
-            messagebox.showerror("Error", f"Failed to start the environment (Vagrant error): {e}")
+            self.show_topmost_messagebox("ERROR", f"Failed to start the environment (Vagrant error): {e}", error=True)
             return
         except Exception as e:
-            messagebox.showerror("Error", f"Unexpected error: {str(e)}")
+            self.show_topmost_messagebox("ERROR", f"Unexpected error: {str(e)}", error=True)
             return
         
         finally:
             self.refresh(popup_tag=self.POPUP_START_TAG)
 
-# Stop function of an env -----------------------------------------------------------------------------------------------------------------------------------
+# Stop function of an env -------------------------------------------------------------------------------------------------------------------
     def stop_vagrant_env(self, app_data, user_data):
         id_env_stop: str = dpg.get_value(self.STOP_ENV_INPUT_TAG)
         
@@ -186,16 +192,16 @@ class CallbacksCoreEnv(CallbacksGUI):
             subprocess.run(cmd, check=True)
         
         except subprocess.CalledProcessError as e:
-            messagebox.showerror("Error", f"Failed to stop the environment (Vagrant error): {e}")
+            self.show_topmost_messagebox("ERROR", f"Failed to stop the environment (Vagrant error): {e}", error=True)
             return
         except Exception as e: 
-            messagebox.showerror(title='ERROR', message=f'The environment {id_env_stop} could not be stopped. Make sure Vagrant is installed.\n\n{e}')
+            self.show_topmost_messagebox("ERROR", f'The environment {id_env_stop} could not be stopped. Make sure Vagrant is installed.\n\n{e}', error=True)
             return
         
         finally:
             self.refresh(popup_tag=self.POPUP_STOP_TAG)
 
-# Delete function of an env ---------------------------------------------------------------------------------------------------------------------------------
+    # Delete function of an env -----------------------------------------------------------------------------------------------------------------
     def delete_vagrant_env(self, app_data, user_data):
         id_env_delete: str = dpg.get_value(self.DELETE_ENV_INPUT_TAG)
         check_delete = messagebox.askokcancel("Info",
@@ -216,16 +222,16 @@ class CallbacksCoreEnv(CallbacksGUI):
                 subprocess.run(cmd, check=True)
             
             except subprocess.CalledProcessError as e:
-                messagebox.showerror("Error", f"Failed to delete the environment (Vagrant error): {e}")
+                self.show_topmost_messagebox("ERROR", f"Failed to delete the environment (Vagrant error): {e}", error=True)
                 return    
             except Exception as e:
-                messagebox.showerror("Error", f"Failed to delete the environment: {str(e)}")
+                self.show_topmost_messagebox("ERROR", f"Failed to delete the environment: {str(e)}", error=True)
                 return
 
             finally:
                 self.refresh(popup_tag=self.POPUP_DELETE_TAG)
 
-# Package function of an env ---------------------------------------------------------------------------------------------------------------------------------
+    # Pack function of an env -----------------------------------------------------------------------------------------------------------------
     def pack_vagrant_env (self, app_data, user_data):
         folder_selected = self.select_folder(text="Select the destination of the .box file")
         
@@ -234,7 +240,7 @@ class CallbacksCoreEnv(CallbacksGUI):
             return
 
         if not os.path.exists(folder_selected):
-            messagebox.showerror("Error", f"Directory does not exist: {folder_selected}")
+            self.show_topmost_messagebox("ERROR", f"Directory does not exist: {folder_selected}", error=True)
             return
         
         env_name_vb: str = dpg.get_value(self.PACK_VB_INPUT_TAG)
@@ -242,33 +248,37 @@ class CallbacksCoreEnv(CallbacksGUI):
         self.show_loading_popup(message="Packaging the Vagrant environment...", loading_pos=[170,50], popup_tag=self.POPUP_PACK_TAG)
 
         try:
-            cmd = f'start /wait cmd /c vagrant package --base {env_name_vb} --output {folder_selected}/{box_output_name}.box'
+            cmd = f"vagrant package --base {env_name_vb} --output {folder_selected}/{box_output_name}.box"
+            if platform.system() == "Windows":
+                cmd = f'start /wait cmd /c "{cmd} & pause"'
+            
             subprocess.run(cmd, shell=True, check=True)
             
         except subprocess.CalledProcessError as e:
-            messagebox.showerror("Error", f"Failed to pack the environment (Vagrant error): {e}")
+            self.show_topmost_messagebox("ERROR", f"Failed to pack the environment (Vagrant error): {e}", error=True)
             return
         except Exception as e:
-            messagebox.showerror("Error", f"Unexpected error: {str(e)}")
+            self.show_topmost_messagebox("ERROR", f"Unexpected error: {str(e)}", error=True)
             return
         
         finally:
             self.refresh(popup_tag=self.POPUP_PACK_TAG)
 
-# Reload function of an env ---------------------------------------------------------------------------------------------------------------------------------
-    def reload_vagrant_env (self, app_data, user_data):
+    # Reload function of an env -------------------------------------------------------------------------------------------------------------------
+    def reload_vagrant_env(self, app_data, user_data):
         id_env_reload: str = dpg.get_value(self.RELOAD_ENV_INPUT_TAG)
-        self.show_loading_popup(message="Reloading the Vagrant environment...", loading_pos=[170,50], popup_tag=self.POPUP_RELOAD_TAG)
-                
-        try:
-            cmd = f'start /wait cmd /c "vagrant reload {id_env_reload} & pause"'
-            subprocess.run(cmd, shell=True, check=True)
 
+        self.show_loading_popup(message="Rebuilding the Vagrant environment...", loading_pos=[170,50], popup_tag=self.POPUP_RELOAD_TAG)
+        
+        try:
+            cmd = f"vagrant reload {id_env_reload}"
+            subprocess.run(cmd, check=True)
+        
         except subprocess.CalledProcessError as e:
-            messagebox.showerror("Error", f"Failed to reload the environment (Vagrant error): {e}")
+            self.show_topmost_messagebox("ERROR", f"Failed to reload the environment (Vagrant error): {e}", error=True)
             return
         except Exception as e:
-            messagebox.showerror("Error", f"Unexpected error: {str(e)}")
+            self.show_topmost_messagebox("ERROR", f"Unexpected error: {str(e)}", error=True)
             return
         
         finally:

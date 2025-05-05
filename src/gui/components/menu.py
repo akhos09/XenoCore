@@ -71,64 +71,7 @@ class MenuElementsGUI(CallbacksCoreEnv, CallbacksCorePlg):
                                         dpg.add_text("?")
                                 self.tooltip(text="Packs a VBox environment as a reusable box for a Vagrantfile")
                                 dpg.add_separator()   
-                        # #----------------------------------------------------
-                        # with dpg.collapsing_header(label="Main Options (Start Halt/Stop Delete Package Reload)"):
-                        #     #------------------------------------------------------------------------------------        
-                        #     with dpg.tree_node(label="Start environment"):
-                        #         with dpg.group(horizontal=True):
-                        #             dpg.add_text("Enter the ID of the machine you want to start: ", bullet=True)
-                        #             dpg.add_input_text(width=200, hint="ID", tag=self.START_ENV_INPUT_TAG)
-                        #             dpg.add_button(
-                        #                 label="Start",
-                        #                 callback=self.start_vagrant_env,
-                        #                 width=80,
-                        #                 tag=self.START_ENV_BTN_TAG
-                        #             )
-                        #             dpg.add_checkbox(label="Provision", tag=self.PROVISION_CHECKBOX_TAG)
-                        #             with dpg.tooltip(parent=dpg.last_item(), hide_on_activity=True):
-                        #                 dpg.add_text("Runs again the provisioners (scripts, commands, etc.)")
-                        #     dpg.add_separator()
-                        #     #------------------------------------------------------------------------------------        
-                        #     with dpg.tree_node(label="Halt/Stop environment"):
-                        #         with dpg.group(horizontal=True):
-                        #             dpg.add_text("Enter the ID of the machine you want to stop: ", bullet=True)
-                        #             dpg.add_input_text(width=200, hint="ID", tag=self.STOP_ENV_INPUT_TAG)
-                        #             dpg.add_button(
-                        #                 label="Stop",
-                        #                 callback=self.stop_vagrant_env,
-                        #                 width=80,
-                        #                 tag=self.STOP_ENV_BTN_TAG
-                        #             )
-                        #             dpg.add_checkbox(label="Force", tag=self.FORCE_STOP_CHECKBOX_TAG)
-                        #     dpg.add_separator()
-                        #     #------------------------------------------------------------------------------------        
-                        #     with dpg.tree_node(label="Delete environment"):
-                        #         with dpg.group(horizontal=True):
-                        #             dpg.add_text("Enter the ID of the machine you want to delete: ", bullet=True)
-                        #             dpg.add_input_text(width=200, hint="ID", tag=self.DELETE_ENV_INPUT_TAG)
-                        #             dpg.add_button(
-                        #                 label="Delete",
-                        #                 callback=self.delete_vagrant_env,
-                        #                 width=80,
-                        #                 tag=self.DELETE_ENV_BTN_TAG
-                        #             )
-                        #             dpg.add_checkbox(label="Force", tag=self.FORCE_DELETE_CHECKBOX_TAG)
-                        #     dpg.add_separator()
-                        #     #------------------------------------------------------------------------------------        
-                        #     with dpg.tree_node(label="Reload environment"):
-                        #         with dpg.group(horizontal=True):
-                        #             dpg.add_text("Enter the ID of the machine you want to reload: ", bullet=True)
-                        #             dpg.add_input_text(width=200, hint="ID", tag=self.RELOAD_ENV_INPUT_TAG)
-                        #             dpg.add_button(
-                        #                 label="Reload",
-                        #                 callback=self.reload_vagrant_env,
-                        #                 width=80,
-                        #                 tag=self.RELOAD_ENV_BTN_TAG
-                        #             )
-                        #             dpg.add_text("?")
-                        #             with dpg.tooltip(parent=dpg.last_item(), hide_on_activity=True):
-                        #                 dpg.add_text("Applies the changes made in the Vagrantfile of the environment")
-                        #     dpg.add_separator()        
+                                
 # Plugins tab & Widgets-------------------------------------------------------------------------------------------------------------------------
                 with dpg.tab(label="Plugins", tag=self.PLUGINS_TAB):
                     with dpg.child_window(label="pluginswin", use_internal_label=True, border=True, auto_resize_x=False, auto_resize_y=False, tag=self.PLUGINS_WIN_TAG):
@@ -206,21 +149,7 @@ class MenuElementsGUI(CallbacksCoreEnv, CallbacksCorePlg):
                                             dpg.add_text("vagrant-proxyconf")
                                             dpg.add_text("Auto-configure proxy settings in VMs")
                                 dpg.add_separator()
-                            #     with dpg.tree_node(label="Uninstall plugins"):
-                            #         with dpg.group(horizontal=True):
-                            #             dpg.add_text("Enter the name/s of the plugin/s you want to uninstall: ", bullet=True)
-                            #             dpg.add_input_text(width=200, hint="Name", tag=self.UNINSTALL_PLG_INPUT_TAG)
-                            #             dpg.add_button(
-                            #                 label="Uninstall",
-                            #                 callback=self.uninstall_vagrant_plg,
-                            #                 width=110,
-                            #                 tag=self.UNINSTALL_PLG_BTN_TAG
-                            #             )
-                            #             dpg.add_text("?")
-                            #         with dpg.tooltip(parent=dpg.last_item(), hide_on_activity=True):
-                            #             dpg.add_text("If you want to uninstall multiple plugins, enter their names separated by spaces")                                                                            
-                            #     dpg.add_separator()
-                            
+
 # Other tab & Widgets---------------------------------------------------------------------------------------------------------------------------
                 with dpg.tab(label="Other", tag=self.OTHER_TAB):
                     with dpg.child_window(label="otherwin", use_internal_label=True, border=True, auto_resize_x=False, auto_resize_y=False, tag=self.OTHER_WIN_TAG):
@@ -296,21 +225,7 @@ class MenuElementsGUI(CallbacksCoreEnv, CallbacksCorePlg):
                                                     width=300,
                                                     tag=self.FONT_SELECTOR_TAG
                                                 )
-                                                dpg.add_button(label="Advanced Appearance Settings", tag=self.THEME_ADV_SETTINGS_TAG)
-                                            with dpg.popup(tag=self.THEME_SETTINGS_ALERT_TAG,
-                                                        modal=False, 
-                                                        mousebutton=0,
-                                                        parent=dpg.last_item(),
-                                                        max_size=[1000,300],
-                                                        no_move=True):
-                                                
-                                                dpg.set_item_pos(self.THEME_SETTINGS_ALERT_TAG, pos=[540,350])
-                                                dpg.add_spacer(height=20)
-                                                dpg.add_text("Be careful with these settings. They could break the appearance of the app.")
-                                                dpg.add_spacer(height=30)
-                                                dpg.add_spacer(width=100, height=80)
-                                                dpg.add_button(label="Go to Default Theme Settings", tag=self.THEME_SETTINGS_BTN_TAG, callback=self.advanced_theme_callback)
-                                                dpg.set_item_pos(dpg.last_item(), pos=[250,130])
+                                                dpg.add_button(label="Advanced Appearance Settings", tag=self.THEME_ADV_SETTINGS_TAG, callback=self.advanced_theme_callback)
                                                 
     def final_setup_menu(self): #Final setup--------------------------------------------------
         load_fonts()
