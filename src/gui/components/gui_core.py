@@ -11,10 +11,10 @@ from .constants import TagsCoreGUI
 class CallbacksGUI(TagsCoreGUI):
     
     ENV_DIS_ITEMS = [TagsCoreGUI.PACK_ENV_BTN_TAG, TagsCoreGUI.SEARCH_MACHINES_BTN_TAG, TagsCoreGUI.FOLDER_SELECTION_BTN_TAG]
-    ENV_HID_ITEMS =  [TagsCoreGUI.PLUGINS_TAB, TagsCoreGUI.OTHER_TAB, TagsCoreGUI.ENV_HELP_RCLK_TAG]
+    ENV_HID_ITEMS =  [TagsCoreGUI.PLUGINS_TAB, TagsCoreGUI.OTHER_TAB, TagsCoreGUI.ENV_HELP_RCLK_TAG, TagsCoreGUI.VGFILEGENERATOR_TAB]
     
     PLG_DIS_ITEMS = [TagsCoreGUI.SEARCH_PLUGINS_BTN_TAG, TagsCoreGUI.INSTALL_PLG_BTN_TAG, TagsCoreGUI.REPAIR_PLG_BTN_TAG]
-    PLG_HID_ITEMS =  [TagsCoreGUI.MACHINES_TAB, TagsCoreGUI.OTHER_TAB, TagsCoreGUI.PLG_HELP_RCLK_TAG]
+    PLG_HID_ITEMS =  [TagsCoreGUI.MACHINES_TAB, TagsCoreGUI.OTHER_TAB, TagsCoreGUI.PLG_HELP_RCLK_TAG, TagsCoreGUI.VGFILEGENERATOR_TAB]
     
     THEMES = {
         "Dark Theme": dark_theme,
@@ -172,3 +172,48 @@ class CallbacksGUI(TagsCoreGUI):
             
         for i in self.PLG_DIS_ITEMS:
             dpg.enable_item(i)
+    
+    def vgfile_selector(self, app_data, user_data):
+        dpg.hide_item(self.HELP_TEXT_VGFILE_TAG)
+        if user_data == "Multi environment":
+            with dpg.group(parent=self.SELECTOR_GROUP_TAG, horizontal=True):
+                dpg.add_input_text(
+                    tag=self.NUM_ENV_INPUT_TAG,
+                    width=220,
+                    callback=lambda s, a, u: dpg.set_value(
+                        s,
+                        str(min(max(1, int(a)) if a.isdigit() else 1, 50))
+                    )
+                )
+
+                dpg.add_button(
+                    label="Add",
+                    width=70,
+                    callback=self.vgfile_add_machines,
+                    tag=self.ADD_ENV_VGFILE_TAG
+                )
+                
+                dpg.add_text("?")
+                self.tooltip(text="The limit of enviroments is capped at 50.")
+        else:
+            self.vgfile_add_machine()
+
+    def vgfile_add_machines(self):
+        num_machines_str = dpg.get_value(self.NUM_ENV_INPUT_TAG)
+        try:
+            num_machines = int(num_machines_str)
+        except ValueError:
+            num_machines = 1
+            
+        for i in range(1, num_machines + 1):
+            with dpg.collapsing_header(label=f"Environment {i}", parent=self.SELECTOR_GROUP_TAG):
+                pass
+            
+#-----------------------------------------------------------------------------------------------------------
+    def vgfile_add_machine(self):
+        if dpg.does_item_exist(self.NUM_ENV_INPUT_TAG):
+            dpg.hide_item(self.NUM_ENV_INPUT_TAG)
+            dpg.hide_item(self.ADD_ENV_VGFILE_TAG)
+            
+            
+        dpg.hide_item(self.HELP_TEXT_VGFILE_TAG)

@@ -4,6 +4,7 @@ class TagsCoreGUI:
     MACHINES_TAB = "machines"
     PLUGINS_TAB = "plugins"
     OTHER_TAB = "other"
+    VGFILEGENERATOR_TAB = "vgfile_tab"
     HELP_TAB = "help_tab"
     ABOUT_TAB = "about_tab"
     APPEARANCE_TAB = "appearance_tab"
@@ -13,6 +14,7 @@ class TagsCoreGUI:
     TAB_BAR_TAG = "tab_bar"
     MACHINES_WIN_TAG = "machines_win"
     PLUGINS_WIN_TAG = "pluginswin"
+    VGFILEGENERATOR_WIN_TAG = "vgfilewin"
     OTHER_WIN_TAG = "otherwin"
     
     # Tables --------------------------------------
@@ -61,7 +63,7 @@ class TagsCoreGUI:
     UNINSTALL_PLG_BTN_TAG = "uninstall_plg_btn"
     REPAIR_PLG_BTN_TAG = "repair_plg_btn"
     THEME_SETTINGS_BTN_TAG = "theme_settings"
-    
+    ADD_ENV_VGFILE_TAG  = "add_env_btn"
     # Inputs ------------------------------------------
     START_ENV_INPUT_TAG = "id_input_start"
     STOP_ENV_INPUT_TAG = "id_input_stop"
@@ -71,6 +73,7 @@ class TagsCoreGUI:
     PACK_OUTPUT_INPUT_TAG = "output_input_name"
     INSTALL_PLG_INPUT_TAG = "id_input_plg_install" #--------
     UNINSTALL_PLG_INPUT_TAG = "id_input_plg_uninstall"
+    NUM_ENV_INPUT_TAG = "num_env"
     
     # Checkboxes --------------------------------------
     PRUNE_CHECKBOX_TAG = "check_prune_search"
@@ -84,6 +87,10 @@ class TagsCoreGUI:
     ROW_GROUP_TAG = "row_group"
     ENV_HEADER_TAG = "env_header"
     THEME_SELECTOR_TAG = "theme_selector"
+    ENV_MODE_SELECTOR_TAG = "env_mode_selector"
+    SELECTOR_GROUP_TAG = "selector_group"
+    HELP_TEXT_VGFILE_TAG = "help_text"
+    
     FONT_SELECTOR_TAG = "font_selector"
     THEME_ADV_SETTINGS_TAG = "theme_advance_settings"
     THEME_SETTINGS_ALERT_TAG = "theme_settings_alert"

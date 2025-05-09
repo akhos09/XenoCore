@@ -11,7 +11,7 @@ from core.plg_core import CallbacksCorePlg
 # Elements from GUI--------------------------------------------------------------------------------
 class MenuElementsGUI(CallbacksCoreEnv, CallbacksCorePlg): 
 
-# Initial settings (viewport)--------------------------------------------------------
+# Initial settings (viewport)----------------------------------------------------------------------
     def initial_settings(self): 
         dpg.create_context()
         dpg.create_viewport(
@@ -22,12 +22,13 @@ class MenuElementsGUI(CallbacksCoreEnv, CallbacksCorePlg):
             large_icon=self.icon_path,
             decorated=True
         )
-# Components and structure--------------------------------------------------------------
+
+# Components and structure-----------------------------------------------------------------------------------------------------------------------------------------------
     def gui_main_components(self): 
         with dpg.window(tag=self.MAIN_WINDOW_TAG):
             with dpg.tab_bar(tag=self.TAB_BAR_TAG): 
                 
-# Machines tab & Widgets--------------------------------------------------------------------------------------------------------------------------
+# Machines tab & Widgets--------------------------------------------------------------------------------------------------------------------------------------------------
                 with dpg.tab(label="Machines", tag=self.MACHINES_TAB):
                     with dpg.child_window(tag=self.MACHINES_WIN_TAG, label="machineswin", use_internal_label=True, border=True, auto_resize_x=False, auto_resize_y=False):
                         with dpg.group(horizontal=False):
@@ -70,9 +71,24 @@ class MenuElementsGUI(CallbacksCoreEnv, CallbacksCorePlg):
                                         )
                                         dpg.add_text("?")
                                 self.tooltip(text="Packs a VBox environment as a reusable box for a Vagrantfile")
-                                dpg.add_separator()   
+                                dpg.add_separator()
                                 
-# Plugins tab & Widgets-------------------------------------------------------------------------------------------------------------------------
+# VgFileGenerator tab & Widgets -----------------------------------------------------------------------------------------------------------------------------------------------               
+                with dpg.tab(label="VgFileGenerator", tag=self.VGFILEGENERATOR_TAB):
+                    with dpg.child_window(tag=self.VGFILEGENERATOR_WIN_TAG, label="vgfilewin", use_internal_label=True, border=True, auto_resize_x=False, auto_resize_y=False):
+                        with dpg.group(horizontal=False, tag=self.SELECTOR_GROUP_TAG):
+                            dpg.add_combo(
+                                items=["Single environment", 
+                                    "Multi environment", 
+                                ], 
+                                callback=self.vgfile_selector,
+                                default_value="Select number of machines",
+                                width=320,
+                                tag=self.ENV_MODE_SELECTOR_TAG
+                                )
+                            dpg.add_text("Select the number of environments you want to create", color=[255, 255, 0], tag=self.HELP_TEXT_VGFILE_TAG)
+                            
+# Plugins tab & Widgets--------------------------------------------------------------------------------------------------------------------------------------------------------
                 with dpg.tab(label="Plugins", tag=self.PLUGINS_TAB):
                     with dpg.child_window(label="pluginswin", use_internal_label=True, border=True, auto_resize_x=False, auto_resize_y=False, tag=self.PLUGINS_WIN_TAG):
                             with dpg.group(horizontal=True, tag=self.OPTIONS_PLG_TAG):
@@ -240,8 +256,9 @@ class MenuElementsGUI(CallbacksCoreEnv, CallbacksCorePlg):
                                                     tag=self.FONT_SELECTOR_TAG
                                                 )
                                                 dpg.add_button(label="Advanced Appearance Settings", tag=self.THEME_ADV_SETTINGS_TAG, callback=self.advanced_theme_callback)
-                                                
-    def final_setup_menu(self): #Final setup--------------------------------------------------
+
+#Final setup----------------------------------------------------------------------------------------------------------------------------------------------------------------
+    def final_setup_menu(self): 
         load_fonts()
         dpg.bind_font(fonts["Default"])
         dpg.bind_theme(default_theme())
@@ -249,8 +266,9 @@ class MenuElementsGUI(CallbacksCoreEnv, CallbacksCorePlg):
         dpg.setup_dearpygui()
         dpg.show_viewport()
         dpg.start_dearpygui()
-    
-    def menu(self): #Menu startup--------------------------------------------------
+        
+#Menu startup---------------------------------------
+    def menu(self): 
         self.initial_settings()
         self.gui_main_components()
         self.final_setup_menu()
