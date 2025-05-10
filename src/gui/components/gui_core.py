@@ -172,48 +172,31 @@ class CallbacksGUI(TagsCoreGUI):
             
         for i in self.PLG_DIS_ITEMS:
             dpg.enable_item(i)
-    
-    def vgfile_selector(self, app_data, user_data):
-        dpg.hide_item(self.HELP_TEXT_VGFILE_TAG)
-        if user_data == "Multi environment":
-            with dpg.group(parent=self.SELECTOR_GROUP_TAG, horizontal=True):
-                dpg.add_input_text(
-                    tag=self.NUM_ENV_INPUT_TAG,
-                    width=220,
-                    callback=lambda s, a, u: dpg.set_value(
-                        s,
-                        str(min(max(1, int(a)) if a.isdigit() else 1, 50))
-                    )
-                )
 
-                dpg.add_button(
-                    label="Add",
-                    width=70,
-                    callback=self.vgfile_add_machines,
-                    tag=self.ADD_ENV_VGFILE_TAG
-                )
-                
-                dpg.add_text("?")
-                self.tooltip(text="The limit of enviroments is capped at 50.")
-        else:
-            self.vgfile_add_machine()
-
-    def vgfile_add_machines(self):
+# Env creation function-----------------------------------------------------------------------------------------------
+    def vgfile_add_machines(self, sender=None, app_data=None, user_data=None):
         num_machines_str = dpg.get_value(self.NUM_ENV_INPUT_TAG)
         try:
             num_machines = int(num_machines_str)
         except ValueError:
             num_machines = 1
-            
+        
         for i in range(1, num_machines + 1):
-            with dpg.collapsing_header(label=f"Environment {i}", parent=self.SELECTOR_GROUP_TAG):
-                pass
+            with dpg.group(parent=self.SELECTOR_GROUP_TAG, horizontal=False):
+                with dpg.collapsing_header(label=f"Environment {i}"):
+                    pass
+                
+# Reset environments created--------------------------------------------------------------------------------------------
+    def vgfile_reset(self, sender=None, app_data=None, user_data=None):
+        if not dpg.does_item_exist(self.SELECTOR_GROUP_TAG):
+            return
             
-#-----------------------------------------------------------------------------------------------------------
-    def vgfile_add_machine(self):
-        if dpg.does_item_exist(self.NUM_ENV_INPUT_TAG):
-            dpg.hide_item(self.NUM_ENV_INPUT_TAG)
-            dpg.hide_item(self.ADD_ENV_VGFILE_TAG)
+        children = dpg.get_item_children(self.SELECTOR_GROUP_TAG, slot=1) 
+        
+        if not children:
+            return
             
-            
-        dpg.hide_item(self.HELP_TEXT_VGFILE_TAG)
+        if len(children) > 0:
+            for i in range(1, len(children)):
+                if dpg.does_item_exist(children[i]):
+                    dpg.delete_item(children[i])
