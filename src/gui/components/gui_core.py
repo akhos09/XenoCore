@@ -184,8 +184,45 @@ class CallbacksGUI(TagsCoreGUI):
         for i in range(1, num_machines + 1):
             with dpg.group(parent=self.SELECTOR_GROUP_TAG, horizontal=False):
                 with dpg.collapsing_header(label=f"Environment {i}"):
-                    pass
+                    with dpg.group(horizontal=False):
+                        # Name Section -----------------------------------------------------------------------------
+                        with dpg.group(horizontal=True):    
+                            dpg.add_text("Name: ")
+                            dpg.add_input_text(default_value=f"Environment {i}", width=350)
+                        
+                        # Name vb Section -----------------------------------------------------------------------------
+                        with dpg.group(horizontal=True):    
+                            dpg.add_text("Name (VBox): ")
+                            dpg.add_input_text(default_value=f"Environment {i}", width=271)
+                            dpg.add_text("?")
+                            self.tooltip("This is the display name in the VirtualBox GUI")
+                            
+                        # Box Section--------------------------------------------------------------------------------
+                        with dpg.group(horizontal=True): 
+                            dpg.add_text("Box:  ")
+                            dpg.add_input_text(hint="e.g: hashicorp/bionic64", width=350)
+                            dpg.add_text("?")
+                            self.tooltip("The box is the template Vagrant uses to create the environment.\nCheck the Other section to see the boxes available.")
+                            
+                        # Cpu Section--------------------------------------------------------------------------------
+                        with dpg.group(horizontal=True): 
+                            dpg.add_text("Number of cores:  ")
+                            dpg.add_input_text(hint="CPUs",width=218)
+                            dpg.add_text("?")
+                            self.tooltip("Be careful with this paremeter, ensure to check how many cores you have in your PC and how many you really need.")
+                            
+                        # RAM Section--------------------------------------------------------------------------------
+                        with dpg.group(horizontal=True): 
+                            dpg.add_text("RAM (MB): ")
+                            dpg.add_input_text(hint="e.g: 1024, 2048, 4096, etc.", width=307)
+                            dpg.add_text("?")
+                            self.tooltip("Also be careful with this parameter, check how much RAM do you have and need.")
+                            
+
                 
+                dpg.add_separator()
+                
+        dpg.hide_item(self.HELP_TEXT_VGFILE_TAG)
 # Reset environments created--------------------------------------------------------------------------------------------
     def vgfile_reset(self, sender=None, app_data=None, user_data=None):
         if not dpg.does_item_exist(self.SELECTOR_GROUP_TAG):
@@ -200,3 +237,5 @@ class CallbacksGUI(TagsCoreGUI):
             for i in range(1, len(children)):
                 if dpg.does_item_exist(children[i]):
                     dpg.delete_item(children[i])
+                    
+        dpg.show_item(self.HELP_TEXT_VGFILE_TAG)
