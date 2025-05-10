@@ -1,6 +1,8 @@
 import jinja2 as ji
 
-class VgFileGenerator:
+from gui.components.gui_core import CallbacksGUI
+
+class VgFileGenerator(CallbacksGUI):
     def __init__(self):
         self.env = ji.Environment(
                     loader=ji.FileSystemLoader("./core/templates"),
@@ -35,5 +37,5 @@ class VgFileGenerator:
         with open('Vagrantfile', 'w') as f:
             f.write(self.output)
 
-test = VgFileGenerator()
-test.render_template()
+# test = VgFileGenerator()
+# test.render_template()
