@@ -11,6 +11,7 @@ from .components.themes import *
 
 class XenoCoreGUI(MenuElementsGUI):
     def __init__(self):
+        super().__init__()
         if sys.platform == "win32":
             try:
                 ctypes.windll.shcore.SetProcessDpiAwareness(1)

@@ -9,6 +9,8 @@ from .fonts import reset_font_binding
 from .constants import TagsCoreGUI
 
 class CallbacksGUI(TagsCoreGUI):
+    def __init__(self):
+        self.machine_index_counter = 1
     
     ENV_DIS_ITEMS = [TagsCoreGUI.PACK_ENV_BTN_TAG, TagsCoreGUI.SEARCH_MACHINES_BTN_TAG, TagsCoreGUI.FOLDER_SELECTION_BTN_TAG]
     ENV_HID_ITEMS =  [TagsCoreGUI.PLUGINS_TAB, TagsCoreGUI.OTHER_TAB, TagsCoreGUI.ENV_HELP_RCLK_TAG, TagsCoreGUI.VGFILEGENERATOR_TAB]
@@ -176,78 +178,180 @@ class CallbacksGUI(TagsCoreGUI):
 # Env creation function-----------------------------------------------------------------------------------------------
     def vgfile_add_machines(self, sender=None, app_data=None, user_data=None):
         num_machines_str = dpg.get_value(self.NUM_ENV_INPUT_TAG)
+        
         try:
             num_machines = int(num_machines_str)
         except ValueError:
             num_machines = 1
-        
-        for i in range(1, num_machines + 1):
+
+        for _ in range(num_machines):
+            i = self.machine_index_counter
+            self.machine_index_counter += 1  # Increment for uniqueness
+            
             with dpg.group(parent=self.SELECTOR_GROUP_TAG, horizontal=False):
                 with dpg.collapsing_header(label=f"Environment {i}"):
                     with dpg.group(horizontal=False):
-                        
-                        # Required fields--------------------------------------------------------------------------
+
+#Required fields--------------------------------------------------------------------------------------------------------
                         dpg.add_text("Required fields:", color=[255, 184, 0])
                         dpg.add_separator()
-                        # Name Section -----------------------------------------------------------------------------
+
+                        # Name-------------------------------------------------------------------------------------------
                         with dpg.group(horizontal=True):    
                             dpg.add_text("Name: ", bullet=True)
                             dpg.add_input_text(default_value=f"Environment {i}", width=349)
-                        
-                        # Name vb Section -----------------------------------------------------------------------------
+
+                        # Name VBox-------------------------------------------------------------------------------------------
                         with dpg.group(horizontal=True):    
                             dpg.add_text("Name (VBox): ", bullet=True)
                             dpg.add_input_text(default_value=f"Environment {i}", width=271)
                             dpg.add_text("?")
                             self.tooltip("This is the display name in the VirtualBox GUI")
-                            
-                        # Hostname Section -----------------------------------------------------------------------------
+
+                        # Hostname-------------------------------------------------------------------------------------------
                         with dpg.group(horizontal=True):    
                             dpg.add_text("Hostname: ", bullet=True)
                             dpg.add_input_text(default_value=f"HostEnvironment{i}", width=305)
                             dpg.add_text("?")
                             self.tooltip("This is the name of the machine itself")
-                            
-                        # Box Section--------------------------------------------------------------------------------
+
+                        # Box-------------------------------------------------------------------------------------------
                         with dpg.group(horizontal=True): 
                             dpg.add_text("Box:  ", bullet=True)
                             dpg.add_input_text(hint="e.g: hashicorp/bionic64", width=350)
                             dpg.add_text("?")
-                            self.tooltip("The box is the template Vagrant uses to create the environment (downloads the box if Vagrant doesn't find it).\nCheck the Other section to see the boxes available.")
-                            
-                    
-                        # Box Version Section--------------------------------------------------------------------------------
+                            self.tooltip("The box is the template Vagrant uses...")
+
+                        # Box Version-------------------------------------------------------------------------------------------
                         with dpg.group(horizontal=True): 
                             dpg.add_text("Box Version: ", bullet=True)
                             dpg.add_input_text(hint="(Latest by default)", width=274)
                             dpg.add_text("?")
-                            self.tooltip("Leave blank to use the latest one downloaded on your PC.")
-                            
-                        # Cpu Section--------------------------------------------------------------------------------
+                            self.tooltip("Leave blank to use the latest...")
+
+                        # CPU-------------------------------------------------------------------------------------------
                         with dpg.group(horizontal=True): 
                             dpg.add_text("Number of cores:  ", bullet=True)
                             dpg.add_input_text(hint="CPUs",width=218)
                             dpg.add_text("?")
-                            self.tooltip("Be careful with this paremeter, ensure to check how many cores you have in your PC and how many you really need.")
-                            
-                        # RAM Section--------------------------------------------------------------------------------
+                            self.tooltip("Check how many cores you have...")
+
+                        # RAM-------------------------------------------------------------------------------------------
                         with dpg.group(horizontal=True): 
                             dpg.add_text("RAM (MB): ", bullet=True)
                             dpg.add_input_text(hint="e.g: 1024, 2048, 4096, etc.", width=307)
                             dpg.add_text("?")
-                            self.tooltip("Also be careful with this parameter, check how much RAM do you have and need.")
-                        dpg.add_separator()
-                        
-                        # Optional fields:----------------------------------------------------------------------------
+                            self.tooltip("Also be careful with this parameter...")
+
+# Optional fields-------------------------------------------------------------------------------------------
                         dpg.add_text("Optional fields:", color=[255, 184, 0])
+                        dpg.add_separator()
+
+                        # Network Interfaces-------------------------------------------------------------------------------------------
+                        dpg.add_combo(
+                            items=["1", "2", "3", "4"],
+                            callback=lambda sender, app_data, user_data=None: self.vgfile_netint_gui(sender, app_data, index=f"{i}"),
+                            default_value="Select number of network interfaces",
+                            width=500,
+                        )
+
+
+                        with dpg.group(horizontal=False, tag=f"net_config_group{i}"):
+                            pass
+
+                        dpg.add_separator()
+
+                        # Disk Size-------------------------------------------------------------------------------------------
+                        with dpg.group(horizontal=True): 
+                            dpg.add_text("Disk Size (GB): ", bullet=True)
+                            dpg.add_input_text(hint="e.g: 20, 30, 40, 50, etc.", width=325)
+                            dpg.add_text("?")
+                            self.tooltip("Requires vagrant-disksize plugin...")
+
+                        # Sync Folders-------------------------------------------------------------------------------------------
+                        with dpg.group(horizontal=True):
+                            dpg.add_text("Synchronized folder ", bullet=True)
+                            dpg.add_button(label=" Add ", callback=lambda: self.vgfile_add_sync_folder(None,None,f"{i}"))
+                            dpg.add_button(label=" Remove ", callback=lambda: self.delete_child_widgets(group=f"sync_folder_group{i}"))
+                            dpg.add_text("?")
+                            self.tooltip("It syncs a folder from your PC to one of your environments.")
+                        
+                        with dpg.group(horizontal=False, tag=f"sync_folder_group{i}"):
+                            pass
+
+                        # Provisioners-------------------------------------------------------------------------------------------
+                        with dpg.group(horizontal=True):
+                            dpg.add_text("Provisioners ", bullet=True)
+                            dpg.add_button(label=" Add File/Folder ", callback=lambda s, a, u=i: self.type_provisioner(None,None,"File",f"{i}"))
+                            dpg.add_button(label=" Add Script ", callback=lambda s, a, u=i: self.type_provisioner(None,None,"Script",f"{i}"))
+                            dpg.add_button(label=" Remove ", callback=lambda: self.delete_child_widgets(f"provision_group{i}"))
+                            dpg.add_text("?")
+                            self.tooltip("Executes a script or transfers a file from your PC.")
+                        
+                        with dpg.group(horizontal=False, tag=f"provision_group{i}"):
+                            pass
+
+                dpg.add_separator()
+
+        dpg.hide_item(self.HELP_TEXT_VGFILE_TAG)
+
+            
+    def type_provisioner(self, sender, app_data, user_data, index):
+        if user_data == "Script":
+            with dpg.group(horizontal=True, parent=f"provision_group{index}"):
+                dpg.add_text("Script: ")
+                dpg.add_input_text(width=185)
+        else:
+            with dpg.group(horizontal=True, parent=f"provision_group{index}"):
+                dpg.add_text("File:")
+                with dpg.group(horizontal=True):
+                    dpg.add_button(label=" Select host folder ", callback=lambda: setattr(self, "selected_path", self.select_folder()))
+                with dpg.group(horizontal=True):    
+                    dpg.add_text("VM destination path: ")
+                    dpg.add_input_text(hint="/home/vagrant/", width=200)
+
+        
+# Delete child widgets------------------------------------------------------------------------------------------------
+    def delete_child_widgets(self, group):
+        children = dpg.get_item_children(group, slot=1)
+        if children:
+            for child in children:
+                if dpg.does_item_exist(child):
+                    dpg.delete_item(child)
+        
+# Network interfaces creation-------------------------------------------------------------------------------------------
+    def vgfile_netint_gui(self, sender, app_data, index):
+        self.delete_child_widgets(f"net_config_group{index}")
+        
+        interface_number = int(app_data) 
+        for i in range(interface_number):
+            with dpg.tree_node(parent=f"net_config_group{index}", label=f"Network Interface {i+1}"):
+                dpg.add_combo(
+                    items=["Host Only/Private Interface", "Public/Bridge Interface"],
+                    default_value="Select type of interface",
+                    width=500,
+                )
+                with dpg.group(horizontal=True):
+                    dpg.add_text("IP Address: ")
+                    dpg.add_input_text(width=185, tag=f"ip_address_{index}_{i}")
+                with dpg.group(horizontal=True):
+                    dpg.add_text("Subnet Mask:")
+                    dpg.add_input_text(width=185, tag=f"subnet_mask_{index}_{i}")
+
+            
+# Add sync folder function---------------------------------------------------------------------------------------------
+    def vgfile_add_sync_folder(self, sender, app_data, index):
+        with dpg.group(horizontal=True, parent=f"sync_folder_group{index}"):
+            with dpg.group(horizontal=True):
+                dpg.add_button(label=" Select host folder ", callback=lambda: setattr(self, "selected_path", self.select_folder()))
+            with dpg.group(horizontal=True):    
+                dpg.add_text("VM destination path: ")
+                dpg.add_input_text(hint="/home/vagrant/", width=200)
 
                 
-                dpg.add_separator()
-                
-        dpg.hide_item(self.HELP_TEXT_VGFILE_TAG)
-        
 # Reset environments created--------------------------------------------------------------------------------------------
-    def vgfile_reset(self, sender=None, app_data=None, user_data=None):
+    def vgfile_reset(self, sender, app_data, user_data):
+        self.machine_index_counter = 1
         if not dpg.does_item_exist(self.SELECTOR_GROUP_TAG):
             return
             

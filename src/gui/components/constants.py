@@ -58,11 +58,13 @@ class TagsCoreGUI:
     LOCAL_PLG_CHECKBOX_TAG = "local_plg_search"
     LOCAL_PLG_REPAIR_CHECKBOX_TAG = "local_plg_repair"
     
-    # Misc --------------------------------------
+    # Selectors ---------------------------------------    
     THEME_SELECTOR_TAG = "theme_selector"
-    SELECTOR_GROUP_TAG = "selector_group"
-    HELP_TEXT_VGFILE_TAG = "help_text"
     FONT_SELECTOR_TAG = "font_selector"
+    SELECTOR_GROUP_TAG = "selector_group"
+    
+    # Misc --------------------------------------
+    HELP_TEXT_VGFILE_TAG = "help_text"
     THEME_ADV_SETTINGS_TAG = "theme_advance_settings"
     OPTIONS_ENV_TAG = "options_env"
     OPTIONS_PLG_TAG = "options_plg"
