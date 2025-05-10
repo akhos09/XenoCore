@@ -253,7 +253,6 @@ class MenuElementsGUI(CallbacksCoreEnv, CallbacksCorePlg):
                                         with dpg.group(horizontal=False):
                                             with dpg.group(horizontal=False):
                                                 dpg.add_combo(
-                                                    label="  Theme Selector",
                                                     items=["Default Theme", 
                                                         "Dark Theme", 
                                                         "Light Theme",
@@ -266,7 +265,6 @@ class MenuElementsGUI(CallbacksCoreEnv, CallbacksCorePlg):
                                                     tag=self.THEME_SELECTOR_TAG
                                                 )
                                                 dpg.add_combo(
-                                                    label="  Font Selector",
                                                     items=["Default Font", 
                                                         "Conthrax-SemiBold", 
                                                         "Average-Regular"], 
