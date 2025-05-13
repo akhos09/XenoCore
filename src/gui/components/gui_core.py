@@ -253,7 +253,7 @@ class CallbacksGUI(TagsCoreGUI):
                             dpg.add_text("Box Version: ", bullet=True)
                             tag_box_version = f"env_box_version_{i}"
                             dpg.add_input_text(hint="(Latest by default)", width=274, tag=tag_box_version)
-                            self.machine_input_data[tag_box_version] = "" # Default value
+                            self.machine_input_data[tag_box_version] = ""
 
                         # CPU-------------------------------------------------------------------------------------------
                         with dpg.group(horizontal=True): 
@@ -363,21 +363,6 @@ class CallbacksGUI(TagsCoreGUI):
 
                 self.network_configs = getattr(self, "network_configs", {})
                 self.network_configs[f"interface_{index}_{i}"] = network_details
-
-    # Needed for the index-----------------------------------------------------------------------------------------------
-    def make_combo_callback(self, index):
-        return lambda sender, app_data: self.vgfile_netint_gui(sender, app_data, str(index))
-    # Fix late binding for sync folder
-    def make_sync_folder_callback(self, index):
-        return lambda s, a: self.vgfile_add_sync_folder(s, a, str(index))
-
-    def make_sync_folder_remove_callback(self, index):
-        return lambda s, a: self.delete_child_widgets(group=f"sync_folder_group{index}")
-
-    # Fix late binding for provisioners
-    def make_provisioner_callback(self, provision_type, index):
-        return lambda s, a: self.type_provisioner(s, a, provision_type, str(index))
-
             
 # Add sync folder function---------------------------------------------------------------------------------------------
     def vgfile_add_sync_folder(self, sender, app_data, index):
@@ -569,7 +554,7 @@ class CallbacksGUI(TagsCoreGUI):
 
         return machine_data
     
-    # Reset environments created--------------------------------------------------------------------------------------------
+# Reset environments created--------------------------------------------------------------------------------------------
     def vgfile_reset(self, sender, app_data, user_data):
         dpg.hide_item("help_text_fill")
         dpg.hide_item(self.RESET_VGFILE_TAG)
@@ -593,7 +578,7 @@ class CallbacksGUI(TagsCoreGUI):
             if dpg.does_item_exist(i):
                 dpg.show_item(i)
                 
-    # Delete child widgets------------------------------------------------------------------------------------------------
+# Delete child widgets------------------------------------------------------------------------------------------------
     def delete_child_widgets(self, group):
         if not dpg.does_item_exist(group):
             return
@@ -603,3 +588,16 @@ class CallbacksGUI(TagsCoreGUI):
             for child in children:
                 if dpg.does_item_exist(child):
                     dpg.delete_item(child)
+                    
+    # Needed for the index-----------------------------------------------------------------------------------------------
+    def make_combo_callback(self, index):
+        return lambda sender, app_data: self.vgfile_netint_gui(sender, app_data, str(index))
+    
+    def make_sync_folder_callback(self, index):
+        return lambda s, a: self.vgfile_add_sync_folder(s, a, str(index))
+
+    def make_sync_folder_remove_callback(self, index):
+        return lambda s, a: self.delete_child_widgets(group=f"sync_folder_group{index}")
+
+    def make_provisioner_callback(self, provision_type, index):
+        return lambda s, a: self.type_provisioner(s, a, provision_type, str(index))
