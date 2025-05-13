@@ -287,11 +287,14 @@ class CallbacksGUI(TagsCoreGUI):
                             pass
 
                         # Disk Size-------------------------------------------------------------------------------------------
+                        dpg.add_separator()
                         with dpg.group(horizontal=True): 
                             dpg.add_text("Disk Size (GB): ", bullet=True)
                             tag_disk_size = f"env_disk_size_{i}"
                             dpg.add_input_text(hint="e.g: 20, 30, 40, 50, etc.", width=325, tag=tag_disk_size)
                             self.machine_input_data[tag_disk_size] = ""
+                            dpg.add_text("?")
+                            self.tooltip("This requires vagrant-disksize plugin")
 
                         # Sync Folders-------------------------------------------------------------------------------------------
                         dpg.add_separator()
@@ -334,7 +337,7 @@ class CallbacksGUI(TagsCoreGUI):
         
         interface_number = int(app_data)
         for i in range(interface_number):
-            interface_tag = f"netint_{index}_{i}"  # Unique tag for this interface
+            interface_tag = f"netint_{index}_{i}" 
             with dpg.tree_node(parent=group_tag, label=f"Network Interface {i+1}", tag=f"{interface_tag}_node"):
                 dpg.add_combo(
                     items=["Host Only/Private Interface", "Public/Bridge Interface"],

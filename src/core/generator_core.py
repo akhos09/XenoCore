@@ -63,6 +63,7 @@ class VgFileGenerator:
                 "provisioners": provisioners,
             })
         return machines
+    
 #Render template function------------------------------------------------------------------------------
     def render_template(self, output_path="Vagrantfile"):
         with open(output_path, "w") as f:
