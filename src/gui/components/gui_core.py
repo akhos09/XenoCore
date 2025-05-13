@@ -15,6 +15,7 @@ class CallbacksGUI(TagsCoreGUI):
         self.machine_index_counter = 1
         self.provision_counter = {}
         self.sync_folder_configs = {}
+        self.provisioner_configs = {}
     
     ENV_DIS_ITEMS = [TagsCoreGUI.PACK_ENV_BTN_TAG, TagsCoreGUI.SEARCH_MACHINES_BTN_TAG, TagsCoreGUI.FOLDER_SELECTION_BTN_TAG]
     ENV_HID_ITEMS =  [TagsCoreGUI.PLUGINS_TAB, TagsCoreGUI.OTHER_TAB, TagsCoreGUI.ENV_HELP_RCLK_TAG, TagsCoreGUI.VGFILEGENERATOR_TAB]
@@ -304,7 +305,8 @@ class CallbacksGUI(TagsCoreGUI):
                         with dpg.group(horizontal=True):
                             dpg.add_text("Provisioners ", bullet=True)
                             current_index = i
-                            dpg.add_button(label=" Add File", callback=lambda s, a: self.type_provisioner(s, a, "File", str(current_index)))
+                            dpg.add_button(label=" Add File ", callback=lambda s, a: self.type_provisioner(s, a, "File", str(current_index)))
+                            dpg.add_button(label=" Add Folder ", callback=lambda s, a: self.type_provisioner(s, a, "Folder", str(current_index)))
                             dpg.add_button(label=" Add Script ", callback=lambda s, a: self.type_provisioner(s, a, "Script", str(current_index)))
                             dpg.add_text("?")
                             self.tooltip("Executes a script or transfers a file from your PC.")
@@ -333,14 +335,15 @@ class CallbacksGUI(TagsCoreGUI):
         base_tag = f"provision_{index}_{provision_id}"
         config_key = f"{index}_{provision_id}"
 
-        # Handler for selecting a file or folder
         def handle_select_file_or_folder():
             path = None
             if user_data == "Script":
                 path = fd.askopenfilename(title="Select a script file", filetypes=[("Script Files", "*.sh;*.bat;*.ps1"), ("All Files", "*.*")])
-            else:
-                path = fd.askopenfilename(title="Select a file") or fd.askdirectory(title="Select a folder")
-            
+            elif user_data == "File":
+                path = fd.askopenfilename(title="Select a file")
+            elif user_data == "Folder":
+                path = fd.askdirectory(title="Select a folder")
+
             if path:
                 if config_key not in self.provisioner_configs:
                     self.provisioner_configs[config_key] = {"type": user_data, "path": path, "destination": ""}
@@ -348,7 +351,6 @@ class CallbacksGUI(TagsCoreGUI):
                     self.provisioner_configs[config_key]["path"] = path
                 dpg.set_item_label(f"{base_tag}_select_btn", os.path.basename(path))
 
-        # Create UI for the provisioner
         with dpg.group(horizontal=True, parent=f"provision_group{index}", tag=f"{base_tag}_group"):
             dpg.add_text(f"{user_data}:")
             dpg.add_button(
@@ -356,7 +358,7 @@ class CallbacksGUI(TagsCoreGUI):
                 callback=lambda: handle_select_file_or_folder(),
                 tag=f"{base_tag}_select_btn"
             )
-            if user_data == "File":
+            if user_data in ["File", "Folder"]:
                 dpg.add_text("Destination: ")
                 dpg.add_input_text(
                     hint="/destination/path",
@@ -519,7 +521,6 @@ class CallbacksGUI(TagsCoreGUI):
                         })
             env_data["sync_folders"] = sync_folders
 
-            # Provisioners-------------------------------------------------------------------
             provisioners = []
             for config_key, config in self.provisioner_configs.items():
                 idx, sid = map(int, config_key.split("_"))
@@ -528,7 +529,7 @@ class CallbacksGUI(TagsCoreGUI):
                     provisioner_path = config["path"]
                     provisioner_destination = config.get("destination", "")
 
-                    if provisioner_type == "File":
+                    if provisioner_type == "File" or provisioner_type == "Folder":
                         provisioners.append({
                             "type": "file",
                             "path": provisioner_path,
@@ -550,6 +551,7 @@ class CallbacksGUI(TagsCoreGUI):
         generator.render_template()
 
         return machine_data
+    
     # Reset environments created--------------------------------------------------------------------------------------------
     def vgfile_reset(self, sender, app_data, user_data):
         dpg.hide_item(self.RESET_VGFILE_TAG)

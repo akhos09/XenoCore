@@ -1,36 +1,31 @@
 Vagrant.configure("2") do |config|
-    {% if multi_machine %}
-    {% for machine in machines %}
-    config.vm.define "{{ machine.name }}" do |{{ machine.name }}|
+    {% if multi_machine -%}
+    {% for machine in machines -%}
+        config.vm.define "{{ machine.name }}" do |{{ machine.name }}|
         {{ machine.name }}.vm.box = "{{ machine.box }}"
-        {% if machine.box_version %}
+        {% if machine.box_version -%}
         {{ machine.name }}.vm.box_version = "{{ machine.box_version }}"
         {% endif %}
-
-        {% for iface in machine.network_interfaces %}
-        {% if iface.type == "Host Only/Private Interface" %}
-        {{ machine.name }}.vm.network "private_network", ip: "{{ iface.ip }}"{% if iface.subnet_mask %}, netmask: "{{ iface.subnet_mask }}"{% endif %}{% if iface.gateway %}, gateway: "{{ iface.gateway }}"{% endif %}
-        {% elif iface.type == "Public/Bridge Interface" %}
-        {{ machine.name }}.vm.network "public_network", ip: "{{ iface.ip }}"{% if iface.subnet_mask %}, netmask: "{{ iface.subnet_mask }}"{% endif %}{% if iface.gateway %}, gateway: "{{ iface.gateway }}"{% endif %}
+        {% for iface in machine.network_interfaces -%}
+        {% if iface.type == "Host Only/Private Interface" -%}
+        {{ machine.name }}.vm.network "private_network", ip: "{{ iface.ip }}"{% if iface.subnet_mask -%}, netmask: "{{ iface.subnet_mask }}"{% endif %}{% if iface.gateway -%}, gateway: "{{ iface.gateway }}"{% endif %}
+        {% elif iface.type == "Public/Bridge Interface" -%}
+        {{ machine.name }}.vm.network "public_network", ip: "{{ iface.ip }}"{% if iface.subnet_mask -%}, netmask: "{{ iface.subnet_mask }}"{% endif %}{% if iface.gateway -%}, gateway: "{{ iface.gateway }}"{% endif %}
         {% endif %}
         {% endfor %}
-
         {{ machine.name }}.vm.hostname = "{{ machine.hostname }}"
-
         {{ machine.name }}.vm.provider "virtualbox" do |vb|
             vb.name = "{{ machine.name }}"
             vb.memory = {{ machine.ram }}
             vb.cpus = {{ machine.cpu }}
         end
-
-        {% for folder in machine.sync_folders %}
+        {% for folder in machine.sync_folders -%}
         {{ machine.name }}.vm.synced_folder "{{ folder.host_folder }}", "{{ folder.vm_destination }}"
         {% endfor %}
-
-        {% for provisioner in machine.provisioners %}
-        {% if provisioner.type == "shell" %}
+        {% for provisioner in machine.provisioners -%}
+        {% if provisioner.type == "shell" -%}
         {{ machine.name }}.vm.provision "shell", path: "{{ provisioner.path }}"
-        {% elif provisioner.type == "file" %}
+        {% elif provisioner.type == "file" -%}
         {{ machine.name }}.vm.provision "file", source: "{{ provisioner.source }}", destination: "{{ provisioner.destination }}"
         {% endif %}
         {% endfor %}
