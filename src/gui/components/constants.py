@@ -47,6 +47,7 @@ class TagsCoreGUI:
     REPAIR_PLG_BTN_TAG = "repair_plg_btn"
     ADD_ENV_VGFILE_TAG  = "add_env_btn"
     RESET_VGFILE_TAG = "reset_vgfile_btn"
+    VG_FILE_GENERATE_BTN_TAG = "generate_vgfile_btn"
 
     # Inputs ------------------------------------------
     PACK_VB_INPUT_TAG = "id_input_pack_vboxname"
@@ -62,6 +63,7 @@ class TagsCoreGUI:
     THEME_SELECTOR_TAG = "theme_selector"
     FONT_SELECTOR_TAG = "font_selector"
     SELECTOR_GROUP_TAG = "selector_group"
+    VGFILE_BTN_GROUP_TAG = "vgfile_btn_group"
     
     # Misc --------------------------------------
     HELP_TEXT_VGFILE_TAG = "help_text"

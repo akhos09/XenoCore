@@ -77,7 +77,7 @@ class MenuElementsGUI(CallbacksCoreEnv, CallbacksCorePlg):
                 with dpg.tab(label="VgFileGenerator", tag=self.VGFILEGENERATOR_TAB):
                     with dpg.child_window(tag=self.VGFILEGENERATOR_WIN_TAG, label="vgfilewin", use_internal_label=True, border=True, auto_resize_x=False, auto_resize_y=False):
                         with dpg.group(horizontal=False, tag=self.SELECTOR_GROUP_TAG):
-                            with dpg.group(horizontal=True):
+                            with dpg.group(horizontal=True, tag = self.VGFILE_BTN_GROUP_TAG):
                                 dpg.add_input_text(
                                     tag=self.NUM_ENV_INPUT_TAG,
                                     hint="Enter number",
@@ -96,14 +96,7 @@ class MenuElementsGUI(CallbacksCoreEnv, CallbacksCorePlg):
 
                                 dpg.add_text("?")
                                 self.tooltip(text="The number of environments is capped at 50.")
-                                
-                                dpg.add_button(
-                                    label="Reset",
-                                    width=70,
-                                    callback=self.vgfile_reset,
-                                    tag=self.RESET_VGFILE_TAG
-                                )
-                            
+                                                            
                                 dpg.add_text("Select the number of environments you want to create", 
                                             color=[255, 255, 0], 
                                             tag=self.HELP_TEXT_VGFILE_TAG)
