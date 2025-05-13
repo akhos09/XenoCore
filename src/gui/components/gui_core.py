@@ -547,7 +547,7 @@ class CallbacksGUI(TagsCoreGUI):
             machine_data[f"environment_{i}"] = env_data
 
         # debug
-        print(machine_data)
+        # print(machine_data)
 
         generator = VgFileGenerator(machine_data)
         generator.render_template()

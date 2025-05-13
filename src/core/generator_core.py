@@ -1,7 +1,19 @@
 import jinja2 as ji
-import tkinter as tk
-from tkinter import filedialog
+import threading
+import subprocess
+import sys
+from tkinter import Tk, filedialog as fd, messagebox
+from contextlib import contextmanager
+import os
 
+@contextmanager
+def change_directory(path):
+    prev = os.getcwd()
+    os.chdir(path)
+    try:
+        yield
+    finally:
+        os.chdir(prev)
 class VgFileGenerator:
     def __init__(self, machine_data: dict):
         self.env = ji.Environment(
@@ -72,18 +84,70 @@ class VgFileGenerator:
 
     
 #Render template function------------------------------------------------------------------------------
-    def render_template(self, output_path=None):
-        if not output_path:
-            root = tk.Tk()
-            root.withdraw()
-            output_path = filedialog.asksaveasfilename(
-                title="Save Vagrantfile as...",
-                filetypes=[("All files", "*.*")],
-                initialfile="Vagrantfile"
-            )
-            if not output_path:
-                print("Cancelled. No file saved.")
-                return
+    def render_template(self, default_name="Vagrantfile"):
+        # --- Select folder in thread ---
+        folder_selected = None
 
-        with open(output_path, "w") as f:
-            f.write(self.output)
+        def folder_dialog():
+            nonlocal folder_selected
+            try:
+                root = Tk()
+                root.withdraw()
+                root.wm_attributes("-topmost", 1)
+                folder_selected = fd.askdirectory(title="Select folder to save Vagrantfile")
+            finally:
+                try:
+                    root.destroy()
+                except:
+                    pass
+
+        thread = threading.Thread(target=folder_dialog)
+        thread.start()
+        thread.join()
+
+        if not folder_selected:
+            print("No folder selected.")
+            return
+
+        # --- Write the Vagrantfile ---
+        try:
+            file_path = os.path.join(folder_selected, default_name)
+            with open(file_path, "w") as f:
+                f.write(self.output)
+            print(f"Vagrantfile written to: {file_path}")
+        except Exception as e:
+            self._show_messagebox("ERROR", f"Failed to write Vagrantfile: {e}", error=True)
+            return
+
+        # --- Ask if user wants to run vagrant up ---
+        confirmed = False
+
+        def confirm_dialog():
+            nonlocal confirmed
+            try:
+                root = Tk()
+                root.withdraw()
+                root.wm_attributes("-topmost", 1)
+                confirmed = messagebox.askyesno("Run Vagrant", "Do you want to run 'vagrant up'?")
+            finally:
+                try:
+                    root.destroy()
+                except:
+                    pass
+
+        thread = threading.Thread(target=confirm_dialog)
+        thread.start()
+        thread.join()
+
+        if not confirmed:
+            print("User cancelled vagrant up.")
+            return
+
+        # --- Run vagrant up ---
+        with change_directory(folder_selected):
+            cmd = 'start /wait cmd /c "vagrant up & pause"' if sys.platform == "win32" else "vagrant up"
+            subprocess.run(cmd, shell=True, check=True)
+        # except subprocess.CalledProcessError as e:
+        #     self("ERROR", f"Vagrant error: {e}", error=True)
+        # except Exception as e:
+        #     self._show_messagebox("ERROR", f"Unexpected error: {e}", error=True)
