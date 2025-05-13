@@ -300,9 +300,8 @@ class CallbacksGUI(TagsCoreGUI):
                         dpg.add_separator()
                         with dpg.group(horizontal=True):
                             dpg.add_text("Synchronized folder ", bullet=True)
-                            current_index = i
-                            dpg.add_button(label=" Add ", callback=lambda s, a: self.vgfile_add_sync_folder(s, a, str(current_index)))
-                            dpg.add_button(label=" Remove ", callback=lambda s, a: self.delete_child_widgets(group=f"sync_folder_group{current_index}"))
+                            dpg.add_button(label=" Add ", callback=self.make_sync_folder_callback(current_env_index))
+                            dpg.add_button(label=" Remove ", callback=self.make_sync_folder_remove_callback(current_env_index))
                             dpg.add_text("?")
                             self.tooltip("It syncs a folder from your PC to one of your environments.")
                         
@@ -313,10 +312,10 @@ class CallbacksGUI(TagsCoreGUI):
                         dpg.add_separator()
                         with dpg.group(horizontal=True):
                             dpg.add_text("Provisioners ", bullet=True)
-                            current_index = i
-                            dpg.add_button(label=" Add File ", callback=lambda s, a: self.type_provisioner(s, a, "File", str(current_index)))
-                            dpg.add_button(label=" Add Folder ", callback=lambda s, a: self.type_provisioner(s, a, "Folder", str(current_index)))
-                            dpg.add_button(label=" Add Script ", callback=lambda s, a: self.type_provisioner(s, a, "Script", str(current_index)))
+                            dpg.add_button(label=" Add File ", callback=self.make_provisioner_callback("File", current_env_index))
+                            dpg.add_button(label=" Add Folder ", callback=self.make_provisioner_callback("Folder", current_env_index))
+                            dpg.add_button(label=" Add Script ", callback=self.make_provisioner_callback("Script", current_env_index))
+
                             dpg.add_text("?")
                             self.tooltip("Executes a script or transfers a file from your PC.")
                         
@@ -368,6 +367,17 @@ class CallbacksGUI(TagsCoreGUI):
     # Needed for the index-----------------------------------------------------------------------------------------------
     def make_combo_callback(self, index):
         return lambda sender, app_data: self.vgfile_netint_gui(sender, app_data, str(index))
+    # Fix late binding for sync folder
+    def make_sync_folder_callback(self, index):
+        return lambda s, a: self.vgfile_add_sync_folder(s, a, str(index))
+
+    def make_sync_folder_remove_callback(self, index):
+        return lambda s, a: self.delete_child_widgets(group=f"sync_folder_group{index}")
+
+    # Fix late binding for provisioners
+    def make_provisioner_callback(self, provision_type, index):
+        return lambda s, a: self.type_provisioner(s, a, provision_type, str(index))
+
             
 # Add sync folder function---------------------------------------------------------------------------------------------
     def vgfile_add_sync_folder(self, sender, app_data, index):
