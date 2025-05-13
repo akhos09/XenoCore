@@ -28,9 +28,9 @@ Vagrant.configure("2") do |config|
         {% endfor %}
 
         {% for provisioner in machine.provisioners %}
-        {% if provisioner.type == 'shell' %}
+        {% if provisioner.type == "shell" %}
         {{ machine.name }}.vm.provision "shell", path: "{{ provisioner.path }}"
-        {% elif provisioner.type == 'file' %}
+        {% elif provisioner.type == "file" %}
         {{ machine.name }}.vm.provision "file", source: "{{ provisioner.source }}", destination: "{{ provisioner.destination }}"
         {% endif %}
         {% endfor %}

@@ -306,7 +306,6 @@ class CallbacksGUI(TagsCoreGUI):
                             current_index = i
                             dpg.add_button(label=" Add File/Folder ", callback=lambda s, a: self.type_provisioner(s, a, "File", str(current_index)))
                             dpg.add_button(label=" Add Script ", callback=lambda s, a: self.type_provisioner(s, a, "Script", str(current_index)))
-                            dpg.add_button(label=" Remove ", callback=lambda s, a: self.delete_child_widgets(f"provision_group{current_index}"))
                             dpg.add_text("?")
                             self.tooltip("Executes a script or transfers a file from your PC.")
                         
@@ -319,44 +318,61 @@ class CallbacksGUI(TagsCoreGUI):
 
 # Type provisioner--------------------------------------------------------------------------------------------------------------
     def type_provisioner(self, sender, app_data, user_data, index):
-        if not hasattr(self, 'provision_counter'):
-            self.provision_counter = {}
+        if not hasattr(self, 'provisioner_counter'):
+            self.provisioner_counter = {}
 
-        if index not in self.provision_counter:
-            self.provision_counter[index] = 1
+        if not hasattr(self, 'provisioner_configs'):
+            self.provisioner_configs = {}
+
+        if index not in self.provisioner_counter:
+            self.provisioner_counter[index] = 1
         else:
-            self.provision_counter[index] += 1
+            self.provisioner_counter[index] += 1
 
-        provision_id = self.provision_counter[index]
+        provision_id = self.provisioner_counter[index]
+        base_tag = f"provision_{index}_{provision_id}"
+        config_key = f"{index}_{provision_id}"
 
-        prefix = "script" if user_data == "Script" else "filefolder"
-        
-        base_tag = f"{prefix}_provision_{index}_{provision_id}"
-        variable_name = f"{base_tag}_path"
+        # Handler for selecting a file or folder
+        def handle_select_file_or_folder():
+            if user_data == "Script":
+                path = fd.askopenfilename(title="Select a script file", filetypes=[("Script Files", "*.sh;*.bat;*.ps1"), ("All Files", "*.*")])
+            else:
+                path = fd.askopenfilename(title="Select a file") or fd.askdirectory(title="Select a folder")
+            
+            if path:
+                if config_key not in self.provisioner_configs:
+                    self.provisioner_configs[config_key] = {"type": user_data, "path": path, "destination": ""}
+                else:
+                    self.provisioner_configs[config_key]["path"] = path
+                dpg.set_item_label(f"{base_tag}_select_btn", os.path.basename(path))
 
-        if user_data == "Script":
-            with dpg.group(horizontal=True, parent=f"provision_group{index}", tag=f"{base_tag}_group"):
-                dpg.add_text("Script:")
-                dpg.add_button(
-                    label=" Select script ",
-                    callback=lambda: setattr(self, variable_name, self.select_folder()),
-                    tag=f"{base_tag}_select_btn"
+        # Create UI for the provisioner
+        with dpg.group(horizontal=True, parent=f"provision_group{index}", tag=f"{base_tag}_group"):
+            dpg.add_text(f"{user_data}:")
+            dpg.add_button(
+                label=" Select ",
+                callback=lambda: handle_select_file_or_folder(),
+                tag=f"{base_tag}_select_btn"
+            )
+            if user_data == "File":
+                dpg.add_text("Destination: ")
+                dpg.add_input_text(
+                    hint="/destination/path",
+                    width=200,
+                    tag=f"{base_tag}_dest_input",
+                    callback=lambda s, a: self._update_provisioner_destination(config_key, a)
                 )
-        else:
-            with dpg.group(horizontal=True, parent=f"provision_group{index}", tag=f"{base_tag}_group"):
-                dpg.add_text("File:", tag=f"{base_tag}_label")
-                with dpg.group(horizontal=True, tag=f"{base_tag}_host_folder_group"):
-                    dpg.add_button(
-                        label=" Select host folder ",
-                        callback=lambda: setattr(self, variable_name, self.select_folder()),
-                        tag=f"{base_tag}_select_btn"
-                    )
-                with dpg.group(horizontal=True, tag=f"{base_tag}_dest_group"):
-                    dpg.add_text("VM destination path: ", tag=f"{base_tag}_dest_label")
-                    dpg.add_input_text(hint="/home/vagrant/", width=200, tag=f"{base_tag}_dest_input")
+            dpg.add_button(
+                label=" Remove ",
+                callback=lambda: self._remove_provisioner(index, provision_id),
+                tag=f"{base_tag}_remove_btn"
+            )
 
-        print(f"Created provisioner of type: {user_data}, tag: {base_tag}, var: {variable_name}")
-
+    def _update_provisioner_destination(self, config_key, destination):
+        if config_key in self.provisioner_configs:
+            self.provisioner_configs[config_key]["destination"] = destination
+        
 # Needed for the index-----------------------------------------------------------------------------------------------
     def make_combo_callback(self, index):
         return lambda sender, app_data: self.vgfile_netint_gui(sender, app_data, str(index))
@@ -482,7 +498,7 @@ class CallbacksGUI(TagsCoreGUI):
                             "subnet_mask": subnet or "",
                             "gateway": gateway or ""
                         })
-            
+                
             env_data["network_interfaces"] = network_interfaces
 
             # Synced folders------------------------------------------------------------------
@@ -502,35 +518,24 @@ class CallbacksGUI(TagsCoreGUI):
 
             # Provisioners-------------------------------------------------------------------
             provisioners = []
-            provision_id = 1
-            
-            script_tag_base = f"script_provision_{i}_{provision_id}"
-            while dpg.does_item_exist(f"{script_tag_base}_group"):
-                script_path = getattr(self, f"{script_tag_base}_path", "")
-                if script_path:
-                    provisioners.append({
-                        "type": "shell",
-                        "path": script_path
-                    })
-                provision_id += 1
-                script_tag_base = f"script_provision_{i}_{provision_id}"
-                
-            provision_id = 1
-            file_tag_base = f"filefolder_provision_{i}_{provision_id}"
-            
-            while dpg.does_item_exist(f"{file_tag_base}_group"):
-                file_path = getattr(self, f"{file_tag_base}_path", "")
-                vm_dest = dpg.get_value(f"{file_tag_base}_dest_input") or ""
-                
-                if file_path or vm_dest:
-                    provisioners.append({
-                        "type": "file",
-                        "source": file_path,
-                        "destination": vm_dest
-                    })
-                provision_id += 1
-                file_tag_base = f"filefolder_provision_{i}_{provision_id}"
-                
+            for config_key, config in self.provisioner_configs.items():
+                idx, sid = map(int, config_key.split("_"))
+                if idx == i:
+                    provisioner_type = config["type"]
+                    provisioner_path = config["path"]
+                    provisioner_destination = config.get("destination", "")
+
+                    if provisioner_type == "File":
+                        provisioners.append({
+                            "type": "file",
+                            "path": provisioner_path,
+                            "destination": provisioner_destination
+                        })
+                    elif provisioner_type == "Script":
+                        provisioners.append({
+                            "type": "shell",
+                            "path": provisioner_path
+                        })
             env_data["provisioners"] = provisioners
 
             machine_data[f"environment_{i}"] = env_data
@@ -542,8 +547,7 @@ class CallbacksGUI(TagsCoreGUI):
         generator.render_template()
 
         return machine_data
-
-# Reset environments created--------------------------------------------------------------------------------------------
+    # Reset environments created--------------------------------------------------------------------------------------------
     def vgfile_reset(self, sender, app_data, user_data):
         dpg.hide_item(self.RESET_VGFILE_TAG)
         dpg.hide_item(self.VG_FILE_GENERATE_BTN_TAG)
@@ -563,3 +567,13 @@ class CallbacksGUI(TagsCoreGUI):
                     
         dpg.show_item(self.HELP_TEXT_VGFILE_TAG)
         dpg.show_item(self.ADD_ENV_VGFILE_TAG)
+        
+    def _remove_provisioner(self, index, provision_id):
+        base_tag = f"provision_{index}_{provision_id}_group"
+        config_key = f"{index}_{provision_id}"
+
+        if dpg.does_item_exist(base_tag):
+            dpg.delete_item(base_tag)
+
+        if hasattr(self, 'provisioner_configs') and config_key in self.provisioner_configs:
+            self.provisioner_configs.pop(config_key, None)

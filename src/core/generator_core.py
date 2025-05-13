@@ -46,7 +46,7 @@ class VgFileGenerator:
                 elif prov.get("type") == "file":
                     provisioners.append({
                         "type": "file",
-                        "source": prov.get("source", ""),
+                        "source": prov.get("path", ""),
                         "destination": prov.get("destination", "")
                     })
             
