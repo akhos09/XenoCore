@@ -304,7 +304,7 @@ class CallbacksGUI(TagsCoreGUI):
                         with dpg.group(horizontal=True):
                             dpg.add_text("Provisioners ", bullet=True)
                             current_index = i
-                            dpg.add_button(label=" Add File/Folder ", callback=lambda s, a: self.type_provisioner(s, a, "File", str(current_index)))
+                            dpg.add_button(label=" Add File", callback=lambda s, a: self.type_provisioner(s, a, "File", str(current_index)))
                             dpg.add_button(label=" Add Script ", callback=lambda s, a: self.type_provisioner(s, a, "Script", str(current_index)))
                             dpg.add_text("?")
                             self.tooltip("Executes a script or transfers a file from your PC.")
@@ -335,6 +335,7 @@ class CallbacksGUI(TagsCoreGUI):
 
         # Handler for selecting a file or folder
         def handle_select_file_or_folder():
+            path = None
             if user_data == "Script":
                 path = fd.askopenfilename(title="Select a script file", filetypes=[("Script Files", "*.sh;*.bat;*.ps1"), ("All Files", "*.*")])
             else:
@@ -368,6 +369,8 @@ class CallbacksGUI(TagsCoreGUI):
                 callback=lambda: self._remove_provisioner(index, provision_id),
                 tag=f"{base_tag}_remove_btn"
             )
+
+        print(f"Created provisioner of type: {user_data}, tag: {base_tag}")
 
     def _update_provisioner_destination(self, config_key, destination):
         if config_key in self.provisioner_configs:
@@ -498,7 +501,7 @@ class CallbacksGUI(TagsCoreGUI):
                             "subnet_mask": subnet or "",
                             "gateway": gateway or ""
                         })
-                
+                    
             env_data["network_interfaces"] = network_interfaces
 
             # Synced folders------------------------------------------------------------------
