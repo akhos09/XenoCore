@@ -19,6 +19,9 @@ class VgFileGenerator:
     def reformat_data(self, data: dict):
         machines = []
         for key, env in data.items():
+            name = (env.get("name") or key).lower()
+            hostname = (env.get("hostname") or name).lower()
+
             network_interfaces = []
             for iface in env.get("network_interfaces", []):
                 network_interfaces.append({
@@ -27,7 +30,7 @@ class VgFileGenerator:
                     "subnet_mask": iface.get("subnet_mask", "255.255.255.0"),
                     "gateway": iface.get("gateway", "")
                 })
-            
+
             sync_folders = []
             for folder in env.get("sync_folders", []):
                 if folder.get("host_folder") and folder.get("vm_destination"):
@@ -35,7 +38,7 @@ class VgFileGenerator:
                         "host_folder": folder.get("host_folder", ""),
                         "vm_destination": folder.get("vm_destination", "")
                     })
-            
+
             provisioners = []
             for prov in env.get("provisioners", []):
                 if prov.get("type") == "shell":
@@ -49,11 +52,11 @@ class VgFileGenerator:
                         "source": prov.get("path", ""),
                         "destination": prov.get("destination", "")
                     })
-            
+
             machines.append({
-                "name": env.get("name") or key,
-                "hostname": env.get("hostname") or key,
-                "box": env.get("box", "ubuntu/bionic64"),
+                "name": name,
+                "hostname": hostname,
+                "box": env.get("box", "hashicorp/bionic64"),
                 "box_version": env.get("box_version", ""),
                 "cpu": int(env.get("cpu") or 1),
                 "ram": int(env.get("ram") or 1024),
@@ -63,6 +66,8 @@ class VgFileGenerator:
                 "provisioners": provisioners,
             })
         return machines
+
+
     
 #Render template function------------------------------------------------------------------------------
     def render_template(self, output_path="Vagrantfile"):

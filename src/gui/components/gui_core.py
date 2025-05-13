@@ -231,8 +231,8 @@ class CallbacksGUI(TagsCoreGUI):
                         with dpg.group(horizontal=True):    
                             dpg.add_text("Name: ", bullet=True)
                             tag_name = f"env_name_{i}"
-                            dpg.add_input_text(default_value=f"Environment {i}", width=349, tag=tag_name)
-                            self.machine_input_data[tag_name] = f"Environment {i}"
+                            dpg.add_input_text(default_value=f"Environment_{i}", width=349, tag=tag_name)
+                            self.machine_input_data[tag_name] = f"Environment{i}"
 
                         # Hostname-------------------------------------------------------------------------------------------
                         with dpg.group(horizontal=True):    

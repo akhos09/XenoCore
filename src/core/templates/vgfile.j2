@@ -2,7 +2,7 @@ Vagrant.configure("2") do |config|
     {% if multi_machine -%}
     {% for machine in machines -%}
     {{'    '}}config.vm.define "{{ machine.name }}" do |{{ machine.name }}|
-        {{ machine.name }}.vm.box = "{{ machine.box }}"
+        {{ machine.name }}.vm.box = "{{ machine.box if machine.box and machine.box.strip() else 'hashicorp/bionic64' }}"
         {{''}}{% if machine.box_version -%}
         {{ machine.name }}.vm.box_version = "{{ machine.box_version }}"
         {% endif -%}
