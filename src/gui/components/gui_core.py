@@ -1,4 +1,5 @@
 import threading
+import os
 from tkinter import filedialog as fd
 from tkinter import Tk, messagebox
 
@@ -13,6 +14,7 @@ class CallbacksGUI(TagsCoreGUI):
     def __init__(self):
         self.machine_index_counter = 1
         self.provision_counter = {}
+        self.sync_folder_configs = {}
     
     ENV_DIS_ITEMS = [TagsCoreGUI.PACK_ENV_BTN_TAG, TagsCoreGUI.SEARCH_MACHINES_BTN_TAG, TagsCoreGUI.FOLDER_SELECTION_BTN_TAG]
     ENV_HID_ITEMS =  [TagsCoreGUI.PLUGINS_TAB, TagsCoreGUI.OTHER_TAB, TagsCoreGUI.ENV_HELP_RCLK_TAG, TagsCoreGUI.VGFILEGENERATOR_TAB]
@@ -289,7 +291,7 @@ class CallbacksGUI(TagsCoreGUI):
                         # Sync Folders-------------------------------------------------------------------------------------------
                         with dpg.group(horizontal=True):
                             dpg.add_text("Synchronized folder ", bullet=True)
-                            current_index = i  # Capture current value
+                            current_index = i
                             dpg.add_button(label=" Add ", callback=lambda s, a: self.vgfile_add_sync_folder(s, a, str(current_index)))
                             dpg.add_button(label=" Remove ", callback=lambda s, a: self.delete_child_widgets(group=f"sync_folder_group{current_index}"))
                             dpg.add_text("?")
@@ -362,7 +364,6 @@ class CallbacksGUI(TagsCoreGUI):
 # Delete child widgets------------------------------------------------------------------------------------------------
     def delete_child_widgets(self, group):
         if not dpg.does_item_exist(group):
-            print(f"Warning: Group {group} doesn't exist")
             return
             
         children = dpg.get_item_children(group, slot=1)
@@ -375,7 +376,6 @@ class CallbacksGUI(TagsCoreGUI):
     def vgfile_netint_gui(self, sender, app_data, index):
         group_tag = f"net_config_group{index}"
         if not dpg.does_item_exist(group_tag):
-            print(f"Warning: Group {group_tag} doesn't exist")
             return
 
         self.delete_child_widgets(group_tag)
@@ -417,6 +417,9 @@ class CallbacksGUI(TagsCoreGUI):
         if not hasattr(self, 'sync_folder_counter'):
             self.sync_folder_counter = {}
 
+        if not hasattr(self, 'sync_folder_configs'):
+            self.sync_folder_configs = {}
+
         if index not in self.sync_folder_counter:
             self.sync_folder_counter[index] = 1
         else:
@@ -424,19 +427,21 @@ class CallbacksGUI(TagsCoreGUI):
 
         sync_id = self.sync_folder_counter[index]
         base_tag = f"syncfolder_{index}_{sync_id}"
+        #Handler--------------------------------------------------------------------------------------
+        def handle_host_folder_select():
+            path = self.select_folder("Select host folder")
+            if path:
+                self.sync_folder_configs[f"{index}_{sync_id}"] = {"host_folder": path}
+                dpg.set_item_label(f"{base_tag}_host_btn", f"{os.path.basename(path)}")
 
         with dpg.group(horizontal=True, parent=f"sync_folder_group{index}", tag=f"{base_tag}_group"):
             with dpg.group(horizontal=True):
                 dpg.add_button(
                     label=" Select host folder ",
-                    callback=lambda idx=index, sid=sync_id: setattr(
-                        self,
-                        f"selected_path_syncfolder_{idx}_{sid}",
-                        self.select_folder()
-                    ),
+                    callback=lambda: handle_host_folder_select(),
                     tag=f"{base_tag}_host_btn"
                 )
-            with dpg.group(horizontal=True):    
+            with dpg.group(horizontal=True):
                 dpg.add_text("VM destination path: ")
                 dpg.add_input_text(
                     hint="/home/vagrant/",
@@ -444,7 +449,7 @@ class CallbacksGUI(TagsCoreGUI):
                     tag=f"{base_tag}_dest_input"
                 )
 
-
+# Load machine_data--------------------------------------------------------------------------
     def load_machine_data(self):
         machine_data = {}
 
@@ -470,7 +475,6 @@ class CallbacksGUI(TagsCoreGUI):
                     subnet = dpg.get_value(f"subnet_mask_{i}_{j}")
                     gateway = dpg.get_value(f"gateway_{i}_{j}")
                     
-                    
                     if interface_type != "Select type of interface" and (ip or subnet or gateway):
                         network_interfaces.append({
                             "type": interface_type,
@@ -483,24 +487,23 @@ class CallbacksGUI(TagsCoreGUI):
 
             # Synced folders------------------------------------------------------------------
             sync_folders = []
-            sync_id = 1
-            while dpg.does_item_exist(f"syncfolder_{i}_{sync_id}_group"):
-                host_folder = getattr(self, f"selected_path_syncfolder_{i}_{sync_id}", "")
-                vm_destination = dpg.get_value(f"syncfolder_{i}_{sync_id}_dest_input") or ""
-                
-                if host_folder or vm_destination:
-                    sync_folders.append({
-                        "host_folder": host_folder,
-                        "vm_destination": vm_destination
-                    })
-                sync_id += 1
+            for config_key, config in self.sync_folder_configs.items():
+                idx, sid = map(int, config_key.split("_"))
+                if idx == i:
+                    host_folder = config.get("host_folder", "")
+                    vm_destination = dpg.get_value(f"syncfolder_{idx}_{sid}_dest_input") or ""
+                    
+                    if host_folder or vm_destination:
+                        sync_folders.append({
+                            "host_folder": host_folder,
+                            "vm_destination": vm_destination
+                        })
             env_data["sync_folders"] = sync_folders
 
             # Provisioners-------------------------------------------------------------------
             provisioners = []
             provision_id = 1
             
-            # Check for script provisioners
             script_tag_base = f"script_provision_{i}_{provision_id}"
             while dpg.does_item_exist(f"{script_tag_base}_group"):
                 script_path = getattr(self, f"{script_tag_base}_path", "")

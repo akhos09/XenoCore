@@ -1,52 +1,40 @@
 Vagrant.configure("2") do |config|
-  {% if multi_machine %}
-  {% for machine in machines %}
-  config.vm.define "{{ machine.name }}" do |{{ machine.name }}|
-    {{ machine.name }}.vm.box = "{{ machine.box or 'ubuntu/bionic64' }}"
-    {% if machine.box_version %}
-    {{ machine.name }}.vm.box_version = "{{ machine.box_version }}"
-    {% endif %}
-    {% for iface in machine.network_interfaces %}
-    {% if iface.type == "Host Only/Private Interface" %}
-    {{ machine.name }}.vm.network "private_network", ip: "{{ iface.ip }}"{% if iface.subnet_mask %}, netmask: "{{ iface.subnet_mask }}"{% endif %}{% if iface.gateway %}, gateway: "{{ iface.gateway }}"{% endif %}
-    
-    {% elif iface.type == "Public/Bridge Interface" %}
-    {{ machine.name }}.vm.network "public_network", ip: "{{ iface.ip }}"{% if iface.subnet_mask %}, netmask: "{{ iface.subnet_mask }}"{% endif %}{% if iface.gateway %}, gateway: "{{ iface.gateway }}"{% endif %}
-    
-    {% else %}
-    # Unknown network interface type: {{ iface.type }}
-    {{ machine.name }}.vm.network "private_network", ip: "{{ iface.ip }}"{% if iface.subnet_mask %}, netmask: "{{ iface.subnet_mask }}"{% endif %}{% if iface.gateway %}, gateway: "{{ iface.gateway }}"{% endif %}
-    {% endif %}
-    {% endfor %}
-    
-    {{ machine.name }}.vm.hostname = "{{ machine.hostname or machine.name }}"
-    {{ machine.name }}.vm.provider "virtualbox" do |vb|
-      vb.name = "{{ machine.vbox_name or machine.name }}"
-      vb.memory = {{ machine.ram or 1024 }}
-      vb.cpus = {{ machine.cpu or 1 }}
-      {% if machine.disk_size %}
-      vb.customize ['modifyvm', :id, '--disk', '{{ machine.disk_size }}']
-      {% endif %}
-    end
+    {% if multi_machine %}
+    {% for machine in machines %}
+    config.vm.define "{{ machine.name }}" do |{{ machine.name }}|
+        {{ machine.name }}.vm.box = "{{ machine.box }}"
+        {% if machine.box_version %}
+        {{ machine.name }}.vm.box_version = "{{ machine.box_version }}"
+        {% endif %}
 
-    {% for folder in machine.sync_folders %}
-    {% if folder.host_folder and folder.vm_destination %}
-    {{ machine.name }}.vm.synced_folder "{{ folder.host_folder }}", "{{ folder.vm_destination }}"
-    
-    {% endif %}
+        {% for iface in machine.network_interfaces %}
+        {% if iface.type == "Host Only/Private Interface" %}
+        {{ machine.name }}.vm.network "private_network", ip: "{{ iface.ip }}"{% if iface.subnet_mask %}, netmask: "{{ iface.subnet_mask }}"{% endif %}{% if iface.gateway %}, gateway: "{{ iface.gateway }}"{% endif %}
+        {% elif iface.type == "Public/Bridge Interface" %}
+        {{ machine.name }}.vm.network "public_network", ip: "{{ iface.ip }}"{% if iface.subnet_mask %}, netmask: "{{ iface.subnet_mask }}"{% endif %}{% if iface.gateway %}, gateway: "{{ iface.gateway }}"{% endif %}
+        {% endif %}
+        {% endfor %}
+
+        {{ machine.name }}.vm.hostname = "{{ machine.hostname }}"
+
+        {{ machine.name }}.vm.provider "virtualbox" do |vb|
+            vb.name = "{{ machine.name }}"
+            vb.memory = {{ machine.ram }}
+            vb.cpus = {{ machine.cpu }}
+        end
+
+        {% for folder in machine.sync_folders %}
+        {{ machine.name }}.vm.synced_folder "{{ folder.host_folder }}", "{{ folder.vm_destination }}"
+        {% endfor %}
+
+        {% for provisioner in machine.provisioners %}
+        {% if provisioner.type == 'shell' %}
+        {{ machine.name }}.vm.provision "shell", path: "{{ provisioner.path }}"
+        {% elif provisioner.type == 'file' %}
+        {{ machine.name }}.vm.provision "file", source: "{{ provisioner.source }}", destination: "{{ provisioner.destination }}"
+        {% endif %}
+        {% endfor %}
+    end
     {% endfor %}
-    {% for provisioner in machine.provisioners %}
-    {% if provisioner.type == 'shell' and provisioner.path %}
-    {{ machine.name }}.vm.provision "shell", path: "{{ provisioner.path }}"
-    
-    {% elif provisioner.type == 'file' and provisioner.source and provisioner.destination %}
-    {{ machine.name }}.vm.provision "file", source: "{{ provisioner.source }}", destination: "{{ provisioner.destination }}"
-    
     {% endif %}
-    {% endfor %}
-  end
-  {% endfor %}
-  {% else %}
-  # Single-machine fallback config can go here if needed
-  {% endif %}
 end
