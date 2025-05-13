@@ -1,4 +1,6 @@
 import jinja2 as ji
+import tkinter as tk
+from tkinter import filedialog
 
 class VgFileGenerator:
     def __init__(self, machine_data: dict):
@@ -70,6 +72,18 @@ class VgFileGenerator:
 
     
 #Render template function------------------------------------------------------------------------------
-    def render_template(self, output_path="Vagrantfile"):
+    def render_template(self, output_path=None):
+        if not output_path:
+            root = tk.Tk()
+            root.withdraw()
+            output_path = filedialog.asksaveasfilename(
+                title="Save Vagrantfile as...",
+                filetypes=[("All files", "*.*")],
+                initialfile="Vagrantfile"
+            )
+            if not output_path:
+                print("Cancelled. No file saved.")
+                return
+
         with open(output_path, "w") as f:
             f.write(self.output)
