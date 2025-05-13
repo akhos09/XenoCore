@@ -72,3 +72,4 @@ class TagsCoreGUI:
     OPTIONS_PLG_TAG = "options_plg"
     ENV_HELP_RCLK_TAG = "env_help_rgk"
     PLG_HELP_RCLK_TAG = "plg_help_rgk"
+    VGFILE_TOOLTIP_TAG = "vgfile_tooltip"

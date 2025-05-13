@@ -182,7 +182,11 @@ class CallbacksGUI(TagsCoreGUI):
 
 # Env creation function-----------------------------------------------------------------------------------------------
     def vgfile_add_machines(self, sender=None, app_data=None, user_data=None):
-        buttons_functions = [self.VG_FILE_GENERATE_BTN_TAG, self.RESET_VGFILE_TAG]
+        buttons_functions = [self.VG_FILE_GENERATE_BTN_TAG, self.RESET_VGFILE_TAG, "help_text_fill"]
+        buttons_functions_hide = [self.NUM_ENV_INPUT_TAG, self.VGFILE_TOOLTIP_TAG]
+        for i in buttons_functions_hide:
+            if dpg.does_item_exist(i):
+                dpg.hide_item(i)
         for i in buttons_functions:
             if dpg.does_item_exist(i):
                 dpg.show_item(i)
@@ -199,6 +203,7 @@ class CallbacksGUI(TagsCoreGUI):
                     tag=self.RESET_VGFILE_TAG,
                     parent=self.VGFILE_BTN_GROUP_TAG
                 )
+                dpg.add_text("Fill the fields of the environments you want to create", color=[255, 255, 0], parent=self.VGFILE_BTN_GROUP_TAG,tag=f"help_text_fill")
         
         dpg.hide_item(self.ADD_ENV_VGFILE_TAG)
         num_machines_str = dpg.get_value(self.NUM_ENV_INPUT_TAG)
@@ -288,8 +293,8 @@ class CallbacksGUI(TagsCoreGUI):
                             dpg.add_input_text(hint="e.g: 20, 30, 40, 50, etc.", width=325, tag=tag_disk_size)
                             self.machine_input_data[tag_disk_size] = ""
 
-
                         # Sync Folders-------------------------------------------------------------------------------------------
+                        dpg.add_separator()
                         with dpg.group(horizontal=True):
                             dpg.add_text("Synchronized folder ", bullet=True)
                             current_index = i
@@ -302,6 +307,7 @@ class CallbacksGUI(TagsCoreGUI):
                             pass
 
                         # Provisioners-------------------------------------------------------------------------------------------
+                        dpg.add_separator()
                         with dpg.group(horizontal=True):
                             dpg.add_text("Provisioners ", bullet=True)
                             current_index = i
@@ -317,81 +323,6 @@ class CallbacksGUI(TagsCoreGUI):
                 dpg.add_separator()
 
         dpg.hide_item(self.HELP_TEXT_VGFILE_TAG)
-
-# Type provisioner--------------------------------------------------------------------------------------------------------------
-    def type_provisioner(self, sender, app_data, user_data, index):
-        if not hasattr(self, 'provisioner_counter'):
-            self.provisioner_counter = {}
-
-        if not hasattr(self, 'provisioner_configs'):
-            self.provisioner_configs = {}
-
-        if index not in self.provisioner_counter:
-            self.provisioner_counter[index] = 1
-        else:
-            self.provisioner_counter[index] += 1
-
-        provision_id = self.provisioner_counter[index]
-        base_tag = f"provision_{index}_{provision_id}"
-        config_key = f"{index}_{provision_id}"
-
-        def handle_select_file_or_folder():
-            path = None
-            if user_data == "Script":
-                path = fd.askopenfilename(title="Select a script file", filetypes=[("Script Files", "*.sh;*.bat;*.ps1"), ("All Files", "*.*")])
-            elif user_data == "File":
-                path = fd.askopenfilename(title="Select a file")
-            elif user_data == "Folder":
-                path = fd.askdirectory(title="Select a folder")
-
-            if path:
-                if config_key not in self.provisioner_configs:
-                    self.provisioner_configs[config_key] = {"type": user_data, "path": path, "destination": ""}
-                else:
-                    self.provisioner_configs[config_key]["path"] = path
-                dpg.set_item_label(f"{base_tag}_select_btn", os.path.basename(path))
-
-        with dpg.group(horizontal=True, parent=f"provision_group{index}", tag=f"{base_tag}_group"):
-            dpg.add_text(f"{user_data}:")
-            dpg.add_button(
-                label=" Select ",
-                callback=lambda: handle_select_file_or_folder(),
-                tag=f"{base_tag}_select_btn"
-            )
-            if user_data in ["File", "Folder"]:
-                dpg.add_text("Destination: ")
-                dpg.add_input_text(
-                    hint="/destination/path",
-                    width=200,
-                    tag=f"{base_tag}_dest_input",
-                    callback=lambda s, a: self._update_provisioner_destination(config_key, a)
-                )
-            dpg.add_button(
-                label=" Remove ",
-                callback=lambda: self._remove_provisioner(index, provision_id),
-                tag=f"{base_tag}_remove_btn"
-            )
-
-        print(f"Created provisioner of type: {user_data}, tag: {base_tag}")
-
-    def _update_provisioner_destination(self, config_key, destination):
-        if config_key in self.provisioner_configs:
-            self.provisioner_configs[config_key]["destination"] = destination
-        
-# Needed for the index-----------------------------------------------------------------------------------------------
-    def make_combo_callback(self, index):
-        return lambda sender, app_data: self.vgfile_netint_gui(sender, app_data, str(index))
-
-# Delete child widgets------------------------------------------------------------------------------------------------
-    def delete_child_widgets(self, group):
-        if not dpg.does_item_exist(group):
-            return
-            
-        children = dpg.get_item_children(group, slot=1)
-        if children:
-            for child in children:
-                if dpg.does_item_exist(child):
-                    dpg.delete_item(child)
                     
 # Network interfaces creation-------------------------------------------------------------------------------------------
     def vgfile_netint_gui(self, sender, app_data, index):
@@ -431,7 +362,9 @@ class CallbacksGUI(TagsCoreGUI):
                 self.network_configs = getattr(self, "network_configs", {})
                 self.network_configs[f"interface_{index}_{i}"] = network_details
 
-
+    # Needed for the index-----------------------------------------------------------------------------------------------
+    def make_combo_callback(self, index):
+        return lambda sender, app_data: self.vgfile_netint_gui(sender, app_data, str(index))
             
 # Add sync folder function---------------------------------------------------------------------------------------------
     def vgfile_add_sync_folder(self, sender, app_data, index):
@@ -469,6 +402,77 @@ class CallbacksGUI(TagsCoreGUI):
                     width=200,
                     tag=f"{base_tag}_dest_input"
                 )
+                
+# Type provisioner--------------------------------------------------------------------------------------------------------------
+    def type_provisioner(self, sender, app_data, user_data, index):
+        if not hasattr(self, 'provisioner_counter'):
+            self.provisioner_counter = {}
+
+        if not hasattr(self, 'provisioner_configs'):
+            self.provisioner_configs = {}
+
+        if index not in self.provisioner_counter:
+            self.provisioner_counter[index] = 1
+        else:
+            self.provisioner_counter[index] += 1
+
+        provision_id = self.provisioner_counter[index]
+        base_tag = f"provision_{index}_{provision_id}"
+        config_key = f"{index}_{provision_id}"
+
+        def handle_select_file_or_folder():
+            path = None
+            if user_data == "Script":
+                path = fd.askopenfilename(title="Select a script file", filetypes=[("Script Files", "*.sh;*.bat;*.ps1"), ("All Files", "*.*")])
+            elif user_data == "File":
+                path = fd.askopenfilename(title="Select a file")
+            elif user_data == "Folder":
+                path = fd.askdirectory(title="Select a folder")
+
+            if path:
+                if config_key not in self.provisioner_configs:
+                    self.provisioner_configs[config_key] = {"type": user_data, "path": path, "destination": ""}
+                else:
+                    self.provisioner_configs[config_key]["path"] = path
+                dpg.set_item_label(f"{base_tag}_select_btn", os.path.basename(path))
+
+        with dpg.group(horizontal=True, parent=f"provision_group{index}", tag=f"{base_tag}_group"):
+            if user_data == "File":
+                dpg.add_text(f"{user_data}:  ")
+            else:
+                dpg.add_text(f"{user_data}:")
+            dpg.add_button(
+                label=" Select ",
+                callback=lambda: handle_select_file_or_folder(),
+                tag=f"{base_tag}_select_btn"
+            )
+            if user_data in ["File", "Folder"]:
+                dpg.add_text("Destination: ")
+                dpg.add_input_text(
+                    hint="/destination/path",
+                    width=200,
+                    tag=f"{base_tag}_dest_input",
+                    callback=lambda s, a: self._update_provisioner_destination(config_key, a)
+                )
+            dpg.add_button(
+                label=" Remove ",
+                callback=lambda: self._remove_provisioner(index, provision_id),
+                tag=f"{base_tag}_remove_btn"
+            )
+# Handlers required for logic----------------------------------------------------------------
+    def _remove_provisioner(self, index, provision_id):
+        base_tag = f"provision_{index}_{provision_id}_group"
+        config_key = f"{index}_{provision_id}"
+
+        if dpg.does_item_exist(base_tag):
+            dpg.delete_item(base_tag)
+
+        if hasattr(self, 'provisioner_configs') and config_key in self.provisioner_configs:
+            self.provisioner_configs.pop(config_key, None)
+            
+    def _update_provisioner_destination(self, config_key, destination):
+        if config_key in self.provisioner_configs:
+            self.provisioner_configs[config_key]["destination"] = destination
 
 # Load machine_data--------------------------------------------------------------------------
     def load_machine_data(self):
@@ -554,6 +558,7 @@ class CallbacksGUI(TagsCoreGUI):
     
     # Reset environments created--------------------------------------------------------------------------------------------
     def vgfile_reset(self, sender, app_data, user_data):
+        dpg.hide_item("help_text_fill")
         dpg.hide_item(self.RESET_VGFILE_TAG)
         dpg.hide_item(self.VG_FILE_GENERATE_BTN_TAG)
         self.machine_index_counter = 1
@@ -569,16 +574,19 @@ class CallbacksGUI(TagsCoreGUI):
             for i in range(1, len(children)):
                 if dpg.does_item_exist(children[i]):
                     dpg.delete_item(children[i])
-                    
-        dpg.show_item(self.HELP_TEXT_VGFILE_TAG)
-        dpg.show_item(self.ADD_ENV_VGFILE_TAG)
         
-    def _remove_provisioner(self, index, provision_id):
-        base_tag = f"provision_{index}_{provision_id}_group"
-        config_key = f"{index}_{provision_id}"
-
-        if dpg.does_item_exist(base_tag):
-            dpg.delete_item(base_tag)
-
-        if hasattr(self, 'provisioner_configs') and config_key in self.provisioner_configs:
-            self.provisioner_configs.pop(config_key, None)
+        buttons_functions_show = [self.NUM_ENV_INPUT_TAG, self.HELP_TEXT_VGFILE_TAG, self.ADD_ENV_VGFILE_TAG, self.VGFILE_TOOLTIP_TAG]
+        for i in buttons_functions_show:
+            if dpg.does_item_exist(i):
+                dpg.show_item(i)
+                
+    # Delete child widgets------------------------------------------------------------------------------------------------
+    def delete_child_widgets(self, group):
+        if not dpg.does_item_exist(group):
+            return
+            
+        children = dpg.get_item_children(group, slot=1)
+        if children:
+            for child in children:
+                if dpg.does_item_exist(child):
+                    dpg.delete_item(child)

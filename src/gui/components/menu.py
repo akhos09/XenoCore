@@ -94,7 +94,7 @@ class MenuElementsGUI(CallbacksCoreEnv, CallbacksCorePlg):
                                     tag=self.ADD_ENV_VGFILE_TAG
                                 )
 
-                                dpg.add_text("?")
+                                dpg.add_text("?", tag=self.VGFILE_TOOLTIP_TAG)
                                 self.tooltip(text="The number of environments is capped at 50.")
                                                             
                                 dpg.add_text("Select the number of environments you want to create", 
