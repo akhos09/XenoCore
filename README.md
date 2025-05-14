@@ -46,7 +46,7 @@ Ensure the following are installed:
    ```bash
    python -m venv venv
    #Linux: source venv/bin/activate  
-   # Windows: venv\Scripts\activate
+   #Windows: venv\Scripts\activate
    ```
 
 
