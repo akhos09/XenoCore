@@ -95,7 +95,7 @@ class MenuElementsGUI(CallbacksCoreEnv, CallbacksCorePlg):
                                 )
 
                                 dpg.add_text("?", tag=self.VGFILE_TOOLTIP_TAG)
-                                self.tooltip(text="The number of environments is capped at 50.")
+                                self.tooltip(text="The number of environments is capped at 50")
                                                             
                                 dpg.add_text("Select the number of environments you want to create", 
                                             color=[255, 255, 0], 
@@ -114,7 +114,7 @@ class MenuElementsGUI(CallbacksCoreEnv, CallbacksCorePlg):
                                 dpg.add_checkbox(tag=self.LOCAL_PLG_CHECKBOX_TAG)
                                 dpg.add_text("Local")
                                 dpg.add_text("?")
-                                self.tooltip(text="Displays the plugins that are only installed in a local environment.\nCheck Vagrant documentation for more info.")
+                                self.tooltip(text="Displays the plugins that are only installed in a local environment.\nCheck Vagrant documentation for more info")
                                 dpg.add_text("Right click any of the installed plugins to see the available options", color=[255, 255, 0], tag=self.PLG_HELP_RCLK_TAG)
                             
                             dpg.add_separator()
@@ -130,7 +130,7 @@ class MenuElementsGUI(CallbacksCoreEnv, CallbacksCorePlg):
                                 dpg.add_checkbox(tag=self.LOCAL_PLG_REPAIR_CHECKBOX_TAG)   
                                 dpg.add_text("Local")
                                 dpg.add_text("?")
-                                self.tooltip(text="Repair tries to uninstall and install all the plugins of the system (Local is for a local plugin).")
+                                self.tooltip(text="Repair tries to uninstall and install all the plugins of the system (Local is for a local plugin)")
                             
                             dpg.add_separator()  
                             
@@ -145,7 +145,7 @@ class MenuElementsGUI(CallbacksCoreEnv, CallbacksCorePlg):
                                 )
                                 
                                 dpg.add_text("?")
-                                self.tooltip(text="Check the recommended plugins if you want to try new ones.")
+                                self.tooltip(text="Check the recommended plugins if you want to try new ones")
 
                             dpg.add_separator()
                             
@@ -215,7 +215,7 @@ class MenuElementsGUI(CallbacksCoreEnv, CallbacksCorePlg):
                                                 dpg.add_text("GitHub Issues:", bullet=True)
                                                 dpg.add_button(
                                                     label="Open Issue",
-                                                    callback=lambda: webbrowser.open("https://github.com/akhos09/XenoVagrant/issues"),
+                                                    callback=lambda: webbrowser.open("https://github.com/akhos09/XenoCore/issues"),
                                                     width=135
                                                 )
                                             dpg.add_text("Email: discordpbl09@gmail.com", bullet=True)
@@ -231,13 +231,13 @@ class MenuElementsGUI(CallbacksCoreEnv, CallbacksCorePlg):
 
                                     with dpg.collapsing_header(label="Application Overview"):
                                         dpg.add_text("Version: 1.0.0", bullet=True)
-                                        dpg.add_text("License: Apache License 2.0", bullet=True)
+                                        dpg.add_text("License: GPL-3.0 license", bullet=True)
                                         dpg.add_text("Author: @akhos09", bullet=True)
                                         with dpg.group(horizontal=True):
                                             dpg.add_text("Documentation:", bullet=True)
                                             dpg.add_button(
                                                 label="GitHub README",
-                                                callback=lambda: webbrowser.open("https://github.com/akhos09/XenoVagrant/blob/main/README.md"),
+                                                callback=lambda: webbrowser.open("https://github.com/akhos09/XenoCore/blob/main/README.md"),
                                                 width=180
                                             )
 

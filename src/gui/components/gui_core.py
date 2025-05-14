@@ -2,6 +2,7 @@ import threading
 import os
 from tkinter import filedialog as fd
 from tkinter import Tk, messagebox
+import webbrowser
 
 import dearpygui.dearpygui as dpg
 
@@ -247,13 +248,20 @@ class CallbacksGUI(TagsCoreGUI):
                             tag_box = f"env_box_{i}"
                             dpg.add_input_text(hint="e.g: hashicorp/bionic64", width=350, tag=tag_box)
                             self.machine_input_data[tag_box] = "hashicorp/bionic64"  # Default value
-
+                            help_button = dpg.add_text("?")
+                            self.tooltip("Click here to see the available boxes")
+                            with dpg.item_handler_registry() as handler:
+                                dpg.add_item_clicked_handler(callback=lambda: webbrowser.open("https://portal.cloud.hashicorp.com/vagrant/discover"))
+                            dpg.bind_item_handler_registry(help_button, handler)
+                            
                         # Box Version-------------------------------------------------------------------------------------------
                         with dpg.group(horizontal=True): 
                             dpg.add_text("Box Version: ", bullet=True)
                             tag_box_version = f"env_box_version_{i}"
                             dpg.add_input_text(hint="(Latest by default)", width=274, tag=tag_box_version)
                             self.machine_input_data[tag_box_version] = ""
+                            dpg.add_text("?")
+                            self.tooltip("Leave blank to use the latest one installed on your PC")
 
                         # CPU-------------------------------------------------------------------------------------------
                         with dpg.group(horizontal=True): 
@@ -261,6 +269,8 @@ class CallbacksGUI(TagsCoreGUI):
                             tag_cpu = f"env_cpu_{i}"
                             dpg.add_input_text(hint="CPUs", width=218, tag=tag_cpu)
                             self.machine_input_data[tag_cpu] = "1" # Default value
+                            dpg.add_text("?")
+                            self.tooltip("Be careful with this field, make sure to check how many cores you have and need")
 
                         # RAM-------------------------------------------------------------------------------------------
                         with dpg.group(horizontal=True): 
@@ -268,6 +278,8 @@ class CallbacksGUI(TagsCoreGUI):
                             tag_ram = f"env_ram_{i}"
                             dpg.add_input_text(hint="e.g: 1024, 2048, 4096, etc.", width=307, tag=tag_ram)
                             self.machine_input_data[tag_ram] = "1024"
+                            dpg.add_text("?")
+                            self.tooltip("Also be careful with this one, make sure to check how much RAM you have and need")
 
                         # Optional fields-------------------------------------------------------------------------------------------
                         dpg.add_text("Optional fields:", color=[255, 184, 0])
@@ -276,13 +288,16 @@ class CallbacksGUI(TagsCoreGUI):
                         # Network Interfaces-------------------------------------------------------------------------------------------
                         current_env_index = i
                         group_tag = f"net_config_group{current_env_index}"
-
-                        dpg.add_combo(
-                            items=["1", "2", "3", "4"],
-                            callback=self.make_combo_callback(current_env_index),
-                            default_value="Select number of network interfaces",
-                            width=500,
-                            )
+                        with dpg.group(horizontal=True):
+                            dpg.add_combo(
+                                items=["1", "2", "3", "4"],
+                                callback=self.make_netint_callback(current_env_index),
+                                default_value="Select number of network interfaces",
+                                width=500,
+                                )
+                            help_button = dpg.add_text("?")
+                            self.tooltip("Here you can configure up to 4 network interfaces")
+                            
                         with dpg.group(horizontal=False, tag=group_tag):
                             pass
 
@@ -303,7 +318,7 @@ class CallbacksGUI(TagsCoreGUI):
                             dpg.add_button(label=" Add ", callback=self.make_sync_folder_callback(current_env_index))
                             dpg.add_button(label=" Remove ", callback=self.make_sync_folder_remove_callback(current_env_index))
                             dpg.add_text("?")
-                            self.tooltip("It syncs a folder from your PC to one of your environments.")
+                            self.tooltip("It syncs a folder from your PC to one of your environments")
                         
                         with dpg.group(horizontal=False, tag=f"sync_folder_group{i}"):
                             pass
@@ -317,7 +332,7 @@ class CallbacksGUI(TagsCoreGUI):
                             dpg.add_button(label=" Add Script ", callback=self.make_provisioner_callback("Script", current_env_index))
 
                             dpg.add_text("?")
-                            self.tooltip("Executes a script or transfers a file from your PC.")
+                            self.tooltip("Executes a script or transfers a file/folder from your PC to the destination you add")
                         
                         with dpg.group(horizontal=False, tag=f"provision_group{i}"):
                             pass
@@ -346,13 +361,13 @@ class CallbacksGUI(TagsCoreGUI):
                 )
                 with dpg.group(horizontal=True, tag=f"{interface_tag}_ip_group"):
                     dpg.add_text("IP Address: ")
-                    dpg.add_input_text(width=185, tag=f"ip_address_{index}_{i}")
+                    dpg.add_input_text(width=220, tag=f"ip_address_{index}_{i}", hint="e.g: 192.168.1.10")
                 with dpg.group(horizontal=True, tag=f"{interface_tag}_subnet_group"):
                     dpg.add_text("Subnet Mask:")
-                    dpg.add_input_text(width=185, tag=f"subnet_mask_{index}_{i}")
+                    dpg.add_input_text(width=220, tag=f"subnet_mask_{index}_{i}", hint="e.g: 255.255.255.0")
                 with dpg.group(horizontal=True, tag=f"{interface_tag}_gateway_group"):
                     dpg.add_text("Gateway:    ")
-                    dpg.add_input_text(width=185, tag=f"gateway_{index}_{i}")
+                    dpg.add_input_text(width=220, tag=f"gateway_{index}_{i}", hint="e.g: 192.168.1.1")
                 
                 network_details = {
                     "type": f"{interface_tag}_type",
@@ -384,7 +399,7 @@ class CallbacksGUI(TagsCoreGUI):
             path = self.select_folder("Select host folder")
             if path:
                 self.sync_folder_configs[f"{index}_{sync_id}"] = {"host_folder": path}
-                dpg.set_item_label(f"{base_tag}_host_btn", f"{os.path.basename(path)}")
+                dpg.set_item_label(f"{base_tag}_host_btn", f" {os.path.basename(path)} ")
 
         with dpg.group(horizontal=True, parent=f"sync_folder_group{index}", tag=f"{base_tag}_group"):
             with dpg.group(horizontal=True):
@@ -432,7 +447,7 @@ class CallbacksGUI(TagsCoreGUI):
                     self.provisioner_configs[config_key] = {"type": user_data, "path": path, "destination": ""}
                 else:
                     self.provisioner_configs[config_key]["path"] = path
-                dpg.set_item_label(f"{base_tag}_select_btn", os.path.basename(path))
+                dpg.set_item_label(f"{base_tag}_select_btn", f" {os.path.basename(path)} ")
 
         with dpg.group(horizontal=True, parent=f"provision_group{index}", tag=f"{base_tag}_group"):
             if user_data == "File":
@@ -590,7 +605,7 @@ class CallbacksGUI(TagsCoreGUI):
                     dpg.delete_item(child)
                     
     # Needed for the index-----------------------------------------------------------------------------------------------
-    def make_combo_callback(self, index):
+    def make_netint_callback(self, index):
         return lambda sender, app_data: self.vgfile_netint_gui(sender, app_data, str(index))
     
     def make_sync_folder_callback(self, index):

@@ -106,7 +106,6 @@ class VgFileGenerator:
         thread.join()
 
         if not folder_selected:
-            print("No folder selected.")
             return
 
         # --- Write the Vagrantfile ---
@@ -114,7 +113,6 @@ class VgFileGenerator:
             file_path = os.path.join(folder_selected, default_name)
             with open(file_path, "w") as f:
                 f.write(self.output)
-            print(f"Vagrantfile written to: {file_path}")
         except Exception as e:
             self._show_messagebox("ERROR", f"Failed to write Vagrantfile: {e}", error=True)
             return
@@ -128,7 +126,7 @@ class VgFileGenerator:
                 root = Tk()
                 root.withdraw()
                 root.wm_attributes("-topmost", 1)
-                confirmed = messagebox.askyesno("Run Vagrant", "Do you want to run 'vagrant up'?")
+                confirmed = messagebox.askyesno("Run Vagrant", "Do you want to run create the environment?")
             finally:
                 try:
                     root.destroy()
@@ -140,7 +138,6 @@ class VgFileGenerator:
         thread.join()
 
         if not confirmed:
-            print("User cancelled vagrant up.")
             return
 
         # --- Run vagrant up ---
