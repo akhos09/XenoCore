@@ -1,6 +1,6 @@
 <h1 align="center">🛡️ XenoCore</h1>
 <p align="center">
-  <img src="https://github.com/akhos09/XenoCore/blob/main/src/assets/img/mainphoto_readme.png" alt="XenoCore UI" width="1200"/>
+  <img src="https://github.com/akhos09/XenoCore/blob/main/src/assets/img/mainphoto_readme.png" alt="XenoCore UI" width="1920"/>
 </p>
 
 ## Table of Contents
