@@ -13,12 +13,10 @@
 * [Development](#development)
 * [License](#license)
 
----
+
 
 ## About
-An app that manages all the posible options for Vagrant and generates customized Vagrantfiles
-
----
+A multi-platform (Linux&Windows) app that manages all the posible options for Vagrant and generates customized Vagrantfiles
 
 ## Dependencies
 
@@ -27,7 +25,6 @@ Ensure the following are installed:
 1. **Vagrant**: Available from [hashicorp.com](https://developer.hashicorp.com/vagrant).
 2. **Python Modules**: Installed via `requirements.txt`.
 
----
 
 ## Installation
 
@@ -48,10 +45,10 @@ Ensure the following are installed:
 
    ```bash
    python -m venv venv
-   source venv/bin/activate  # Windows: venv\Scripts\activate
+   #Linux: source venv/bin/activate  
+   # Windows: venv\Scripts\activate
    ```
 
----
 
 ## Usage
 
@@ -67,7 +64,6 @@ Ensure the following are installed:
    python app.py
    ```
 
----
 
 ## Project Structure
 
@@ -98,7 +94,6 @@ XenoCore/
 
 ```
 
----
 
 ## Troubleshooting
 
@@ -107,14 +102,13 @@ XenoCore/
 * Use `python --version` to verify you're using the correct Python version.
 * Activate your virtual environment before running the script.
 
----
 
 ## Development
 
 Planned features:
 
 ...
----
+
 
 ## License
 
