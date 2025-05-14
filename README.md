@@ -1,6 +1,6 @@
 # 🛡️ XenoCore
 
-An app that manages all posible options for Vagrant and generates customized Vagrantfiles
+An app that manages all the posible options for Vagrant and generates customized Vagrantfiles
 
 ## Table of Contents
 
