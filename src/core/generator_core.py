@@ -1,10 +1,13 @@
-import jinja2 as ji
+
+import os
+import sys
 import threading
 import subprocess
-import sys
 from tkinter import Tk, filedialog as fd, messagebox
 from contextlib import contextmanager
-import os
+
+import jinja2 as ji
+
 
 @contextmanager
 def change_directory(path):
