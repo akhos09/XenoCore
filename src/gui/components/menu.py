@@ -203,11 +203,11 @@ class MenuElementsGUI(CallbacksCoreEnv, CallbacksCorePlg):
                                         
                                         with dpg.collapsing_header(label="Troubleshooting"):
                                             with dpg.tree_node(label="Connection Problems"):
-                                                dpg.add_text("Check network settings", bullet=True)
-                                                dpg.add_text("Verify credentials", bullet=True)
+                                                dpg.add_text("Check network interfaces in VirtualBox and delete the ones that aren't used anymore.", bullet=True)
+                                                dpg.add_text("Check the type of network interface you have created.", bullet=True)
                                             with dpg.tree_node(label="Performance Issues"):
-                                                dpg.add_text("Reduce concurrent operations", bullet=True)
-                                                dpg.add_text("Allocate more resources", bullet=True)
+                                                dpg.add_text("It is common to have slow performance on Windows (not in Linux), this is due to the inner workings of powershell.", bullet=True)
+                                                dpg.add_text("Check Vagrantfile's syntax if the creation is stucked at some point.", bullet=True)
 
                                         with dpg.collapsing_header(label="Support"):
                                             dpg.add_text("For additional help:", bullet=True)
@@ -218,7 +218,7 @@ class MenuElementsGUI(CallbacksCoreEnv, CallbacksCorePlg):
                                                     callback=lambda: webbrowser.open("https://github.com/akhos09/XenoCore/issues"),
                                                     width=135
                                                 )
-                                            dpg.add_text("Email: discordpbl09@gmail.com", bullet=True)
+                                            dpg.add_text("Email: xenocore09@gmail.com", bullet=True)
                                             dpg.add_text("Discord: pabi09", bullet=True)
 
                                 with dpg.tab(label="About", tag=self.ABOUT_TAB):

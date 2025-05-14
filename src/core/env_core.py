@@ -6,7 +6,6 @@ from tkinter import messagebox
 
 import dearpygui.dearpygui as dpg
 
-from gui.components.constants import TagsCoreGUI
 from gui.components.gui_core import CallbacksGUI
 
 # Decorator (stays in the app's pwd after executing a vagrant up that changes the dir in order to execute it)

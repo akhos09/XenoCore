@@ -17,6 +17,7 @@ def change_directory(path):
         yield
     finally:
         os.chdir(prev)
+        
 class VgFileGenerator:
     def __init__(self, machine_data: dict):
         self.env = ji.Environment(

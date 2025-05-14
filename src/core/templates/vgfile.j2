@@ -12,11 +12,11 @@ Vagrant.configure("2") do |config|
         {% endif %}
         {% for iface in machine.network_interfaces %}
         {% if iface.type == "Host Only/Private Interface" %}
-        {{ machine.name }}.vm.network "private_network", ip: "{{ iface.ip }}"{% if iface.subnet_mask %}, netmask: "{{ iface.subnet_mask }}"{% endif %}{% if iface.gateway %}, gateway: "{{ iface.gateway }}"
-        {% endif %}
+        {{ machine.name }}.vm.network "private_network"{% if iface.ip %}, ip: "{{ iface.ip }}"{% endif %}{% if iface.subnet_mask %}, netmask: "{{ iface.subnet_mask }}"{% endif %}{% if iface.gateway %}, gateway: "{{ iface.gateway }}"{% endif %}
+        
         {% elif iface.type == "Public/Bridge Interface" %}
-        {{ machine.name }}.vm.network "public_network", ip: "{{ iface.ip }}"{% if iface.subnet_mask %}, netmask: "{{ iface.subnet_mask }}"{% endif %}{% if iface.gateway %}, gateway: "{{ iface.gateway }}"
-        {% endif %}
+        {{ machine.name }}.vm.network "public_network"{% if iface.ip %}, ip: "{{ iface.ip }}"{% endif %}{% if iface.subnet_mask %}, netmask: "{{ iface.subnet_mask }}"{% endif %}{% if iface.gateway %}, gateway: "{{ iface.gateway }}"{% endif %}
+        
         {% endif %}
         {% endfor %}
         {{ machine.name }}.vm.hostname = "{{ machine.hostname }}"

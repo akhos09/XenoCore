@@ -8,7 +8,7 @@ import dearpygui.dearpygui as dpg
 
 from .themes import default_theme, dark_theme, light_theme, cyberpunk_theme, gruvboxdark_theme, nyx_theme
 from .fonts import reset_font_binding
-from .constants import TagsCoreGUI
+from .tags import TagsCoreGUI
 from core.generator_core import VgFileGenerator
 
 class CallbacksGUI(TagsCoreGUI):
