@@ -18,7 +18,7 @@ class XenoCoreGUI(MenuElementsGUI):
             except Exception as e:
                 self.show_topmost_messagebox(title='ERROR', message=f'DPI Awareness could not be set.\n\n{e}', error=True)
 
-        self.icon_path = os.path.join(os.path.dirname(__file__), "../assets/img/test.ico")
+        self.icon_path = os.path.join(os.path.dirname(__file__), "../assets/img/app_icon.ico")
         if not os.path.exists(self.icon_path):
             self.show_topmost_messagebox(title='ERROR', message='Assets folder not found. Make sure it exists inside the src folder.', error=True)
             sys.exit(1)
