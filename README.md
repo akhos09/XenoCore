@@ -44,8 +44,8 @@ Ensure the following are installed:
    pip install -r requirements.txt
    ```
 
-   You could use a virtual environment:
-
+  _You could use a virtual environment:_
+  
    ```bash
    python -m venv venv
    #Linux: source venv/bin/activate  
