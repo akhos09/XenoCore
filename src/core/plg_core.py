@@ -42,7 +42,8 @@ class CallbacksCorePlg(CallbacksGUI):
             if dpg.does_item_exist(self.TEMP_PLG_WINDOW_TAG):
                 dpg.delete_item(self.TEMP_PLG_WINDOW_TAG)
             return
-
+        
+        # ------- Gets output of vagrant plugin list and formats it into a table ------- 
         lines = command_status.stdout.splitlines()
         data_lines = []
         for line in lines:
@@ -114,6 +115,7 @@ class CallbacksCorePlg(CallbacksGUI):
         self.plg_disable_gui(text=f"Installing the {name_plg_install} plugin...", text_tag=self.INSTALLING_PLG_TEXT_TAG)
 
         try:
+            # ------- Bypasses some dependency version checks (although they are correct, this generates a lot of errors, so that's why I added it) ------- 
             if sys.platform == "win32":
                 cmd = f'start /wait cmd /c "set VAGRANT_DISABLE_STRICT_DEPENDENCY_ENFORCEMENT=1 && vagrant plugin install {name_plg_install} && pause"'
             else:
@@ -200,10 +202,6 @@ class CallbacksCorePlg(CallbacksGUI):
         finally:
             self.plg_enable_gui(text_tag=self.REPAIRING_PLG_TEXT_TAG)
 
-# Expunge plugin function -----------------------------------------------------------------------------------------------------------------------------------
-    def expunge_vagrant_plg(self, app_data, user_data):
-        pass
-    
 # Right click context menu plgs -----------------------------------------------------------------------------------------------------------------------------
     def plg_right_click_context_menu(self, sender, app_data, user_data):
         self.right_click_context_menu(sender, app_data, user_data, menu_type="plugin")

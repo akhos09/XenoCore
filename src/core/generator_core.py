@@ -19,6 +19,7 @@ def change_directory(path):
         os.chdir(prev)
         
 class VgFileGenerator:
+    # ------- Initializes the jinja2 env for templates ------- 
     def __init__(self, machine_data: dict):
         self.env = ji.Environment(
             loader=ji.FileSystemLoader("./core/templates"),
@@ -33,7 +34,7 @@ class VgFileGenerator:
         }
         self.output = self.template.render(**self.params)
         
-#Format data function------------------------------------------------------------------------------
+# Format data function------------------------------------------------------------------------------
     def reformat_data(self, data: dict):
         machines = []
         for key, env in data.items():
@@ -89,7 +90,6 @@ class VgFileGenerator:
     
 #Render template function------------------------------------------------------------------------------
     def render_template(self, default_name="Vagrantfile"):
-        # --- Select folder in thread ---
         folder_selected = None
 
         def folder_dialog():
@@ -112,7 +112,7 @@ class VgFileGenerator:
         if not folder_selected:
             return
 
-        # --- Write the Vagrantfile ---
+        # --- Writes the Vagrantfile ---
         try:
             file_path = os.path.join(folder_selected, default_name)
             with open(file_path, "w") as f:
@@ -121,7 +121,6 @@ class VgFileGenerator:
             self._show_messagebox("ERROR", f"Failed to write Vagrantfile: {e}", error=True)
             return
 
-        # --- Ask if user wants to run vagrant up ---
         confirmed = False
 
         def confirm_dialog():
@@ -130,7 +129,7 @@ class VgFileGenerator:
                 root = Tk()
                 root.withdraw()
                 root.wm_attributes("-topmost", 1)
-                confirmed = messagebox.askyesno("Run Vagrant", "Do you want to run create the environment?")
+                confirmed = messagebox.askyesno("Run Vagrant", "Do you want to create the environment you just generated?")
             finally:
                 try:
                     root.destroy()
@@ -144,7 +143,7 @@ class VgFileGenerator:
         if not confirmed:
             return
 
-        # --- Run vagrant up ---
+        # ------- The env is created if the users clicks Yes at the check ------- 
         with change_directory(folder_selected):
             cmd = 'start /wait cmd /c "vagrant up & pause"' if sys.platform == "win32" else "vagrant up"
             subprocess.run(cmd, shell=True, check=True)

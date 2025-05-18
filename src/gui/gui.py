@@ -9,7 +9,8 @@ import dearpygui.dearpygui as dpg
 from .components.menu import MenuElementsGUI
 from .components.themes import *
 
-class XenoCoreGUI(MenuElementsGUI):
+class XenoCoreGUI(MenuElementsGUI):    
+# ------- Sets DPI Awareness for high resolution screens and checks if the assets folder is in the right path ------- 
     def __init__(self):
         super().__init__()
         if sys.platform == "win32":
@@ -23,6 +24,7 @@ class XenoCoreGUI(MenuElementsGUI):
             self.show_topmost_messagebox(title='ERROR', message='Assets folder not found. Make sure it exists inside the src folder.', error=True)
             sys.exit(1)
 
+# ------- Entrypoint of the app (checks if Vagrant is in the system and executes the GUI) -------
 def main():
     if not shutil.which("vagrant"):
         messagebox.showerror(title='ERROR', message='Vagrant is not installed. Ensure is installed and registered in the PATH.')

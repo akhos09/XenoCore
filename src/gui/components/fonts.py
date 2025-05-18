@@ -2,12 +2,13 @@ import os
 
 import dearpygui.dearpygui as dpg
 
-fonts = {} #Dict that stores the fonts--------------------------------------------------
+# ------- Storage dict for the fonts ------- 
+fonts = {} 
 
 def load_fonts():
         with dpg.font_registry():
             
-            fonts["Conthrax-SemiBold"] = dpg.add_font(os.path.join(os.path.dirname(__file__), "../../assets/fonts/Conthrax-SemiBold.otf"), 22)
+            fonts["Conthrax-SemiBold"] = dpg.add_font(os.path.join(os.path.dirname(__file__), "../../assets/fonts/Conthrax-SemiBold.otf"), 18)
             fonts["Average-Regular"] = dpg.add_font(os.path.join(os.path.dirname(__file__),"../../assets/fonts/Average-Regular.ttf"), 29)
             fonts["Default"] = dpg.add_font(os.path.join(os.path.dirname(__file__),"../../assets/fonts/JetBrainsMono.ttf"), 24)
             

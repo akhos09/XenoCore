@@ -12,12 +12,14 @@ from .tags import TagsCoreGUI
 from core.generator_core import VgFileGenerator
 
 class CallbacksGUI(TagsCoreGUI):
+    # ------- Initializes all the structures for storage ------- 
     def __init__(self):
         self.machine_index_counter = 1
         self.provision_counter = {}
         self.sync_folder_configs = {}
         self.provisioner_configs = {}
     
+    # ------- Disables or hides items ------- 
     ENV_DIS_ITEMS = [TagsCoreGUI.PACK_ENV_BTN_TAG, TagsCoreGUI.SEARCH_MACHINES_BTN_TAG, TagsCoreGUI.FOLDER_SELECTION_BTN_TAG]
     ENV_HID_ITEMS =  [TagsCoreGUI.PLUGINS_TAB, TagsCoreGUI.OTHER_TAB, TagsCoreGUI.ENV_HELP_RCLK_TAG, TagsCoreGUI.VGFILEGENERATOR_TAB]
     
@@ -56,7 +58,7 @@ class CallbacksGUI(TagsCoreGUI):
         with dpg.tooltip(parent=dpg.last_item(), hide_on_activity=True):
             dpg.add_text(text)
             
-# Select folder function ----------------------------------------------------------------------------------
+# Select folder function (uses threading for Linux compability) -------------------------------------------
     def select_folder(self, text="Select a folder"):
 
         result = {"path": None}
@@ -75,7 +77,7 @@ class CallbacksGUI(TagsCoreGUI):
         
         return result["path"]
             
-# Topmost Tk messagebox -----------------------------------------------------------------------------------
+# Topmost Tk messagebox (uses threading for Linux compability) --------------------------------------------
     def show_topmost_messagebox(self, title, message, error=False):
         def run_messagebox():
             try:
@@ -394,6 +396,7 @@ class CallbacksGUI(TagsCoreGUI):
 
         sync_id = self.sync_folder_counter[index]
         base_tag = f"syncfolder_{index}_{sync_id}"
+        
         #Handler--------------------------------------------------------------------------------------
         def handle_host_folder_select():
             path = self.select_folder("Select host folder")
@@ -604,7 +607,7 @@ class CallbacksGUI(TagsCoreGUI):
                 if dpg.does_item_exist(child):
                     dpg.delete_item(child)
                     
-    # Needed for the index-----------------------------------------------------------------------------------------------
+# Needed for the index-----------------------------------------------------------------------------------------------
     def make_netint_callback(self, index):
         return lambda sender, app_data: self.vgfile_netint_gui(sender, app_data, str(index))
     

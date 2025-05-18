@@ -45,8 +45,8 @@ class MenuElementsGUI(CallbacksCoreEnv, CallbacksCorePlg):
                                 self.tooltip(text="Refreshes the cache of the environments on your system.\nCheck help if you need more info")  
                                 dpg.add_text("Right click any of the local environments to see the available options", color=[255, 255, 0], tag=self.ENV_HELP_RCLK_TAG) 
                             
-                        dpg.add_separator()  
-                        
+                        dpg.add_separator()
+                        # Main options machines --------------------------------------------------------------------------------------------------------------------------
                         with dpg.group(horizontal=False):
                             with dpg.group(horizontal=True):
                                 dpg.add_text("Create an environment (Vagrantfile):")
@@ -73,7 +73,7 @@ class MenuElementsGUI(CallbacksCoreEnv, CallbacksCorePlg):
                                 self.tooltip(text="Packs a VBox environment as a reusable box for a Vagrantfile")
                                 dpg.add_separator()
                                 
-# VgFileGenerator tab & Widgets -----------------------------------------------------------------------------------------------------------------------------------------------               
+# VgFileGenerator tab & Widgets ------------------------------------------------------------------------------------------------------------------------------------------               
                 with dpg.tab(label="VgFileGenerator", tag=self.VGFILEGENERATOR_TAB):
                     with dpg.child_window(tag=self.VGFILEGENERATOR_WIN_TAG, label="vgfilewin", use_internal_label=True, border=True, auto_resize_x=False, auto_resize_y=False):
                         with dpg.group(horizontal=False, tag=self.SELECTOR_GROUP_TAG):
@@ -82,6 +82,7 @@ class MenuElementsGUI(CallbacksCoreEnv, CallbacksCorePlg):
                                     tag=self.NUM_ENV_INPUT_TAG,
                                     hint="Enter number",
                                     width=220,
+                                    # ------- Limits the number of environments to 50 (fixes some bugs) ------- 
                                     callback=lambda s, a, u: dpg.set_value(
                                         s,
                                         str(min(max(1, int(a)) if a.isdigit() else 1, 50))
@@ -101,9 +102,10 @@ class MenuElementsGUI(CallbacksCoreEnv, CallbacksCorePlg):
                                             color=[255, 255, 0], 
                                             tag=self.HELP_TEXT_VGFILE_TAG)
                                 
-# Plugins tab & Widgets--------------------------------------------------------------------------------------------------------------------------------------------------------
+# Plugins tab & Widgets---------------------------------------------------------------------------------------------------------------------------------------------------
                 with dpg.tab(label="Plugins", tag=self.PLUGINS_TAB):
                     with dpg.child_window(label="pluginswin", use_internal_label=True, border=True, auto_resize_x=False, auto_resize_y=False, tag=self.PLUGINS_WIN_TAG):
+                        # Main options plugins ---------------------------------------------------------------------------------------------------------------------------
                             with dpg.group(horizontal=True, tag=self.OPTIONS_PLG_TAG):
                                 dpg.add_button(
                                     label="Search for plugins",
@@ -149,6 +151,7 @@ class MenuElementsGUI(CallbacksCoreEnv, CallbacksCorePlg):
 
                             dpg.add_separator()
                             
+                            # Recommended plugins ---------------------------------------------------------------------------------------------------------------------------
                             with dpg.collapsing_header(label="List of recommended plugins", default_open=True):
                                 with dpg.group(horizontal=False):
 
@@ -193,7 +196,7 @@ class MenuElementsGUI(CallbacksCoreEnv, CallbacksCorePlg):
                                             dpg.add_text("Auto-configure proxy settings in VMs")
                                 dpg.add_separator()
 
-# Other tab & Widgets---------------------------------------------------------------------------------------------------------------------------
+# Other tab & Help--------------------------------------------------------------------------------------------------------------------------------------------------------
                 with dpg.tab(label="Other", tag=self.OTHER_TAB):
                     with dpg.child_window(label="otherwin", use_internal_label=True, border=True, auto_resize_x=False, auto_resize_y=False, tag=self.OTHER_WIN_TAG):
                         with dpg.group(horizontal=False):

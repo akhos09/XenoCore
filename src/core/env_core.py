@@ -57,6 +57,7 @@ class CallbacksCoreEnv(CallbacksGUI):
                 dpg.delete_item(self.TEMP_ENV_WINDOW_TAG)
             return
         
+        # ------- Gets output of vagrant global-status and formats it into a table ------- 
         lines = command_status.stdout.splitlines() 
         data_lines = []
         for line in lines:
@@ -274,6 +275,7 @@ class CallbacksCoreEnv(CallbacksGUI):
     def connect_vagrant_env(self, sender, app_data, user_data):
         dpg.delete_item("right_click_popup")
         try:
+            # ------- Uses internal Vagrant ssh (fixes some bugs and errors) ------- 
             if sys.platform == "win32":
                 cmd = f'start powershell -NoExit -Command "$Env:VAGRANT_PREFER_SYSTEM_BIN=0; vagrant ssh {user_data}"'
             else:

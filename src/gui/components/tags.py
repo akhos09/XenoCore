@@ -1,3 +1,4 @@
+# ------- Global tags unified in a single Class ------- 
 class TagsCoreGUI:
     # Tabs --------------------------------------
     MACHINES_TAB = "machines"

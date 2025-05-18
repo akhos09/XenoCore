@@ -2,6 +2,7 @@ from typing import  Union
 
 import dearpygui.dearpygui as dpg
 
+# ------- Initializes all the various theme settings ------- 
 def default_theme() -> Union[str, int]:
     with dpg.theme() as theme_id:
         with dpg.theme_component(0):
@@ -14,7 +15,7 @@ def default_theme() -> Union[str, int]:
             
             dpg.add_theme_color(dpg.mvThemeCol_HeaderHovered          , (98, 114, 164, 220))  # When hovered
             dpg.add_theme_color(dpg.mvThemeCol_HeaderActive           , (98, 114, 164, 255))  # When active/expanded
-            dpg.add_theme_color(dpg.mvThemeCol_Header, (100, 100, 145, 255)) 
+            dpg.add_theme_color(dpg.mvThemeCol_Header                 , (100, 100, 145, 255)) 
 
             # Interactive Elements
             dpg.add_theme_color(dpg.mvThemeCol_Button                 , (98, 114, 164, 180)) # Dracula Purple
