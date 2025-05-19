@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="https://github.com/akhos09/XenoCore/blob/main/src/assets/img/app_icon.png" alt="XenoCore UI" width="200"/>
+  <img src="https://github.com/akhos09/XenoCore/blob/main/src/assets/img/app_icon.png" alt="XenoCore UI" width="190"/>
 </p>
 <h1 align="center">🛡️ XenoCore</h1>
 <p align="center">
