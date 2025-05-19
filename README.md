@@ -19,14 +19,15 @@
 
 
 ## About
-A multi-platform (Linux&Windows) app that manages all the posible options for Vagrant and generates customized Vagrantfiles
+XenoCore is a cross-platform (Linux&Windows) designed to manage all the possible options for Vagrant and generate customized Vagrantfiles via GUI. You can configure up to 50 environments with various parameters (network interfaces, provisioners, synchronized folders, disk size, and more).
 
 ## Dependencies
 
 Ensure the following are installed:
 
-1. **Vagrant**: Available from [hashicorp.com](https://developer.hashicorp.com/vagrant).
-2. **Python Modules**: Installed via `requirements.txt`.
+1. **Vagrant**: Available from [hashicorp.com](https://developer.hashicorp.com/vagrant)
+2. **VirtualBox**: Available from [virtualbox.org](https://www.virtualbox.org/wiki/Downloads)
+3. **Python Modules**: Installed via `requirements.txt`
 
 
 ## Installation
@@ -44,13 +45,13 @@ Ensure the following are installed:
    pip install -r requirements.txt
    ```
 
-  _You could use a virtual environment:_
-  
-   ```bash
-   python -m venv venv
-   #Linux: source venv/bin/activate  
-   #Windows: venv\Scripts\activate
-   ```
+    _You could use a virtual environment:_
+    
+     ```bash
+     python -m venv venv
+     #Linux: source venv/bin/activate  
+     #Windows: venv\Scripts\activate
+     ```
 
 
 ## Usage
@@ -107,11 +108,10 @@ XenoCore/
 
 
 ## Development
-
-Planned features:
-
-...
-
+ - Enhance Linux support
+ - Add more advanced parameters to the VgFileGenerator
+ - Implement more fonts and themes
+ - Create a customized theme creator
 
 ## License
 
