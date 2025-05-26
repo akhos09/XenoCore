@@ -56,6 +56,8 @@ class MenuElementsGUI(CallbacksCoreEnv, CallbacksCorePlg):
                                     width=160,
                                     tag=self.FOLDER_SELECTION_BTN_TAG
                                 )
+                                dpg.add_text("?")
+                                self.tooltip(text="Select a folder containing the Vagrantfile\n(check vagrantfiles folder in the root folder if you want to try one of them)")  
                             dpg.add_separator()
                             with dpg.group(horizontal=False):
                                 with dpg.group(horizontal=True):
