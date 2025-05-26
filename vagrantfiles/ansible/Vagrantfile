@@ -1,0 +1,51 @@
+Vagrant.configure("2") do |config|
+    config.vm.box = "ubuntu/focal64"
+
+# SETTINGS FOR THE MASTER NODE----------------------------------------------------------------------------------------------------------------------------------
+    config.vm.define "masternode" do |masternode|
+      masternode.vm.network "private_network", ip: "192.168.30.3", netmask: "255.255.255.0"
+      masternode.vm.hostname = "masternode"
+      masternode.vm.synced_folder "./ansibleconfigroot/", "/root/ansible/"
+      masternode.vm.provider "virtualbox" do |vb|
+        vb.name = "nodemasteransible"
+        vb.memory = "4096"
+        vb.cpus = 2
+        vb.customize ["modifyvm", :id, "--cableconnected1", "on"]
+      end
+      masternode.vm.provision "shell", path: "./scripts/setupmaster.sh"
+    end
+
+# SETTINGS FOR THE VMs (change any parameter as you want)-------------------------------------------------------------------------------------------------------
+    config.vm.define "node1" do |node1|
+      node1.vm.network "private_network", ip: "192.168.30.4", netmask: "255.255.255.0"
+      node1.vm.hostname = "node1"
+      node1.vm.provider "virtualbox" do |vb|
+        vb.name = "node1ansible"
+        vb.memory = "4096"
+        vb.cpus = 2
+      end
+      node1.vm.provision "shell", path: "./scripts/childsetup.sh"
+    end
+  
+    config.vm.define "node2" do |node2|
+      node2.vm.network "private_network", ip: "192.168.30.5", netmask: "255.255.255.0"
+      node2.vm.hostname = "node2"
+      node2.vm.provider "virtualbox" do |vb|
+        vb.name = "node2ansible"
+        vb.memory = "4096"
+        vb.cpus = 2
+      end
+      node2.vm.provision "shell", path: "./scripts/childsetup.sh"
+    end
+  
+    config.vm.define "node3" do |node3|
+      node3.vm.network "private_network", ip: "192.168.30.6", netmask: "255.255.255.0"
+      node3.vm.hostname = "node3"
+      node3.vm.provider "virtualbox" do |vb|
+        vb.name = "node3ansible"
+        vb.memory = "4096"
+        vb.cpus = 2
+      end
+      node3.vm.provision "shell", path: "./scripts/childsetup.sh"
+    end
+  end

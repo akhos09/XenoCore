@@ -1,0 +1,14 @@
+Vagrant.configure("2") do |config|
+  config.vm.box = "ubuntu/bionic64"
+  config.vm.box_version = "20230607.0.5"
+  config.vm.network "private_network", ip: "192.168.30.30"
+  config.vm.define "serverweb"
+  #config.disksize.size = "50GB"# size of the disk, requires plugin || vagrant plugin install vagrant-disksize || 
+  config.vm.provider "virtualbox" do |vb| # vb as hypervisor
+    vb.name ="serverweb"
+    vb.memory = "2048"
+    vb.cpus = 2
+  end
+  config.vm.provision "shell", path: "./scripts/initialconfig.sh"
+  #config.vm.provision "shell", path: "./scripts/guestadditions.sh"
+end

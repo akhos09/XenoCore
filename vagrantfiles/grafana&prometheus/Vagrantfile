@@ -1,0 +1,70 @@
+Vagrant.configure("2") do |config|
+    config.vm.box = "ubuntu/focal64"
+
+# SETTINGS FOR THE GRAFANA SERVER----------------------------------------------------------------------------------------------------------------------------
+  config.vm.define "grafana" do |grafana|
+    grafana.vm.network "private_network", ip: "192.168.30.4", netmask: "255.255.255.0"
+    grafana.vm.hostname = "grafana"
+    grafana.vm.provider "virtualbox" do |vb|
+      vb.name = "grafana"
+      vb.memory = "2048"
+      vb.cpus = 2
+      vb.customize ["modifyvm", :id, "--cableconnected1", "on"]
+    end
+      grafana.vm.provision "shell", path: "./scripts/setupgrafana.sh"
+  end
+
+# SETTINGS FOR THE WEB SERVER----------------------------------------------------------------------------------------------------------------------------
+  config.vm.define "webserver" do |webserver|
+    webserver.vm.network "private_network", ip: "192.168.30.7", netmask: "255.255.255.0"
+    webserver.vm.hostname = "webserver"
+    webserver.vm.provider "virtualbox" do |vb|
+      vb.name = "webserver"
+      vb.memory = "2048"
+      vb.cpus = 1
+      vb.customize ["modifyvm", :id, "--cableconnected1", "on"]
+    end
+    webserver.vm.provision "shell", path: "./scripts/websetup.sh"
+  end
+
+# SETTINGS FOR THE LDAPSERVER----------------------------------------------------------------------------------------------------------------------------------
+  config.vm.define "serverldap" do |serverldap|
+    serverldap.vm.network "private_network", ip: "192.168.30.3", netmask: "255.255.255.0"
+    serverldap.vm.hostname = "serverldap"
+    serverldap.vm.synced_folder "./filesextra/", "/root/openldap/" #change name of the first folder or create it to sync it
+    # serverldap.vm.disk :disk, size: "10GB", name: "storage1_raid"
+    # serverldap.vm.disk :disk, size: "10GB", name: "storage2_raid"
+    serverldap.vm.provider "virtualbox" do |vb|
+      vb.name = "serverldap"
+      vb.memory = "4096"
+      vb.cpus = 1
+      vb.customize ["modifyvm", :id, "--cableconnected1", "on"]
+    end
+    serverldap.vm.provision "shell", path: "./scripts/setupldap.sh"
+  end
+
+# SETTINGS FOR THE CLIENTS (change any parameter as you want)-------------------------------------------------------------------------------------------------------
+  config.vm.define "client1ldap" do |client1ldap|
+    client1ldap.vm.network "private_network", ip: "192.168.30.6", netmask: "255.255.255.0"
+    client1ldap.vm.hostname = "client1ldap"
+    client1ldap.vm.provider "virtualbox" do |vb|
+      vb.name = "client1ldap"
+      vb.memory = "2048"
+      vb.cpus = 1
+    end
+    client1ldap.vm.provision "shell", path: "./scripts/childsetup.sh"
+  end
+
+# SETTINGS FOR THE PROMETHEUS SERVER----------------------------------------------------------------------------------------------------------------------------
+  config.vm.define "prometheus" do |prometheus|
+    prometheus.vm.network "private_network", ip: "192.168.30.5", netmask: "255.255.255.0"
+    prometheus.vm.hostname = "prometheus"
+    prometheus.vm.provider "virtualbox" do |vb|
+      vb.name = "prometheus"
+      vb.memory = "4096"
+      vb.cpus = 1
+      vb.customize ["modifyvm", :id, "--cableconnected1", "on"]
+    end
+    prometheus.vm.provision "shell", path: "./scripts/setupprom.sh"
+  end
+end

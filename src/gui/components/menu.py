@@ -70,7 +70,7 @@ class MenuElementsGUI(CallbacksCoreEnv, CallbacksCorePlg):
                                             tag=self.PACK_ENV_BTN_TAG
                                         )
                                         dpg.add_text("?")
-                                self.tooltip(text="Packs a VBox environment as a reusable box for a Vagrantfile")
+                                self.tooltip(text="Packs a Vbox environment as a reusable box for a Vagrantfile")
                                 dpg.add_separator()
                                 
 # VgFileGenerator tab & Widgets ------------------------------------------------------------------------------------------------------------------------------------------               
@@ -225,14 +225,7 @@ class MenuElementsGUI(CallbacksCoreEnv, CallbacksCorePlg):
                                             dpg.add_text("Discord: pabi09", bullet=True)
 
                                 with dpg.tab(label="About", tag=self.ABOUT_TAB):
-                                    
-                                    with dpg.collapsing_header(label="Quick Start Guide"):
-                                        dpg.add_text("1. Configure your settings in the Settings tab", bullet=True)
-                                        dpg.add_text("2. Add new machines in the Machines tab", bullet=True)
-                                        dpg.add_text("3. Manage plugins in the Plugins tab", bullet=True)
-                                        dpg.add_text("4. Use the status bar to monitor operations", bullet=True)
-
-                                    with dpg.collapsing_header(label="Application Overview"):
+                                    with dpg.collapsing_header(label="Application Overview", default_open=True):
                                         dpg.add_text("Version: 1.0.0", bullet=True)
                                         dpg.add_text("License: GPL-3.0 license", bullet=True)
                                         dpg.add_text("Author: @akhos09", bullet=True)

@@ -3,3 +3,8 @@ __pycache__
 test
 *.log
 *.vagrant
+filesextra
+files
+openldapsync
+phpdevapache
+linkwordpress

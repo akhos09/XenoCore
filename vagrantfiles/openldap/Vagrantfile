@@ -1,0 +1,42 @@
+Vagrant.configure("2") do |config|
+    config.vm.box = "ubuntu/focal64"
+
+# SETTINGS FOR THE LDAPSERVER----------------------------------------------------------------------------------------------------------------------------------
+    config.vm.define "serverldap" do |serverldap|
+      serverldap.vm.box = "hluaces/ubuntu-gnome"
+      serverldap.vm.box_version = "22.04.1"
+      serverldap.vm.network "private_network", ip: "192.168.30.3", netmask: "255.255.255.0"
+      serverldap.vm.hostname = "serverldap"
+      serverldap.vm.synced_folder "./openldapsync/", "/root/openldap/"
+      serverldap.vm.provider "virtualbox" do |vb|
+        vb.name = "serverldap"
+        vb.memory = "4096"
+        vb.cpus = 4
+        vb.customize ["modifyvm", :id, "--cableconnected1", "on"]
+      end
+      serverldap.vm.provision "shell", path: "./scripts/setupmaster.sh"
+    end
+
+# SETTINGS FOR THE CLIENTS (change any parameter as you want)-------------------------------------------------------------------------------------------------------
+    config.vm.define "client1ldap" do |client1ldap|
+      client1ldap.vm.network "private_network", ip: "192.168.30.4", netmask: "255.255.255.0"
+      client1ldap.vm.hostname = "client1ldap"
+      client1ldap.vm.provider "virtualbox" do |vb|
+        vb.name = "client1ldap"
+        vb.memory = "2048"
+        vb.cpus = 1
+      end
+      client1ldap.vm.provision "shell", path: "./scripts/childsetup.sh"
+    end
+  
+    config.vm.define "client2ldap" do |client2ldap|
+      client2ldap.vm.network "private_network", ip: "192.168.30.5", netmask: "255.255.255.0"
+      client2ldap.vm.hostname = "client2ldap"
+      client2ldap.vm.provider "virtualbox" do |vb|
+        vb.name = "client2ldap"
+        vb.memory = "2048"
+        vb.cpus = 1
+      end
+      client2ldap.vm.provision "shell", path: "./scripts/childsetup.sh"
+    end
+end
