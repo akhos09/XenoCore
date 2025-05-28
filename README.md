@@ -91,14 +91,20 @@ XenoCore/
 │   │   │   ├── menu.py
 │   │   │   └── themes.py
 │   │   └── gui.py
-│   └── app.py                    
+│   └── app.pyw                   
+├── vagrantfiles/
+│   ├── ansible/
+│   ├── dhcp/
+│   ├── grafana&prometheus/
+│   ├── openldap/
+│   ├── php/
+│   ├── webserver/
+│   └── wordpress/
 ├── .gitignore
 ├── LICENSE
 ├── README.md
 └── requirements.txt
-
 ```
-
 
 ## Troubleshooting
 
