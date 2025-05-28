@@ -38,8 +38,8 @@ class VgFileGenerator:
     def reformat_data(self, data: dict):
         machines = []
         for key, env in data.items():
-            name = (env.get("name") or key).lower()
-            hostname = (env.get("hostname") or name).lower()
+            name = (env.get("name", f"Name{key}") or key).lower()
+            hostname = (env.get("hostname", f"Hostname{key}") or name).lower()
 
             network_interfaces = []
             for iface in env.get("network_interfaces", []):
@@ -77,8 +77,8 @@ class VgFileGenerator:
                 "hostname": hostname,
                 "box": env.get("box", "hashicorp/bionic64"),
                 "box_version": env.get("box_version", ""),
-                "cpu": int(env.get("cpu") or 1),
-                "ram": int(env.get("ram") or 1024),
+                "cpu": env.get("cpu", "1") or "1",
+                "ram": env.get("ram", "1024") or "1024",
                 "disk_size": env.get("disk_size", "20GB"),
                 "network_interfaces": network_interfaces,
                 "sync_folders": sync_folders,

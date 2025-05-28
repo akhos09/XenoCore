@@ -249,7 +249,7 @@ class CallbacksGUI(TagsCoreGUI):
                             dpg.add_text("Box:  ", bullet=True)
                             tag_box = f"env_box_{i}"
                             dpg.add_input_text(hint="e.g: hashicorp/bionic64", width=350, tag=tag_box)
-                            self.machine_input_data[tag_box] = "hashicorp/bionic64"  # Default value
+                            self.machine_input_data[tag_box] = "hashicorp/bionic64"
                             help_button = dpg.add_text("?")
                             self.tooltip("Click here to see the available boxes")
                             with dpg.item_handler_registry() as handler:
@@ -492,6 +492,7 @@ class CallbacksGUI(TagsCoreGUI):
 
 # Load machine_data--------------------------------------------------------------------------
     def load_machine_data(self):
+        self.clean_all_input_spaces()
         machine_data = {}
 
         for i in range(1, self.machine_index_counter):
@@ -540,7 +541,8 @@ class CallbacksGUI(TagsCoreGUI):
                             "vm_destination": vm_destination
                         })
             env_data["sync_folders"] = sync_folders
-
+            
+            # Provisioners ------------------------------------------------------------------
             provisioners = []
             for config_key, config in self.provisioner_configs.items():
                 idx, sid = map(int, config_key.split("_"))
@@ -607,6 +609,14 @@ class CallbacksGUI(TagsCoreGUI):
                 if dpg.does_item_exist(child):
                     dpg.delete_item(child)
                     
+# Replace blank spaces (this caused a lot of bugs)-------------------------------------------------------------------
+    def clean_all_input_spaces(self):
+        for tag in self.machine_input_data.keys():
+            value = dpg.get_value(tag)
+            if " " in value:
+                cleaned = value.replace(" ", "")
+                dpg.set_value(tag, cleaned)
+
 # Needed for the index-----------------------------------------------------------------------------------------------
     def make_netint_callback(self, index):
         return lambda sender, app_data: self.vgfile_netint_gui(sender, app_data, str(index))

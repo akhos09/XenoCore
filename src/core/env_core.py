@@ -48,6 +48,15 @@ class CallbacksCoreEnv(CallbacksGUI):
             for i in self.ENV_DIS_ITEMS:
                 dpg.enable_item(i)
         
+        if "failed" in command_status.stdout.lower():
+            self.show_topmost_messagebox('ERROR', 
+                                        'Vagrant failed because an error in syntax of a Vagrantfile ', error=True)
+            if dpg.does_item_exist(self.ENV_TABLE_TAG):
+                dpg.delete_item(self.ENV_TABLE_TAG)
+            if dpg.does_item_exist(self.TEMP_ENV_WINDOW_TAG):
+                dpg.delete_item(self.TEMP_ENV_WINDOW_TAG)
+            return
+        
         if "no active Vagrant environments" in command_status.stdout:
             self.show_topmost_messagebox('INFO', 
                                         'You don’t have any Vagrant environment in your computer. Try creating one with the options below.')
