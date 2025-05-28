@@ -1,10 +1,4 @@
 #!/bin/bash
-#:Title: dhcpforge.sh
-#:Version: 1.0
-#:Author: Pablo Fernández López
-#:Date: 19/04/2024
-#:Dependencies:
-#:      - "ISC-DHCP-SERVER"
 install_dhcp_server(){
    ens="enp0s9"
    sudo apt-get update && sudo apt-get upgrade -y
