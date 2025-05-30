@@ -91,7 +91,7 @@ XenoCore/
 │   │   │   ├── menu.py
 │   │   │   └── themes.py
 │   │   └── gui.py
-│   └── app.pyw                   
+│   └── app.py           
 ├── vagrantfiles/
 │   ├── ansible/
 │   ├── dhcp/
