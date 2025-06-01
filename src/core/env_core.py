@@ -239,7 +239,7 @@ class CallbacksCoreEnv(CallbacksGUI):
         save_path = self.ask_save_path(default_name=f"{env_name_vb}.box")
 
         if not save_path:
-            self.show_topmost_messagebox("ERROR", "No file selected", error=True)
+            self.show_topmost_messagebox("ERROR", "No destination folder selected", error=True)
             return
 
         self.env_disable_gui(text=f"Packaging the {env_name_vb} environment...", text_tag=self.PACKAGING_ENV_TEXT_TAG)
