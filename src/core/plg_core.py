@@ -163,7 +163,7 @@ class CallbacksCorePlg(CallbacksGUI):
         try:
             cmd = f'vagrant plugin update {name_plg_update}'
             if sys.platform == "win32":
-                cmd = f'start /wait cmd /c "{cmd} & pause"'  
+                cmd = f'start /wait cmd /c "set VAGRANT_DISABLE_STRICT_DEPENDENCY_ENFORCEMENT=1 && vagrant plugin update {name_plg_update} && pause"'
 
             subprocess.run(cmd, shell=True, check=True)
 
