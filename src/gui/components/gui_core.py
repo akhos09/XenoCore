@@ -579,7 +579,28 @@ class CallbacksGUI(TagsCoreGUI):
         dpg.hide_item("help_text_fill")
         dpg.hide_item(self.RESET_VGFILE_TAG)
         dpg.hide_item(self.VG_FILE_GENERATE_BTN_TAG)
+        
+        # Reset counters----------------------------
         self.machine_index_counter = 1
+        
+        # Clear all configuration dictionaries------
+        self.provision_counter = {}
+        self.sync_folder_configs = {}
+        self.provisioner_configs = {}
+        
+        # Clear all variables-----------------------
+        if hasattr(self, 'network_configs'):
+            self.network_configs = {}
+        
+        if hasattr(self, 'sync_folder_counter'):
+            self.sync_folder_counter = {}
+        
+        if hasattr(self, 'provisioner_counter'):
+            self.provisioner_counter = {}
+        
+        if hasattr(self, 'machine_input_data'):
+            self.machine_input_data = {}
+        
         if not dpg.does_item_exist(self.SELECTOR_GROUP_TAG):
             return
             
