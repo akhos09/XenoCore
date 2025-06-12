@@ -110,8 +110,8 @@ XenoCore/
 
 * Make sure Python is added to your system's PATH.
 * If modules are missing, ensure `pip install -r requirements.txt` completed without errors.
-* Use `python --version` to verify you're using the correct Python version.
-* Activate your virtual environment before running the script.
+* Use `python --version` to verify you're using the correct Python version (3.12.5 minimum).
+* If you are in Windows disable Hyper-V, WSL, and Virtual Machine Platform. It could cause some trouble with VirtualBox.
 
 
 ## Development
@@ -119,6 +119,8 @@ XenoCore/
  - Add more advanced parameters to the VgFileGenerator
  - Implement more fonts and themes
  - Create a customized theme creator
+ - Add a multiplier to create X times the same environment with the same options
+ - Add metrics checkbox option (to collect data from the virtual machines and redirect it into a Grafana installed on the native system)
 
 ## License
 
