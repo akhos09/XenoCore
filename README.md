@@ -20,7 +20,7 @@
 
 
 ## About
-XenoCore is a cross-platform (Linux&Windows) designed to manage all the possible options for Vagrant and generate customized Vagrantfiles via GUI. You can configure up to 50 environments with various parameters (network interfaces, provisioners, synchronized folders, disk size, and more).
+XenoCore is a multi-platform (Linux&Windows) application designed to manage all the possible options for Vagrant and generate customized Vagrantfiles via GUI. You can configure up to 50 environments with various parameters (network interfaces, provisioners, synchronized folders, disk size, and more).
 
 ## Dependencies
 
