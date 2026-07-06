@@ -28,7 +28,7 @@ Ensure the following are installed:
 
 1. **Vagrant**: Available from [hashicorp.com](https://developer.hashicorp.com/vagrant)
 2. **VirtualBox**: Available from [virtualbox.org](https://www.virtualbox.org/wiki/Downloads)
-3. **uv**: Installed with`curl -LsSf https://astral.sh/uv/install.sh | sh` [docs](https://docs.astral.sh/uv/)
+3. **uv** [docs](https://docs.astral.sh/uv/): Installed with `curl -LsSf https://astral.sh/uv/install.sh | sh`
 
 
 ## Installation
