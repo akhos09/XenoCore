@@ -28,7 +28,7 @@ Ensure the following are installed:
 
 1. **Vagrant**: Available from [hashicorp.com](https://developer.hashicorp.com/vagrant)
 2. **VirtualBox**: Available from [virtualbox.org](https://www.virtualbox.org/wiki/Downloads)
-3. **Python Modules**: Installed via `requirements.txt`
+3. **uv**: Installed with`curl -LsSf https://astral.sh/uv/install.sh | sh` [docs](https://docs.astral.sh/uv/)
 
 
 ## Installation
@@ -40,33 +40,18 @@ Ensure the following are installed:
    cd XenoCore/
    ```
 
-2. **Install Python dependencies**:
+2. **Install Python dependencies using UV**:
 
    ```bash
-   pip install -r requirements.txt
+   uv sync
    ```
-
-    _You could use a virtual environment:_
-    
-     ```bash
-     python -m venv venv
-     #Linux: source venv/bin/activate  
-     #Windows: venv\Scripts\activate
-     ```
-
 
 ## Usage
 
-1. **Navigate to the source directory**:
+1. **Run the application**:
 
    ```bash
-   cd src
-   ```
-
-2. **Run the application**:
-
-   ```bash
-   python app.py
+   uv run python src/app.py
    ```
 
 
@@ -101,16 +86,18 @@ XenoCore/
 │   ├── webserver/
 │   └── wordpress/
 ├── .gitignore
+├── .python-version
+├── pyproject.toml
+├── uv.lock
 ├── LICENSE
 ├── README.md
-└── requirements.txt
 ```
 
 ## Troubleshooting
 
-* Make sure Python is added to your system's PATH.
-* If modules are missing, ensure `pip install -r requirements.txt` completed without errors.
-* Use `python --version` to verify you're using the correct Python version (3.12.5 minimum).
+* Make sure uv ins installed correctly `uv --version`.
+* If dependencies fail, run `uv sync --resinstall`.
+* Use `uv python list` to verify you're using the correct Python version (3.12.5 minimum).
 * If you are in Windows disable Hyper-V, WSL, and Virtual Machine Platform. It could cause some trouble with VirtualBox.
 
 
