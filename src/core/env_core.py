@@ -134,7 +134,7 @@ class CallbacksCoreEnv(CallbacksGUI):
         folder_selected = self.select_folder(text="Select the directory containing the Vagrantfile")
         
         if not folder_selected:
-            self.show_topmost_messagebox("ERROR", f"Directory not selected", error=True)
+            self.show_topmost_messagebox("ERROR", "Directory not selected", error=True)
             return
 
         if not os.path.exists(folder_selected):
@@ -146,7 +146,7 @@ class CallbacksCoreEnv(CallbacksGUI):
         try:
             with change_directory(folder_selected):
                 if sys.platform == "win32":
-                    cmd = f'start /wait cmd /c "vagrant up & pause"'
+                    cmd = 'start /wait cmd /c "vagrant up & pause"'
                 else:
                     cmd = "vagrant up"
                 

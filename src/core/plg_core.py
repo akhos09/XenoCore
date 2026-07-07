@@ -180,14 +180,14 @@ class CallbacksCorePlg(CallbacksGUI):
         dpg.delete_item("right_click_popup")
         name_plg_repair: str = user_data
         
-        self.plg_disable_gui(text=f"Repairing the plugins...", text_tag=self.REPAIRING_PLG_TEXT_TAG)
+        self.plg_disable_gui(text="Repairing the plugins...", text_tag=self.REPAIRING_PLG_TEXT_TAG)
         
         check_local = dpg.get_value(self.LOCAL_PLG_REPAIR_CHECKBOX_TAG)
         
         try:
-            cmd = f'vagrant plugin repair'
+            cmd = 'vagrant plugin repair'
             if check_local:
-                cmd = f'vagrant plugin repair --local'
+                cmd = 'vagrant plugin repair --local'
                 
             if sys.platform == "win32":
                 cmd = f'start /wait cmd /c "{cmd} & pause"'  

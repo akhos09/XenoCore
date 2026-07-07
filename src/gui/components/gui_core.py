@@ -48,7 +48,7 @@ class CallbacksGUI(TagsCoreGUI):
 # Advanced theme selector --------------------------------------------------------------------------
     def advanced_theme_callback(self, app_data, user_data):
         check_settings = messagebox.askokcancel("INFO",
-        f"This menu could break the appeareance of the app. Are you sure to continue?")
+        "This menu could break the appeareance of the app. Are you sure to continue?")
         
         if check_settings:
             dpg.show_style_editor()
@@ -206,7 +206,7 @@ class CallbacksGUI(TagsCoreGUI):
                     tag=self.RESET_VGFILE_TAG,
                     parent=self.VGFILE_BTN_GROUP_TAG
                 )
-                dpg.add_text("Fill the fields of the environments you want to create", color=[255, 255, 0], parent=self.VGFILE_BTN_GROUP_TAG,tag=f"help_text_fill")
+                dpg.add_text("Fill the fields of the environments you want to create", color=[255, 255, 0], parent=self.VGFILE_BTN_GROUP_TAG,tag="help_text_fill")
         
         dpg.hide_item(self.ADD_ENV_VGFILE_TAG)
         num_machines_str = dpg.get_value(self.NUM_ENV_INPUT_TAG)
